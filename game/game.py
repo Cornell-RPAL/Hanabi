@@ -1,5 +1,5 @@
 from consts import NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, COLORS, \
-    NUMBERS, AMTS, NUMBER_IN_HAND, is_color, is_number
+    NUMBERS, AMTS, NUMBER_IN_HAND
 from card import Card
 from random import shuffle
 
@@ -43,11 +43,11 @@ class Game:
         """
         class InvalidHint(Exception):
             pass
-        if is_color(feature):
+        if Card.is_color(feature):
             index_list = [i for (card, i) in enumerate(
                 self.hands[player]) if card.color == feature]
 
-        if is_number(feature):
+        if Card.is_number(feature):
             index_list = [i for (card, i) in enumerate(
                 self.hands[player]) if card.number == feature]
 

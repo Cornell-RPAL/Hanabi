@@ -1,3 +1,4 @@
+
 # BOARD CONSTANTS
 NUMBER_OF_HINT_TOKENS = 8
 NUMBER_OF_ERROR_TOKENS = 3
@@ -14,11 +15,3 @@ AMTS = {
 }
 
 NUMBER_IN_HAND = 5
-
-
-def is_color(color):
-    return color in COLORS
-
-
-def is_number(number):
-    return number in NUMBERS

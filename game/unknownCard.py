@@ -1,40 +1,34 @@
 from card import Card
-from consts import *
+
 
 class UnknownCard():
-  """
-  A card in a hand.
-  """
-
-  def __init__(self, possible_cards):
-    self.possible_cards = possible_cards
-    self.hand_age = 0
-
-  def update_feature(self, feature, applies = True):
     """
-      Removes cards from possible cards
-      feature: []
+    A card in a hand.
     """
-    assert(is_color(feature) or is_number(feature))
-    result = []
 
-    def nxor(b1, b2):
-      return (b1 and b2) or (not(b1) and not(b2))
+    def __init__(self, possible_cards):
+        self.possible_cards = possible_cards
+        self.hand_age = 0
 
-    for card in self.possible_cards:
-      if nxor(applies, card.color == feature or card.number == feature):
-        result.append(card)
-    
-    self.possible_cards = result
+    def update_feature(self, feature, applies=True):
+        """
+          Removes cards from possible cards
+          feature: []
+        """
+        assert(Card.is_valid_color(feature) or Card.is_valid_number(feature))
+        result = []
 
-  def exclude(self, card):
-    assert isinstance(card, Card)
-    assert card in self.possible_cards
-    
-    self.possible_cards.remove(card)
+        def nxor(b1, b2):
+            return (b1 and b2) or (not(b1) and not(b2))
 
-        
-    
+        for card in self.possible_cards:
+            if nxor(applies, card.color == feature or card.number == feature):
+                result.append(card)
 
+        self.possible_cards = result
 
-    
+    def exclude(self, card):
+        assert isinstance(card, Card)
+        assert card in self.possible_cards
+
+        self.possible_cards.remove(card)
