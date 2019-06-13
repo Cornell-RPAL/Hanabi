@@ -1,4 +1,4 @@
-from const import *
+from consts import *
 from card import Card
 from unknownCard import UnknownCard
 from random import shuffle

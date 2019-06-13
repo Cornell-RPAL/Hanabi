@@ -1,5 +1,5 @@
 from card import Card
-from const import *
+from consts import *
 
 class UnknownCard():
   """

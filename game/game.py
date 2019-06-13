@@ -1,4 +1,4 @@
-from const import *
+from consts import *
 from card import Card
 from random import shuffle
 
@@ -12,13 +12,13 @@ class Game:
     self.hint_tokens = NUMBER_OF_HINT_TOKENS
     self.error_tokens = NUMBER_OF_ERROR_TOKENS
 
-    self.shuffle(ALL_CARDS)
+    shuffle(ALL_CARDS)
     self.cards = ALL_CARDS
-    self.hands = (cards[:NUMBER_IN_HAND - 1],
-            cards[NUMBER_IN_HAND : NUMBER_IN_HAND * 2])
+    self.hands = (self.cards[:NUMBER_IN_HAND - 1],
+            self.cards[NUMBER_IN_HAND : NUMBER_IN_HAND * 2])
     
     self.discard_pile = []
-    self.draw_pile = cards[NUMBER_IN_HAND * 2 + 1:]
+    self.draw_pile = self.cards[NUMBER_IN_HAND * 2 + 1:]
 
     self.played_cards = dict(zip(COLORS, [0]*5))
 

@@ -1,5 +1,5 @@
 from enum import Enum
-from const import *
+from consts import *
 
 class Card:
   """
