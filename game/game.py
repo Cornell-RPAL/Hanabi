@@ -9,21 +9,21 @@ class Game:
   The primary game state for a game of Hanabi.
   """
   def __init__(self):
-    hint_tokens = NUMBER_OF_HINT_TOKENS
-    error_tokens = NUMBER_OF_ERROR_TOKENS
+    self.hint_tokens = NUMBER_OF_HINT_TOKENS
+    self.error_tokens = NUMBER_OF_ERROR_TOKENS
 
-    shuffle(ALL_CARDS)
-    cards = ALL_CARDS
-    hands = (cards[:NUMBER_IN_HAND - 1],
+    self.shuffle(ALL_CARDS)
+    self.cards = ALL_CARDS
+    self.hands = (cards[:NUMBER_IN_HAND - 1],
             cards[NUMBER_IN_HAND : NUMBER_IN_HAND * 2])
     
-    discard_pile = []
-    draw_pile = cards[NUMBER_IN_HAND * 2 + 1:]
+    self.discard_pile = []
+    self.draw_pile = cards[NUMBER_IN_HAND * 2 + 1:]
 
-    played_cards = dict(zip(COLORS, [0]*5))
+    self.played_cards = dict(zip(COLORS, [0]*5))
 
-    turn = 0
-    msg = ""
+    self.turn = 0
+    self.msg = ""
 
   def hint_to(self, player, feature):
     """
@@ -40,13 +40,13 @@ class Game:
     class InvalidHint(Exception):
       pass
     if is_color(feature):
-      index_list = [i for (card, i) in enumerate(hands[player]) if card.color == feature]
+      index_list = [i for (card, i) in enumerate(self.hands[player]) if card.color == feature]
 
     if is_number(feature):
-      index_list = [i for (card, i) in enumerate(hands[player]) if card.number == feature]
+      index_list = [i for (card, i) in enumerate(self.hands[player]) if card.number == feature]
     
     if index_list:
-      msg = "Your teammate hinted that your cards at" + str(index_list) +\
+      self.msg = "Your teammate hinted that your cards at" + str(index_list) +\
         "is " + feature
     else:
       raise InvalidHint
