@@ -14,25 +14,33 @@ class Game:
     """
 
     def __init__(self):
-        self.hint_tokens = NUMBER_OF_HINT_TOKENS
-        self.error_tokens = NUMBER_OF_ERROR_TOKENS
+        self._hint_tokens = NUMBER_OF_HINT_TOKENS
+        self._error_tokens = NUMBER_OF_ERROR_TOKENS
 
         shuffle(ALL_CARDS)
-        self.cards = ALL_CARDS
-        self.hands = (self.cards[:NUMBER_IN_HAND - 1],
-                      self.cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2 - 1])
+        self._cards = ALL_CARDS
+        self._hands = (self._cards[:NUMBER_IN_HAND],
+                      self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
 
-        self.discard_pile = []
-        self.draw_pile = self.cards[NUMBER_IN_HAND * 2 + 1:]
+        self._discard_pile = []
+        self._draw_pile = self._cards[NUMBER_IN_HAND * 2:]
 
-        self.played_cards = dict(zip(COLORS, [0]*5))
+        #self._played_cards = dict(zip(COLORS, [0]*5))
+        self._played_pile = []
 
-        self.turn = 0
-        self.msg = ""
+        self._turn = 0
+        self._msg = ""
 
-        # if __debug__:
+        if __debug__:
+            self._check_invariant()
 
-        #     self.check_invariant()
+    @property
+    def turn(self):
+        return self._turn
+
+    @property
+    def message(self):
+        return self._msg
 
     def hint_to(self, player, feature):
         """
@@ -50,26 +58,26 @@ class Game:
             the opponent's hand.
         """
         assert player in [0, 1]
-        assert self.error_tokens > 0
+        assert self._error_tokens > 0
 
         class InvalidHint(Exception):
             pass
 
         if Card.is_valid_color(feature):
             index_list = [i for (i, card) in enumerate(
-                self.hands[player]) if card.color == feature]
+                self._hands[player]) if card.color == feature]
 
         if Card.is_valid_number(feature):
             index_list = [i for (i, card) in enumerate(
-                self.hands[player]) if card.number == feature]
+                self._hands[player]) if card.number == feature]
 
         if index_list:
             return index_list
         else:
             raise InvalidHint
 
-        self.turn += 1
-        self.error_tokens -= 1
+        self._turn += 1
+        self._error_tokens -= 1
 
     def play_card(self, player, card_ix):
         """
@@ -79,70 +87,79 @@ class Game:
 
             Returns:
                 True iff card was successfully played on board
-
         """
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
-        assert self.error_tokens > 0
+        assert self._error_tokens > 0
 
         success = True
 
-        card = self.hands[player][card_ix]
+        card = self._hands[player][card_ix]
 
         # Checks if previous number of same color is on top of color's stack
-        if self.played_cards[card.color] == card.number - 1:
-            self.played_cards[card.color] += 1
+        # if self._played_cards[card.color] == card.number - 1:
+        #    self._played_cards[card.color] += 1
+
+        if (card.number == 1 or
+            Card(card.color, card.number - 1) in self._played_pile):
+            self._played_pile += card
         else:
             success = False
-            self.discard_pile.append(card)
-            self.error_tokens -= 1
+            self._discard_pile.append(card)
+            self._error_tokens -= 1
 
         # Update hand, draw pile
-        if len(self.draw_pile):
-            self.hands[player][card_ix] = self.draw_pile.pop()
+        if len(self._draw_pile):
+            self._hands[player][card_ix] = self._draw_pile.pop()
         else:
-            self.hands[player][card_ix] = None
+            self._hands[player][card_ix] = None
 
-        self.turn += 1
-        self.error_tokens -= 1
+        self._turn += 1
+        self._error_tokens -= 1
 
         if __debug__:
-            self.check_invariant()
+            self._check_invariant()
         return success
 
     def discard(self, player, card_ix):
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
 
-        card = self.hands[player][card_ix]
+        card = self._hands[player][card_ix]
 
-        self.discard_pile.append(card)
+        self._discard_pile.append(card)
 
-        if len(self.draw_pile):
-            self.hands[player][card_ix] = self.draw_pile.pop()
+        if len(self._draw_pile):
+            self._hands[player][card_ix] = self._draw_pile.pop()
         else:
-            self.hands[player][card_ix] = None
+            self._hands[player][card_ix] = None
 
-        self.error_tokens += 1
+        self._error_tokens += 1
 
-    def check_invariant(self):
+    def _check_invariant(self):
 
-        cards_in_game = []
+        cards_in_game = (self._played_pile + self._discard_pile + self._draw_pile
+            + self._hands[0] + self._hands[1])
 
-        for color, top_n in self.played_cards.items():
-            for n in range(1, top_n):
-                cards_in_game.append(Card(color, n))
+        # for color, top_n in self._played_cards.items():
+        #     for n in range(1, top_n):
+        #         cards_in_game.append(Card(color, n))
 
-        cards_in_game += (self.discard_pile + self.draw_pile + self.hands[0] +
-                          self.hands[1])
+        # cards_in_game += (self._discard_pile + self._draw_pile + self._hands[0] +
+        #                  self._hands[1])
 
-        print(self.hands)
-        print('\n')
-        print(Counter(cards_in_game).most_common())
-        print('\n')
-        print(Counter(ALL_CARDS).most_common())
-        print(Counter(cards_in_game).most_common()
-              == Counter(ALL_CARDS).most_common())
+        # print(self._hands)
+        # print('\n')
+        # print(Counter(cards_in_game).most_common())
+        # print('\n')
+        # print(Counter(ALL_CARDS).most_common())
+        # print(Counter(cards_in_game).most_common()
+        #       == Counter(ALL_CARDS).most_common())
+        # print('\nDiff:\n')
+        # print(Counter(ALL_CARDS) - Counter(cards_in_game))
 
-        assert (Counter(cards_in_game).most_common()
-                == Counter(ALL_CARDS).most_common())
+        assert Counter(cards_in_game) == Counter(ALL_CARDS), \
+            ('The invariant is broken: cards missing from deck:' + 
+            str(Counter(ALL_CARDS) - Counter(cards_in_game)))
+
+

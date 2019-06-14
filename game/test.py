@@ -1,7 +1,6 @@
 from game import Game
 
 g = Game()
-print(g.hands)
 g.hint_to(0, "red")
-# print(g.msg)
-# print(g.hands)
+g.play_card(0, 0)
+g.play_card(0, 1)
