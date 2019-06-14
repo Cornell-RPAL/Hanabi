@@ -7,10 +7,14 @@ class UnknownCard():
     """
 
     def __init__(self, possible_cards):
-        self.possible_cards = possible_cards
-        self.hand_age = 0
+        self._possible_cards = possible_cards
+        self._hand_age = 0
 
-    def update_feature(self, feature, applies=True):
+    @property
+    def possible_cards(self):
+
+
+    def updateFeature(self, feature, applies=True):
         """
           Removes cards from possible cards
           feature: []

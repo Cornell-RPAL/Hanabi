@@ -7,11 +7,19 @@ class Card:
     """
 
     def __init__(self, color, number):
-        assert Card.is_valid_color(color)
-        assert Card.is_valid_number(number)
+        assert Card.isValidColor(color)
+        assert Card.isValidNumber(number)
 
-        self.color = color
-        self.number = number
+        self._color = color
+        self._number = number
+
+    @property
+    def color(self):
+      return self._color
+    
+    @property
+    def number(self):
+      return self._number
 
     def __repr__(self):
         return "Card: " + self.color + " " + str(self.number)
@@ -23,9 +31,9 @@ class Card:
         return hash(str(self))
 
     @staticmethod
-    def is_valid_color(color):
+    def isValidColor(color):
         return color in COLORS
 
     @staticmethod
-    def is_valid_number(number):
+    def isValidNumber(number):
         return number in NUMBERS
