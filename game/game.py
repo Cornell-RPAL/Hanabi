@@ -102,7 +102,7 @@ class Game:
 
         if (card.number == 1 or
             Card(card.color, card.number - 1) in self._played_pile):
-            self._played_pile += card
+            self._played_pile.append(card)
         else:
             success = False
             self._discard_pile.append(card)
@@ -135,6 +135,9 @@ class Game:
             self._hands[player][card_ix] = None
 
         self._error_tokens += 1
+
+        if __debug__:
+            self._check_invariant()
 
     def _check_invariant(self):
 
