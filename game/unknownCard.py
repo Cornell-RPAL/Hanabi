@@ -8,18 +8,22 @@ class UnknownCard():
 
     def __init__(self, possible_cards):
         self._possible_cards = possible_cards
-        self._hand_age = 0
+        self._handAge = 0
 
     @property
     def possible_cards(self):
+      return self._possible_cards
 
-
+    @property
+    def handAge(self):
+      return self._handAge
+    
     def updateFeature(self, feature, applies=True):
         """
           Removes cards from possible cards
           feature: []
         """
-        assert(Card.is_valid_color(feature) or Card.is_valid_number(feature))
+        assert(Card.isValidColor(feature) or Card.isValidNumber(feature))
         result = []
 
         def nxor(b1, b2):

@@ -1,5 +1,8 @@
-from consts import NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, COLORS, \
-    NUMBERS, AMTS, NUMBER_IN_HAND
+from consts import (
+    NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS,
+    COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
+    STATE_ACTIVE, STATE_LAST_ROUND, STATE_COMPLETE
+)
 from card import Card
 from collections import Counter
 from random import shuffle
@@ -29,7 +32,10 @@ class Game:
         self._playedPile = []
 
         self._turn = 0
+        self._score = 0
         self._msg = ""
+
+        self._lastTurn = 0
 
         if __debug__:
             self._checkInvariant()
@@ -37,6 +43,10 @@ class Game:
     @property
     def turn(self):
         return self._turn
+    
+    @property
+    def score(self):
+        return len(self._playedPile)
 
     @property
     def message(self):
@@ -114,9 +124,9 @@ class Game:
         else:
             self._hands[player][card_ix] = None
 
-        self._turn += 1
         self._errorTokens -= 1
-
+        self._turn += 1
+        
         if __debug__:
             self._checkInvariant()
         return success
@@ -134,10 +144,28 @@ class Game:
         else:
             self._hands[player][card_ix] = None
 
-        self._errorTokens += 1
+        self._errorTokens -= 1
+        self._hintTokens += 1
+        self._turn += 1
 
         if __debug__:
             self._checkInvariant()
+
+    def checkState(self):
+        if self._errorTokens == 0:
+            self._msg = "You made 3 mistakes! There has been an explosion"
+            self._state = STATE_COMPLETE
+        elif self.score == 25:
+            self._msg = "Legendary! You made all five fireworks!"
+            self._state = STATE_COMPLETE
+        elif self._drawPile == []:
+            self._msg = "All cards are gone! You two each have one turn left"
+            self._state = STATE_LAST_ROUND
+            self._lastTurn = self._turn + 2
+        elif (self._state == STATE_LAST_ROUND and 
+                self._turn == self._lastTurn):
+            self._msg = "You have used up all the rounds! Game complete"
+            self._state = STATE_COMPLETE
 
     def _checkInvariant(self):
 
