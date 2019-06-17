@@ -8,4 +8,3 @@ stdscr.refresh()
 s = stdscr.getstr()
 
 curses.endwin()
-    

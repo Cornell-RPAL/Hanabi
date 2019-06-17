@@ -75,11 +75,11 @@ class Game:
 
         if Card.isValidColor(feature):
             index_list = [i for (i, card) in enumerate(self._hands[player])
-                if card.color == feature]
+                          if card.color == feature]
 
         if Card.isValidNumber(feature):
             index_list = [i for (i, card) in enumerate(self._hands[player])
-                if card.number == feature]
+                          if card.number == feature]
 
         if index_list:
             return index_list
@@ -109,7 +109,7 @@ class Game:
         # Checks if previous number of same color is on top of color's stack
         if (card.number == 1 or
             (Card(card.color, card.number) not in self._playedPile and
-            Card(card.color, card.number - 1) in self._playedPile)):
+             Card(card.color, card.number - 1) in self._playedPile)):
             self._playedPile.append(card)
         else:
             success = False
@@ -118,9 +118,9 @@ class Game:
 
         # Update hand, draw pile
         if len(self._drawPile):
-            self._hands[player][card_ix]=self._drawPile.pop()
+            self._hands[player][card_ix] = self._drawPile.pop()
         else:
-            self._hands[player][card_ix]=None
+            self._hands[player][card_ix] = None
 
         self._errorTokens -= 1
         self._turn += 1
@@ -133,14 +133,14 @@ class Game:
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
 
-        card=self._hands[player][card_ix]
+        card = self._hands[player][card_ix]
 
         self._discardPile.append(card)
 
         if len(self._drawPile):
-            self._hands[player][card_ix]=self._drawPile.pop()
+            self._hands[player][card_ix] = self._drawPile.pop()
         else:
-            self._hands[player][card_ix]=None
+            self._hands[player][card_ix] = None
 
         self._errorTokens -= 1
         self._hintTokens += 1
