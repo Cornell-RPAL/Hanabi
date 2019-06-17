@@ -24,16 +24,11 @@ class Hanabi():
 
     def update(self, stdscr):
         if self._state in [STATE_ACTIVE, STATE_LAST_ROUND]:
-            stdscr.addstr('Your teammate did ' + self._prevCommand)
             self._displayGame(stdscr, self._game, self._player)
-            stdscr.addstr(self._prevError, curses.A_BOLD)
-            stdscr.addstr(self._game.message)
-            stdscr.addstr(">>> ", curses.A_BLINK)
-            stdscr.refresh()
-
+            
             command = stdscr.getstr().decode()
             if self._game.update(self._player, command):
-                self._prevCommand = command
+                self._prevCommand = self._game.message
                 self._player = 1 - self._player
             else:
                 self._prevError = self._game.message
@@ -62,19 +57,27 @@ class Hanabi():
         
     def _displayGame(self, scr, g, player):
         stdscr.clear()
+        stdscr.addstr("~HANABI~\n\n")
+        stdscr.addstr(self._prevCommand)
+        self._displayBoard(stdscr, g, player)
+        stdscr.addstr(self._prevError, curses.A_BOLD)
+        stdscr.addstr(">>> ", curses.A_BLINK)
+        stdscr.refresh()
+
+    def _displayBoard(self, scr, g, player):
         p_hand = ' '.join(['[' + card.color + ' ' + str(card.number) + ']' \
             for card in g.hands[1 - player]])
         played = ' '.join(['[' + color + ' ' + str(number) + ']' \
             for color, number in g.topPlayedCards().items()])
 
-        scr.addstr("HANABI\n\n")
         scr.addstr("Hint Tokens: " + str(g.hintTokens) + '\n')
         scr.addstr("Error Tokens: " + str(g.errorTokens) + '\n')
         scr.addstr("Turn: " + str(g.turn) + '\n\n')
         scr.addstr("Partner Hand: " + p_hand + '\n\n')
         scr.addstr("Played Cards: " + played + '\n\n')
-        scr.addstr(g.message + '\n')
-        return
+        if g.message != self._prevCommand:
+            scr.addstr(g.message + '\n')
+        
 
 
 

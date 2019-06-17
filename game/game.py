@@ -101,6 +101,8 @@ class Game:
         assert player in [0, 1]
         assert self._errorTokens > 0
 
+        index_list = []
+
         if Card.isValidColor(feature):
             index_list = [i for (i, card) in enumerate(self._hands[player])
                           if card.color == feature]
@@ -202,7 +204,7 @@ class Game:
         try:
             if verb == "help":
                 self._message = 'You can either "play [card index]",\
-                    "discard [card index]", or "hint [number or color]\n"'
+                    "discard [card index]", or "hint [number or color]"\n'
             else:
                 if len(args) != 1:
                     raise IncorrectArgumentNumber
@@ -210,17 +212,28 @@ class Game:
                     raise InvalidCommand
                 else:
                     if verb == "play":
+                        self._message = "Your partner played " + \
+                            str(
+                                self._hands[1 - player][int(args[0])]
+                                )
                         self.playCard(player, int(args[0]))
                     elif verb == "discard":
                         self.discard(player, int(args[0]))
+                        self._message = "Your partner discarded " + str(args[0])
                     elif verb == "hint":
-                        self.hintTo(1 - player, args[0])
+                        if args[0].isdigit():
+                            il = self.hintTo(1 - player, int(args[0]))
+                        else:
+                            il = self.hintTo(1 - player, args[0])
+                        self._message = ("Your partner hinted that your cards " + 
+                        "at indices " + str(il) + " are " + str(args[0]))
                     self._state = STATE_CONTINUE
+                    self._message += '\n'
                     return True
 
-        except ValueError:
-            self._message = ("Invalid index, please enter number from 0 to " + 
-                str(NUMBER_IN_HAND))
+        # except ValueError:
+        #     self._message = ("Invalid index, please enter number from 0 to " + 
+        #         str(NUMBER_IN_HAND))
         except InvalidHint:
             self._message = ("Invalid feature, please enter color, or" +
                 "number from 0 to " + str(NUMBER_IN_HAND))
