@@ -33,7 +33,7 @@ class Game:
 
         self._turn = 0
         self._score = 0
-        self._msg = ""
+        self._message = ""
 
         self._lastTurn = 0
 
@@ -50,7 +50,31 @@ class Game:
 
     @property
     def message(self):
-        return self._msg
+        return self._message
+    
+    @property
+    def hintTokens(self):
+        return self._hintTokens
+    
+    @property
+    def errorTokens(self):
+        return self._errorTokens
+    
+    @property
+    def hands(self):
+        return self._hands
+
+    def topPlayedCards(self):
+        """
+        A dictionary representing the top card of each color. 
+        
+        The value is [0] if there is no cards of the color.
+        """
+        d = dict(zip(COLORS, [0]*5))
+        for c in self._playedPile:
+            if d[c.color] < c.number:
+                d[c.color] = c.number
+        return d
 
     def hintTo(self, player, feature):
         """
@@ -151,18 +175,18 @@ class Game:
 
     def checkState(self):
         if self._errorTokens == 0:
-            self._msg = "You made 3 mistakes! There has been an explosion"
+            self._message = "You made 3 mistakes! There has been an explosion"
             self._state = STATE_COMPLETE
         elif self.score == 25:
-            self._msg = "Legendary! You made all five fireworks!"
+            self._message = "Legendary! You made all five fireworks!"
             self._state = STATE_COMPLETE
         elif self._drawPile == []:
-            self._msg = "All cards are gone! You two each have one turn left"
+            self._message = "All cards are gone! You two each have one turn left"
             self._state = STATE_LAST_ROUND
             self._lastTurn = self._turn + 2
         elif (self._state == STATE_LAST_ROUND and 
                 self._turn == self._lastTurn):
-            self._msg = "You have used up all the rounds! Game complete"
+            self._message = "You have used up all the rounds! Game complete"
             self._state = STATE_COMPLETE
 
     def _checkInvariant(self):
