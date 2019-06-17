@@ -1,7 +1,7 @@
 from consts import (
     NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS,
     COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
-    STATE_ACTIVE, STATE_LAST_ROUND, STATE_COMPLETE
+    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
 from card import Card
 from collections import Counter
@@ -10,6 +10,12 @@ from random import shuffle
 ALL_CARDS = [Card(c, n)
              for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
+class InvalidHint(Exception):
+    pass
+class IncorrectArgumentNumber(Exception):
+    pass
+class InvalidCommand(Exception):
+    pass
 
 class Game:
     """
@@ -34,6 +40,7 @@ class Game:
         self._turn = 0
         self._score = 0
         self._message = ""
+        self._state = STATE_ACTIVE
 
         self._lastTurn = 0
 
@@ -93,9 +100,6 @@ class Game:
         """
         assert player in [0, 1]
         assert self._errorTokens > 0
-
-        class InvalidHint(Exception):
-            pass
 
         if Card.isValidColor(feature):
             index_list = [i for (i, card) in enumerate(self._hands[player])
@@ -173,43 +177,66 @@ class Game:
         if __debug__:
             self._checkInvariant()
 
-    def checkState(self):
+    def _checkState(self):
         if self._errorTokens == 0:
-            self._message = "You made 3 mistakes! There has been an explosion"
+            self._message = "You made 3 mistakes! There has been an explosion\n"
             self._state = STATE_COMPLETE
         elif self.score == 25:
-            self._message = "Legendary! You made all five fireworks!"
+            self._message = "Legendary! You made all five fireworks!\n"
             self._state = STATE_COMPLETE
         elif self._drawPile == []:
-            self._message = "All cards are gone! You two each have one turn left"
+            self._message = "All cards are gone! \
+                You two each have one turn left\n"
             self._state = STATE_LAST_ROUND
             self._lastTurn = self._turn + 2
         elif (self._state == STATE_LAST_ROUND and
                 self._turn == self._lastTurn):
-            self._message = "You have used up all the rounds! Game complete"
+            self._message = "You have used up all the rounds! Game complete\n"
             self._state = STATE_COMPLETE
+
+    def update(self, player, command):
+        wl = command.split(' ')
+        verb = wl[0]
+        args = wl[1:]
+
+        try:
+            if verb == "help":
+                self._message = 'You can either "play [card index]",\
+                    "discard [card index]", or "hint [number or color]\n"'
+            else:
+                if len(args) != 1:
+                    raise IncorrectArgumentNumber
+                elif verb not in ["play", "discard", "hint"]:
+                    raise InvalidCommand
+                else:
+                    if verb == "play":
+                        self.playCard(player, int(args[0]))
+                    elif verb == "discard":
+                        self.discard(player, int(args[0]))
+                    elif verb == "hint":
+                        self.hintTo(1 - player, args[0])
+                    self._state = STATE_CONTINUE
+                    return True
+
+        except ValueError:
+            self._message = ("Invalid index, please enter number from 0 to " + 
+                str(NUMBER_IN_HAND))
+        except InvalidHint:
+            self._message = ("Invalid feature, please enter color, or" +
+                "number from 0 to " + str(NUMBER_IN_HAND))
+        except IncorrectArgumentNumber:
+            self._message = "Invalid number of arguments, type [help] \
+                    for help. \n"
+        except InvalidCommand:
+            self._message = "Invalid command! Type [help] for help."
+        self._message += '\n'
+        self._checkState()
+        return False
 
     def _checkInvariant(self):
 
         cards_in_game = (self._playedPile + self._discardPile + self._drawPile
                          + self._hands[0] + self._hands[1])
-
-        # for color, top_n in self._played_cards.items():
-        #     for n in range(1, top_n):
-        #         cards_in_game.append(Card(color, n))
-
-        # cards_in_game += (self._discard_pile + self._draw_pile +
-        #                   self._hands[0] + self._hands[1])
-
-        # print(self._hands)
-        # print('\n')
-        # print(Counter(cards_in_game).most_common())
-        # print('\n')
-        # print(Counter(ALL_CARDS).most_common())
-        # print(Counter(cards_in_game).most_common()
-        #       == Counter(ALL_CARDS).most_common())
-        # print('\nDiff:\n')
-        # print(Counter(ALL_CARDS) - Counter(cards_in_game))
 
         assert Counter(cards_in_game) == Counter(ALL_CARDS), \
             ('The invariant is broken: cards missing from deck:' +
