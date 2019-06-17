@@ -107,11 +107,9 @@ class Game:
         card = self._hands[player][card_ix]
 
         # Checks if previous number of same color is on top of color's stack
-        # if self._played_cards[card.color] == card.number - 1:
-        #    self._played_cards[card.color] += 1
-
         if (card.number == 1 or
-            Card(card.color, card.number - 1) in self._playedPile):
+            (Card(card.color, card.number) not in self._playedPile and
+            Card(card.color, card.number - 1) in self._playedPile)):
             self._playedPile.append(card)
         else:
             success = False
@@ -171,23 +169,6 @@ class Game:
 
         cards_in_game = (self._playedPile + self._discardPile + self._drawPile
             + self._hands[0] + self._hands[1])
-
-        # for color, top_n in self._played_cards.items():
-        #     for n in range(1, top_n):
-        #         cards_in_game.append(Card(color, n))
-
-        # cards_in_game += (self._discard_pile + self._draw_pile + self._hands[0] +
-        #                  self._hands[1])
-
-        # print(self._hands)
-        # print('\n')
-        # print(Counter(cards_in_game).most_common())
-        # print('\n')
-        # print(Counter(ALL_CARDS).most_common())
-        # print(Counter(cards_in_game).most_common()
-        #       == Counter(ALL_CARDS).most_common())
-        # print('\nDiff:\n')
-        # print(Counter(ALL_CARDS) - Counter(cards_in_game))
 
         assert Counter(cards_in_game) == Counter(ALL_CARDS), \
             ('The invariant is broken: cards missing from deck:' + 
