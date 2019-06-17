@@ -74,12 +74,12 @@ class Game:
             pass
 
         if Card.isValidColor(feature):
-            index_list = [i for (i, card) in enumerate(
-                self._hands[player]) if card.color == feature]
+            index_list = [i for (i, card) in enumerate(self._hands[player]) 
+                if card.color == feature]
 
         if Card.isValidNumber(feature):
-            index_list = [i for (i, card) in enumerate(
-                self._hands[player]) if card.number == feature]
+            index_list = [i for (i, card) in enumerate(self._hands[player]) 
+                if card.number == feature]
 
         if index_list:
             return index_list
