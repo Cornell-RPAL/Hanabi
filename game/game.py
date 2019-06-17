@@ -23,12 +23,12 @@ class Game:
         shuffle(ALL_CARDS)
         self._cards = ALL_CARDS
         self._hands = (self._cards[:NUMBER_IN_HAND],
-                      self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
+                       self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
 
         self._discardPile = []
         self._drawPile = self._cards[NUMBER_IN_HAND * 2:]
 
-        #self._played_cards = dict(zip(COLORS, [0]*5))
+        # self._played_cards = dict(zip(COLORS, [0]*5))
         self._playedPile = []
 
         self._turn = 0
@@ -43,7 +43,7 @@ class Game:
     @property
     def turn(self):
         return self._turn
-    
+
     @property
     def score(self):
         return len(self._playedPile)
@@ -98,12 +98,12 @@ class Game:
             pass
 
         if Card.isValidColor(feature):
-            index_list = [i for (i, card) in enumerate(self._hands[player]) 
-                if card.color == feature]
+            index_list = [i for (i, card) in enumerate(self._hands[player])
+                          if card.color == feature]
 
         if Card.isValidNumber(feature):
-            index_list = [i for (i, card) in enumerate(self._hands[player]) 
-                if card.number == feature]
+            index_list = [i for (i, card) in enumerate(self._hands[player])
+                          if card.number == feature]
 
         if index_list:
             return index_list
@@ -133,7 +133,7 @@ class Game:
         # Checks if previous number of same color is on top of color's stack
         if (card.number == 1 or
             (Card(card.color, card.number) not in self._playedPile and
-            Card(card.color, card.number - 1) in self._playedPile)):
+             Card(card.color, card.number - 1) in self._playedPile)):
             self._playedPile.append(card)
         else:
             success = False
@@ -148,7 +148,7 @@ class Game:
 
         self._errorTokens -= 1
         self._turn += 1
-        
+
         if __debug__:
             self._checkInvariant()
         return success
@@ -184,7 +184,7 @@ class Game:
             self._message = "All cards are gone! You two each have one turn left"
             self._state = STATE_LAST_ROUND
             self._lastTurn = self._turn + 2
-        elif (self._state == STATE_LAST_ROUND and 
+        elif (self._state == STATE_LAST_ROUND and
                 self._turn == self._lastTurn):
             self._message = "You have used up all the rounds! Game complete"
             self._state = STATE_COMPLETE
@@ -192,10 +192,25 @@ class Game:
     def _checkInvariant(self):
 
         cards_in_game = (self._playedPile + self._discardPile + self._drawPile
-            + self._hands[0] + self._hands[1])
+                         + self._hands[0] + self._hands[1])
+
+        # for color, top_n in self._played_cards.items():
+        #     for n in range(1, top_n):
+        #         cards_in_game.append(Card(color, n))
+
+        # cards_in_game += (self._discard_pile + self._draw_pile +
+        #                   self._hands[0] + self._hands[1])
+
+        # print(self._hands)
+        # print('\n')
+        # print(Counter(cards_in_game).most_common())
+        # print('\n')
+        # print(Counter(ALL_CARDS).most_common())
+        # print(Counter(cards_in_game).most_common()
+        #       == Counter(ALL_CARDS).most_common())
+        # print('\nDiff:\n')
+        # print(Counter(ALL_CARDS) - Counter(cards_in_game))
 
         assert Counter(cards_in_game) == Counter(ALL_CARDS), \
-            ('The invariant is broken: cards missing from deck:' + 
-            str(Counter(ALL_CARDS) - Counter(cards_in_game)))
-
-
+            ('The invariant is broken: cards missing from deck:' +
+             str(Counter(ALL_CARDS) - Counter(cards_in_game)))

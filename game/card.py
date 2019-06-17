@@ -15,11 +15,11 @@ class Card:
 
     @property
     def color(self):
-      return self._color
-    
+        return self._color
+
     @property
     def number(self):
-      return self._number
+        return self._number
 
     def __repr__(self):
         return "Card: " + self.color + " " + str(self.number)
