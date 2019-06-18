@@ -12,12 +12,12 @@ class UnknownCard():
 
     @property
     def possible_cards(self):
-      return self._possible_cards
+        return self._possible_cards
 
     @property
     def handAge(self):
-      return self._handAge
-    
+        return self._handAge
+
     def updateFeature(self, feature, applies=True):
         """
           Removes cards from possible cards
