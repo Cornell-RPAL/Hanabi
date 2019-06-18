@@ -10,12 +10,18 @@ from random import shuffle
 ALL_CARDS = [Card(c, n)
              for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
+
 class InvalidHint(Exception):
     pass
+
+
 class IncorrectArgumentNumber(Exception):
     pass
+
+
 class InvalidCommand(Exception):
     pass
+
 
 class Game:
     """
@@ -58,15 +64,15 @@ class Game:
     @property
     def message(self):
         return self._message
-    
+
     @property
     def hintTokens(self):
         return self._hintTokens
-    
+
     @property
     def errorTokens(self):
         return self._errorTokens
-    
+
     @property
     def hands(self):
         return self._hands
@@ -74,7 +80,7 @@ class Game:
     def topPlayedCards(self):
         """
         A dictionary representing the top card of each color. 
-        
+
         The value is [0] if there is no cards of the color.
         """
         d = dict(zip(COLORS, [0]*5))
@@ -215,28 +221,30 @@ class Game:
                         self._message = "Your partner played " + \
                             str(
                                 self._hands[1 - player][int(args[0])]
-                                )
+                            )
                         self.playCard(player, int(args[0]))
                     elif verb == "discard":
                         self.discard(player, int(args[0]))
-                        self._message = "Your partner discarded " + str(args[0])
+                        self._message = "Your partner discarded " + \
+                            str(args[0])
                     elif verb == "hint":
                         if args[0].isdigit():
                             il = self.hintTo(1 - player, int(args[0]))
                         else:
                             il = self.hintTo(1 - player, args[0])
-                        self._message = ("Your partner hinted that your cards " + 
-                        "at indices " + str(il) + " are " + str(args[0]))
+                        self._message = ("Your partner hinted that your cards "
+                                         + "at indices " + str(il) + " are "
+                                         + str(args[0]))
                     self._state = STATE_CONTINUE
                     self._message += '\n'
                     return True
 
         # except ValueError:
-        #     self._message = ("Invalid index, please enter number from 0 to " + 
+        #     self._message = ("Invalid index, please enter number from 0 to " +
         #         str(NUMBER_IN_HAND))
         except InvalidHint:
             self._message = ("Invalid feature, please enter color, or" +
-                "number from 0 to " + str(NUMBER_IN_HAND))
+                             "number from 0 to " + str(NUMBER_IN_HAND))
         except IncorrectArgumentNumber:
             self._message = "Invalid number of arguments, type [help] \
                     for help. \n"
