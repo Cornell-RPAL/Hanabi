@@ -77,9 +77,13 @@ class Game:
     def hands(self):
         return self._hands
 
+    @property
+    def state(self):
+        return self._state
+
     def topPlayedCards(self):
         """
-        A dictionary representing the top card of each color. 
+        A dictionary representing the top card of each color.
 
         The value is [0] if there is no cards of the color.
         """
@@ -118,12 +122,11 @@ class Game:
                           if card.number == feature]
 
         if index_list:
+            self._turn += 1
+            self._hintTokens -= 1
             return index_list
         else:
             raise InvalidHint
-
-        self._turn += 1
-        self._errorTokens -= 1
 
     def playCard(self, player, card_ix):
         """
@@ -143,9 +146,9 @@ class Game:
         card = self._hands[player][card_ix]
 
         # Checks if previous number of same color is on top of color's stack
-        if (card.number == 1 or
-            (Card(card.color, card.number) not in self._playedPile and
-             Card(card.color, card.number - 1) in self._playedPile)):
+        if (Card(card.color, card.number) not in self._playedPile and
+            (card.number == 1 or Card(card.color, card.number - 1)
+             in self._playedPile)):
             self._playedPile.append(card)
         else:
             success = False
@@ -158,7 +161,6 @@ class Game:
         else:
             self._hands[player][card_ix] = None
 
-        self._errorTokens -= 1
         self._turn += 1
 
         if __debug__:
@@ -220,7 +222,7 @@ class Game:
                     if verb == "play":
                         self._message = "Your partner played " + \
                             str(
-                                self._hands[1 - player][int(args[0])]
+                                self._hands[player][int(args[0])]
                             )
                         self.playCard(player, int(args[0]))
                     elif verb == "discard":
@@ -239,9 +241,6 @@ class Game:
                     self._message += '\n'
                     return True
 
-        # except ValueError:
-        #     self._message = ("Invalid index, please enter number from 0 to " +
-        #         str(NUMBER_IN_HAND))
         except InvalidHint:
             self._message = ("Invalid feature, please enter color, or" +
                              "number from 0 to " + str(NUMBER_IN_HAND))
