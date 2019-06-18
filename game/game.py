@@ -144,10 +144,14 @@ class Game:
         if (Card(card.color, card.number) not in self._playedPile and
              (card.number == 1 or Card(card.color, card.number - 1) in self._playedPile)):
             self._playedPile.append(card)
+            if card.number == 5:
+                self._hintTokens += 1
         else:
             success = False
             self._discardPile.append(card)
             self._errorTokens -= 1
+        
+
 
         # Update hand, draw pile
         if len(self._drawPile):
