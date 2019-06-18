@@ -29,10 +29,11 @@ class Hanabi():
             command = stdscr.getstr().decode()
             if self._game.update(self._player, command):
                 self._prevCommand = self._game.message
+                self._prevError = ''
                 self._player = 1 - self._player
             else:
                 self._prevError = self._game.message
-
+            self._state = self._game.state 
             return True
                 
         elif self._state == STATE_CONTINUE:
@@ -42,7 +43,7 @@ class Hanabi():
             stdscr.refresh()
             while stdscr.getstr():
                 pass
-            
+            self._state = STATE_ACTIVE
             return True
 
         elif self._state == STATE_COMPLETE:
@@ -75,7 +76,8 @@ class Hanabi():
         scr.addstr("Turn: " + str(g.turn) + '\n\n')
         scr.addstr("Partner Hand: " + p_hand + '\n\n')
         scr.addstr("Played Cards: " + played + '\n\n')
-        if g.message != self._prevCommand:
+        if (g.message != self._prevCommand and
+            g.message != self._prevError):
             scr.addstr(g.message + '\n')
         
 
