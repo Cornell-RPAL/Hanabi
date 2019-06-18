@@ -233,9 +233,6 @@ class Game:
                     self._message += '\n'
                     return True
 
-        # except ValueError:
-        #     self._message = ("Invalid index, please enter number from 0 to " + 
-        #         str(NUMBER_IN_HAND))
         except InvalidHint:
             self._message = ("Invalid feature, please enter color, or" +
                 "number from 0 to " + str(NUMBER_IN_HAND))

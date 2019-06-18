@@ -14,7 +14,7 @@ stdscr = curses.initscr()
 
 class Hanabi():
 
-    def start(self):
+    def __init__(self):
         curses.echo()
         self._game = Game()
         self._player = 0
@@ -79,15 +79,9 @@ class Hanabi():
         if (g.message != self._prevCommand and
             g.message != self._prevError):
             scr.addstr(g.message + '\n')
-        
-
-
-
-
-hanabi = Hanabi()
 
 def main(scr):
-    hanabi.start()
+    hanabi = Hanabi()
     while hanabi.update(scr):
         pass
 
