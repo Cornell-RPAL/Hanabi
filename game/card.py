@@ -7,8 +7,8 @@ class Card:
     """
 
     def __init__(self, color, number):
-        assert Card.isValidColor(color)
-        assert Card.isValidNumber(number)
+        assert isValidColor(color)
+        assert isValidNumber(number)
 
         self._color = color
         self._number = number
@@ -30,10 +30,8 @@ class Card:
     def __hash__(self):
         return hash(str(self))
 
-    @staticmethod
-    def isValidColor(color):
-        return color in COLORS
+def isValidColor(color):
+    return color in COLORS
 
-    @staticmethod
-    def isValidNumber(number):
-        return number in NUMBERS
+def isValidNumber(number):
+    return number in NUMBERS

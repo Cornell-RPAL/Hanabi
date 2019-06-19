@@ -4,7 +4,7 @@ from consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
 from board import Board, ALL_CARDS
-from card import Card
+from card import Card, isValidColor, isValidNumber
 from collections import Counter
 from random import shuffle
 
@@ -115,12 +115,12 @@ class Game:
 
         index_list = []
 
-        if Card.isValidColor(feature):
+        if isValidColor(feature):
             index_list = [i for (i, card) in 
             enumerate(self.getHand(player))
                           if card.color == feature]
 
-        if Card.isValidNumber(feature):
+        if isValidNumber(feature):
             index_list = [i for (i, card) in
             enumerate(self.getHand(player))
                           if card.number == feature]
