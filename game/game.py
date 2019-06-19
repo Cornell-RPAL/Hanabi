@@ -163,8 +163,6 @@ class Game:
             success = False
             self._discardPile.append(card)
             self._errorTokens -= 1
-        
-
 
         # Update hand, draw pile
         if len(self._drawPile):
