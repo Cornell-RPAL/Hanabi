@@ -64,12 +64,12 @@ class Hanabi():
 
     def _displayBoard(self, scr, g, player):
         p_hand = ' '.join(['[' + card.color + ' ' + str(card.number) + ']'
-                           for card in g.hands[1 - player]])
+                           for card in g.getHand(1 - player)])
         played = ' '.join(['[' + color + ' ' + str(number) + ']'
                            for color, number in g.topPlayedCards().items()])
 
-        scr.addstr("Hint Tokens: " + str(g.hintTokens) + '\n')
-        scr.addstr("Error Tokens: " + str(g.errorTokens) + '\n')
+        scr.addstr("Hint Tokens: " + str(g.board.hintTokens) + '\n')
+        scr.addstr("Error Tokens: " + str(g.board.errorTokens) + '\n')
         scr.addstr("Turn: " + str(g.turn) + '\n\n')
         scr.addstr("Partner Hand: " + p_hand + '\n\n')
         scr.addstr("Played Cards: " + played + '\n\n')
