@@ -3,13 +3,10 @@ from consts import (
     COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
+from board import Board, ALL_CARDS
 from card import Card
 from collections import Counter
 from random import shuffle
-
-ALL_CARDS = [Card(c, n)
-             for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
-
 
 class InvalidHint(Exception):
     pass
@@ -33,26 +30,29 @@ class Game:
     """
 
     def __init__(self):
-        self._hintTokens = NUMBER_OF_HINT_TOKENS
-        self._errorTokens = NUMBER_OF_ERROR_TOKENS
+        # self.board.hintTokens = NUMBER_OF_HINT_TOKENS
+        # self.board.errorTokens = NUMBER_OF_ERROR_TOKENS
 
-        shuffle(ALL_CARDS)
-        self._cards = ALL_CARDS
-        self._hands = (self._cards[:NUMBER_IN_HAND],
-                       self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
+        # shuffle(ALL_CARDS)
+        # self._cards = ALL_CARDS
+        # self._hands = (self._cards[:NUMBER_IN_HAND],
+        #                self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
 
-        self._discardPile = []
-        self._drawPile = self._cards[NUMBER_IN_HAND * 2:]
+        # self._discardPile = []
+        # self._drawPile = self._cards[NUMBER_IN_HAND * 2:]
 
-        # self._played_cards = dict(zip(COLORS, [0]*5))
-        self._playedPile = []
+        # # self._played_cards = dict(zip(COLORS, [0]*5))
+        # self._playedPile = []
 
-        self._turn = 0
-        self._score = 0
+        self._board = Board()
+
         self._message = ""
         self._state = STATE_ACTIVE
 
         self._lastTurn = 0
+
+        self._turn = 0
+        self._score = 0
 
         if __debug__:
             self._checkInvariant()
@@ -63,27 +63,22 @@ class Game:
 
     @property
     def score(self):
-        return len(self._playedPile)
+        return self._score
 
     @property
     def message(self):
         return self._message
 
     @property
-    def hintTokens(self):
-        return self._hintTokens
-
-    @property
-    def errorTokens(self):
-        return self._errorTokens
-
-    @property
-    def hands(self):
-        return self._hands
-
-    @property
     def state(self):
         return self._state
+
+    @property
+    def board(self):
+        return self._board
+
+    def getHand(self, player):
+        return self.board._hands[player]
 
     def topPlayedCards(self):
         """
@@ -92,7 +87,7 @@ class Game:
         The value is [0] if there is no cards of the color.
         """
         d = dict(zip(COLORS, [0]*5))
-        for c in self._playedPile:
+        for c in self.board.playedPile:
             if d[c.color] < c.number:
                 d[c.color] = c.number
         return d
@@ -113,24 +108,26 @@ class Game:
             the opponent's hand.
         """
         assert player in [0, 1]
-        assert self._errorTokens > 0
+        assert self.board.errorTokens > 0
 
-        if self._hintTokens <= 0:
+        if self.board.hintTokens <= 0:
             raise NoHintTokens
 
         index_list = []
 
         if Card.isValidColor(feature):
-            index_list = [i for (i, card) in enumerate(self._hands[player])
+            index_list = [i for (i, card) in 
+            enumerate(self.getHand(player))
                           if card.color == feature]
 
         if Card.isValidNumber(feature):
-            index_list = [i for (i, card) in enumerate(self._hands[player])
+            index_list = [i for (i, card) in
+            enumerate(self.getHand(player))
                           if card.number == feature]
 
         if index_list:
             self._turn += 1
-            self._hintTokens -= 1
+            self.board.hintTokens -= 1
             return index_list
         else:
             raise InvalidHint
@@ -146,31 +143,31 @@ class Game:
         """
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
-        assert self._errorTokens > 0
+        assert self.board.errorTokens > 0
 
         success = True
 
-        card = self._hands[player][card_ix]
+        card = self.getHand(player)[card_ix]
 
         # Checks if previous number of same color is on top of color's stack
-        if (Card(card.color, card.number) not in self._playedPile and
+        if (Card(card.color, card.number) not in self.board.playedPile and
                 (card.number == 1 or Card(card.color, card.number - 1) 
-                    in self._playedPile)):
-            self._playedPile.append(card)
+                    in self.board.playedPile)):
+            self.board.playedPile.append(card)
             if card.number == 5:
-                self._hintTokens += 1
+                self.board.hintTokens += 1
         else:
             success = False
-            self._discardPile.append(card)
-            self._errorTokens -= 1
+            self.board.discardPile.append(card)
+            self.board.errorTokens -= 1
         
 
 
         # Update hand, draw pile
-        if len(self._drawPile):
-            self._hands[player][card_ix] = self._drawPile.pop()
+        if len(self.board.drawPile):
+            self.getHand(player)[card_ix] = self.board.drawPile.pop()
         else:
-            self._hands[player][card_ix] = None
+            self.getHand(player)[card_ix] = None
 
         self._turn += 1
 
@@ -182,30 +179,29 @@ class Game:
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
 
-        card = self._hands[player][card_ix]
+        card = self.getHand(player)[card_ix]
 
-        self._discardPile.append(card)
+        self.board.discardPile.append(card)
 
-        if len(self._drawPile):
-            self._hands[player][card_ix] = self._drawPile.pop()
+        if len(self.board.drawPile):
+            self.getHand(player)[card_ix] = self.board.drawPile.pop()
         else:
-            self._hands[player][card_ix] = None
+            self.getHand(player)[card_ix] = None
 
-        self._errorTokens -= 1
-        self._hintTokens += 1
+        self.board.hintTokens += 1
         self._turn += 1
 
         if __debug__:
             self._checkInvariant()
 
     def _checkState(self):
-        if self._errorTokens == 0:
+        if self.board.errorTokens == 0:
             self._message = "You made 3 mistakes! There has been an explosion\n"
             self._state = STATE_COMPLETE
-        elif self.score == 25:
+        elif self._score == 25:
             self._message = "Legendary! You made all five fireworks!\n"
             self._state = STATE_COMPLETE
-        elif self._drawPile == []:
+        elif self.board.drawPile == []:
             self._message = "All cards are gone! \
                 You two each have one turn left\n"
             self._state = STATE_LAST_ROUND
@@ -233,7 +229,7 @@ class Game:
                     if verb == "play":
                         self._message = "Your partner played " + \
                             str(
-                                self._hands[player][int(args[0])]
+                                self.getHand(player)[int(args[0])]
                             )
                         self.playCard(player, int(args[0]))
                     elif verb == "discard":
@@ -268,8 +264,8 @@ class Game:
 
     def _checkInvariant(self):
 
-        cards_in_game = (self._playedPile + self._discardPile + self._drawPile
-                         + self._hands[0] + self._hands[1])
+        cards_in_game = (self.board.playedPile + self.board.discardPile + self.board.drawPile
+                         + self.getHand(0) + self.getHand(1))
 
         assert Counter(cards_in_game) == Counter(ALL_CARDS), \
             ('The invariant is broken: cards missing from deck:' +
