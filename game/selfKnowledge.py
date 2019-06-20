@@ -31,7 +31,7 @@ class SelfKnowledge():
             else:
                 self._hand[i].filter(f)
 
-    def updateFromMessage(self, message):
+    #def updateFromMessage(self, message):
         
 
 

@@ -73,6 +73,8 @@ class Hanabi():
         scr.addstr("Turn: " + str(g.turn) + '\n\n')
         scr.addstr("Partner Hand: " + p_hand + '\n\n')
         scr.addstr("Played Cards: " + played + '\n\n')
+        scr.addstr("Number left in draw pile: " + 
+            len(g.board.drawPile()) + '\n\n')
 
         
         if (g.message != self._prevCommand and

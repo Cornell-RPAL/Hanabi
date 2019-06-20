@@ -10,7 +10,6 @@ from random import shuffle
 ALL_CARDS = [Card(c, n)
              for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
-
 class Board():
     def __init__(self):
         self._hintTokens = NUMBER_OF_HINT_TOKENS
