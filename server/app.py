@@ -1,21 +1,22 @@
 from flask import Flask, jsonify, request, json
-
+import sys
+sys.path.insert(0, '../game/')
+from alexaGame import Hanabi
 
 
 app = Flask(__name__)
-
-# class JsonResponce():
-#     def __init__(self, message):
-#         self._message = message
+h = Hanabi()
 
 @app.route('/launch', methods=['GET'])
 def launch():
-    return "Hello, World!"
+    
+    return "Welcome to Hanabi."
 
-def colorHint(color,quantity):
-    return 'Color hint received!'
+def colorHint(color):
+    h.update("hint " + color)
+    return h.output
 
-def numberHint(number,quantity):
+def numberHint(number):
     return 'Number hint received!'
 
 def hintRequest():
@@ -23,9 +24,9 @@ def hintRequest():
 
 @app.route('/hintColor', methods=['POST'])
 def hintColorResult():
-   color = request.get_json()['color']
-   quant = request.get_json()['quantity']
-   return colorHint(color, quant)
+color = request.get_json()['color']
+quant = request.get_json()['quantity']
+return colorHint(color, quant)
 
 @app.route('/hintNumber', methods=['POST'])
 def hintNumberResult():
