@@ -13,30 +13,27 @@ def index():
 def colorHint(color,quantity):
     return 'Color hint received!'
 
-def numberHint(color,quantity):
+def numberHint(number,quantity):
     return 'Number hint received!'
 
-def hintRequst():
+def hintRequest():
     return 'Hint'
 
-@app.route('/alexa', methods=['POST'])
-def result():
-   # resp = ''
-   intent = request.get_json()['intent']
-   if intent == 'HintColorIntent':
-       color = request.get_json()['color']
-       quant = request.get_json()['quantity']
-       resp = colorHint(color, quant)
-   elif intent == 'HintNumberIntent':
-       number = request.get_json()['number']
-       quant = request.get_json()['quantity']
-       resp = numberHint(number, quant)
-   elif intent == 'HintRequestIntent':
-       resp = hintRequst()
-   else:
-       resp = 'Invalid Input'
-   return resp
+@app.route('/hintColor', methods=['POST'])
+def hintColorResult():
+   color = request.get_json()['color']
+   quant = request.get_json()['quantity']
+   return colorHint(color, quant)
 
+@app.route('/hintNumber', methods=['POST'])
+def hintNumberResult():
+    number = request.get_json()['number']
+    quant = request.get_json()['quantity']
+    return numberHint(number, quant)
+
+@app.route('/hintRequest', methods=['GET'])
+def hintRequestResult():
+    return hintRequest()
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=5000, debug=True)
