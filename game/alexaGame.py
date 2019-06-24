@@ -5,11 +5,6 @@ from consts import (
 )
 stdscr = curses.initscr()
 
-# stdscr.addstr("Hello World!\n")
-# stdscr.refresh()
-# s = stdscr.getstr()
-
-
 class Hanabi():
 
     def __init__(self):
