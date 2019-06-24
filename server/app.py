@@ -1,14 +1,16 @@
 from flask import Flask, jsonify, request, json
 
+
+
 app = Flask(__name__)
 
 # class JsonResponce():
 #     def __init__(self, message):
 #         self._message = message
 
-@app.route('/')
-def index():
-    return jsonify("Hello, World!")
+@app.route('/launch', methods=['GET'])
+def launch():
+    return "Hello, World!"
 
 def colorHint(color,quantity):
     return 'Color hint received!'
