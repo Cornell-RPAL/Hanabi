@@ -1,16 +1,13 @@
-from consts import (
-    NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS,
-    COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
-    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
+from consts import (STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
 from board import Board, ALL_CARDS
 from card import Card, isValidColor, isValidNumber
 from collections import Counter
 from random import shuffle
 
+
 class InvalidHint(Exception):
     pass
-
 
 class NoHintTokens(Exception):
     pass

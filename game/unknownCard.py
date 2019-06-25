@@ -19,10 +19,10 @@ class UnknownCard():
     @property
     def handAge(self):
         return self._handAge
-    
+
     def filter(self, f):
-        self._possibleCards = Counter(dict([pair 
-            for pair in self._possibleCards.items() if f(pair[0])]))
+        self._possibleCards = Counter(dict([pair
+                                            for pair in self._possibleCards.items() if f(pair[0])]))
 
     # def updateFeature(self, feature, applies=True):
     #     """
