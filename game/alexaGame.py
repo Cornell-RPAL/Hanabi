@@ -3,28 +3,26 @@ from game import Game
 from consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
-stdscr = curses.initscr()
-
-# stdscr.addstr("Hello World!\n")
-# stdscr.refresh()
-# s = stdscr.getstr()
 
 
 class Hanabi():
 
     def __init__(self):
-        curses.echo()
         self._game = Game()
         self._player = 0
         self._state = STATE_ACTIVE
         self._prevCommand = ""
         self._prevError = ""
+        self._output = ""
 
-    def update(self, stdscr):
+    @property
+    def output(self):
+        return self._output
+
+    def update(self, command):
         if self._state in [STATE_ACTIVE, STATE_LAST_ROUND]:
-            self._displayGame(stdscr, self._game, self._player)
+            self._displayGame(self._game, self._player)
 
-            command = stdscr.getstr().decode()
             if self._game.update(self._player, command):
                 self._prevCommand = self._game.message
                 self._prevError = ''
@@ -35,51 +33,44 @@ class Hanabi():
             return True
 
         elif self._state == STATE_CONTINUE:
-            stdscr.clear()
-            stdscr.addstr("It is player " + str(self._player) + "'s turn. " +
+            self._output = ""
+            self._output += ("It is player " + str(self._player) + "'s turn. " +
                           "Press enter to continue.")
-            stdscr.refresh()
-            while stdscr.getstr():
-                pass
+            
             self._state = STATE_ACTIVE
             return True
 
         elif self._state == STATE_COMPLETE:
-            stdscr.clear()
-            stdscr.addstr(self._game.message)
-            stdscr.addstr('Your final score is ' + self._game.score)
-            stdscr.refresh()
-            while stdscr.getstr():
-                pass
+            self._output = ""
+            self._output += (self._game.message)
+            self._output += ('Your final score is ' + self._game.score)
+            
             return False
 
-    def _displayGame(self, scr, g, player):
-        stdscr.clear()
-        stdscr.addstr("~HANABI~\n\n")
-        stdscr.addstr(self._prevCommand)
-        self._displayBoard(stdscr, g, player)
-        stdscr.addstr(self._prevError, curses.A_BOLD)
-        stdscr.addstr(">>> ", curses.A_BLINK)
-        stdscr.refresh()
+    def _displayGame(self, g, player):
+        self._output += ("Here is all the information. ")
+        self._output += (self._prevCommand)
+        self._displayBoard(g, player)
+        self._output += (self._prevError)
+        self._output += ("Now say what you want to do.")
 
-    def _displayBoard(self, scr, g, player):
+    def _displayBoard(self, g, player):
         p_hand = ' '.join(['[' + card.color + ' ' + str(card.number) + ']'
                            for card in g.getHand(1 - player)])
         played = ' '.join(['[' + color + ' ' + str(number) + ']'
                            for color, number in g.topPlayedCards().items()])
 
-        scr.addstr("Hint Tokens: " + str(g.board.hintTokens) + '\n')
-        scr.addstr("Error Tokens: " + str(g.board.errorTokens) + '\n')
-        scr.addstr("Turn: " + str(g.turn) + '\n\n')
-        scr.addstr("Partner Hand: " + p_hand + '\n\n')
-        scr.addstr("Played Cards: " + played + '\n\n')
-        scr.addstr("Number left in draw pile: " + 
+        self._output += ("Hint Tokens: " + str(g.board.hintTokens) + '\n')
+        self._output += ("Error Tokens: " + str(g.board.errorTokens) + '\n')
+        self._output += ("Turn: " + str(g.turn) + '\n\n')
+        self._output += ("Partner Hand: " + p_hand + '\n\n')
+        self._output += ("Played Cards: " + played + '\n\n')
+        self._output += ("Number left in draw pile: " + 
             str(len(g.board.drawPile)) + '\n\n')
 
-        
         if (g.message != self._prevCommand and
                 g.message != self._prevError):
-            scr.addstr(g.message + '\n')
+            self._output += (g.message + '\n')
 
 
 def main(scr):
