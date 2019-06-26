@@ -5,6 +5,7 @@ from collections import Counter
 from consts import NUMBER_IN_HAND
 from card import isValidColor, isValidNumber
 
+
 class SelfKnowledge():
     def __init__(self, game, player):
         self._board = game.board
