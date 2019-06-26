@@ -71,12 +71,3 @@ class Hanabi():
         if (g.message != self._prevCommand and
                 g.message != self._prevError):
             self._output += (g.message + '\n')
-
-
-def main(scr):
-    hanabi = Hanabi()
-    while hanabi.update(scr):
-        pass
-
-
-curses.wrapper(main)
