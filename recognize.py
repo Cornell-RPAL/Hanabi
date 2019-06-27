@@ -6,8 +6,8 @@ from cv2 import imshow
 visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
 print(current_loc)
-read_path = current_loc + "/vision/data/at_test.JPG"
-save_path = current_loc + "/vision/data/post_test.JPG"
+read_path = current_loc + "/vision/data/before/hand_far.png"
+save_path = current_loc + "/vision/data/after/hand_far.png"
 
 
 at_detector = apriltags3.Detector(families='tagStandard41h12',
@@ -67,11 +67,11 @@ for tag in tags:
                 fontScale=0.8,
                 color=(0, 0, 255))
 
+cv2.imwrite(save_path, color_img)
 
 if visualization:
     cv2.imshow('Detected tags', color_img)
-    cv2.imwrite(save_path, color_img)
-
     k = cv2.waitKey(0)
     if k == 27:         # wait for ESC key to exit
             cv2.destroyAllWindows()
+
