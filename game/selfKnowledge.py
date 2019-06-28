@@ -16,6 +16,18 @@ class SelfKnowledge():
             for ukCard in self._hand:
                 ukCard.exclude(card)
 
+    @property
+    def board(self):
+        return self._board
+    
+    @property
+    def partnerHand(self):
+        return self._partnerHand
+
+    @property
+    def hand(self):
+        return self._hand
+
     def updateWithHint(self, feature, indexList):
         assert(isValidColor(feature) or isValidNumber(feature))
         assert(indexList)
