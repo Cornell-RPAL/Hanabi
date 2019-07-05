@@ -78,7 +78,38 @@ class MicrophoneStream(object):
 
             yield b''.join(data)
 
+class TextStream(object):
+    def __init__(self):
+        self.closed = True
 
+    def __enter__(self):
+        self.closed = False
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.closed = True
+
+    def generator(self, responses):
+        while not self.closed:
+            num_chars_printed = 0    
+
+            for response in responses:
+                if not response.results:
+                    continue
+
+                result = response.results[0]
+                if not result.alternatives:
+                    continue
+                
+                transcript = result.alternatives[0].transcript
+
+                overwrite_chars = ' ' * (num_chars_printed - len(transcript))
+
+                if not result.is_final:
+                    num_chars_printed = len(transcript)
+                else:
+                    yield (transcript + overwrite_chars)
+            
 def listen_print_loop(responses):
     """Iterates through server responses and prints them.
 
@@ -157,7 +188,11 @@ def main():
         responses = client.streaming_recognize(streaming_config, requests)
 
         # Now, put the transcription responses to use.
-        listen_print_loop(responses)
+        # listen_print_loop(responses)
+        with TextStream() as ts:
+            text_generator = ts.generator(responses)
+            for text in text_generator:
+                print (text)
 
 
 if __name__ == '__main__':
