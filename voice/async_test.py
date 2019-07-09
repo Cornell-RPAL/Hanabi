@@ -1,8 +1,17 @@
 import asyncio
 
+def timer(secs=1):
+    def _timer(f):
+        async def wrapper(*args, **kwargs):
+            while 1:
+                await asyncio.sleep(secs)
+                await f()
+        return wrapper
+    return _timer
+
 class DS():
     def __init__(self):
-        self.oldL = []
+        self.prev_len = 0
         self.l = []
 
     async def f1(self):
@@ -29,11 +38,19 @@ class DS():
     
     async def display(self):
         while True:
-            if self.l != self.oldL:
-                print (self.l)
-                self.oldL = self.l
             await asyncio.sleep(0.5)
-            yield True
+            if len(self.l) > self.prev_len:
+                print (self.l)
+                self.prev_len = len(self.l)
+            
+    #@timer(secs=0.5)
+    async def run(self):
+        while True:
+            await asyncio.sleep(0.5)
+            print(self.l)
+
+
+    
 
     async def main(self):
         task1 = asyncio.create_task(self.t1())
@@ -41,6 +58,8 @@ class DS():
         task3 = asyncio.create_task(self.display())
         await asyncio.gather(task1, task2, task3)
         #self.display()
+
+
 
 d = DS()
 asyncio.run(d.main())
