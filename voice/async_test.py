@@ -42,20 +42,13 @@ class DS():
             if len(self.l) > self.prev_len:
                 print (self.l)
                 self.prev_len = len(self.l)
-            
-    #@timer(secs=0.5)
-    async def run(self):
-        while True:
-            await asyncio.sleep(0.5)
-            print(self.l)
-
-
-    
 
     async def main(self):
         task1 = asyncio.create_task(self.t1())
         task2 = asyncio.create_task(self.t2())
+
         task3 = asyncio.create_task(self.display())
+        
         await asyncio.gather(task1, task2, task3)
         #self.display()
 
