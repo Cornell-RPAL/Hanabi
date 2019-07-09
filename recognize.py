@@ -6,8 +6,9 @@ from cv2 import imshow
 visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
 print(current_loc)
-read_path = current_loc + "/vision/data/before/hand_far.png"
-save_path = current_loc + "/vision/data/after/hand_far.png"
+file_name = 'hand_far.png'
+read_path = current_loc + "/vision/data/before/" + file_name
+save_path = current_loc + "/vision/data/after/" + file_name
 
 
 at_detector = apriltags3.Detector(families='tagStandard41h12',
