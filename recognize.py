@@ -3,12 +3,12 @@ import os
 import cv2
 from cv2 import imshow
 
-visualization = True
+visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
 print(current_loc)
-file_name = 'hand_far.png'
-read_path = current_loc + "/vision/data/before/" + file_name
-save_path = current_loc + "/vision/data/after/" + file_name
+file_name = 'poss_setup.png'
+read_path = current_loc + "/vision/data/webcam/before/" + file_name
+save_path = current_loc + "/vision/data/webcam/after/" + file_name
 
 
 at_detector = apriltags3.Detector(families='tagStandard41h12',
@@ -58,7 +58,8 @@ def id_to_card(id_):
 tag_ids = [tag.tag_id for tag in tags]
 print(len(tags), " tags found: ", tag_ids)
 print(len(tags), " cards found: ", [id_to_card(id_) for id_ in tag_ids])
-
+print(tags[0].corners)
+print(tags[1].corners)
 
 color_img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
 
