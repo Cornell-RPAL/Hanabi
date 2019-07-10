@@ -39,9 +39,6 @@ class SelfKnowledge():
     def hand(self):
         return self._hand
 
-    # def hintReceived(self):
-
-
     # # def newKnowledge(self):
     
     def updateHandAge(self):

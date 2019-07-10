@@ -39,23 +39,23 @@ class Hanabi():
                     raise InvalidCommand
                 else:
                     if verb == "play":
-                        player_action = PlayCard(self._game, player, int(args[0]))
+                        player_action = PlayCard(player, int(args[0]))
                         player_action.act(self._game, self._bot)
                         self._message += (player_action.__str__())
                     elif verb == "discard":
-                        player_action = Discard(self._game, player, int(args[0]))
+                        player_action = Discard(player, int(args[0]))
                         player_action.act(self._game, self._bot)
                         self._message +=(player_action.__str__())
                     elif verb == "hint":
                         if args[0].isdigit():
-                            player_action = Hint(self._game, player, feature= int(args[0]))
+                            player_action = Hint(player, feature= int(args[0]))
                         else:
-                            player_action = Hint(self._game, player, feature= args[0])
+                            player_action = Hint(player, feature= args[0])
                         player_action.act(self._game, self._bot)
                     self._state = STATE_CONTINUE
                     self._message += ('\n')
                     bot_act = self._bot.decideAction()
-                    bot_act.act(self._bot)
+                    bot_act.act(self._game, self._bot)
                     self._message += bot_act.__str__()
                     return True
 

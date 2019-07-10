@@ -12,18 +12,6 @@ class Hanabot():
         self._selfknowledge = SelfKnowledge(game, HANABOT)
         self._player = HANABOT
 
-    def inform(self, action):
-        self._selfknowledge.updateHandAge()
-        if action.player_num == self._player:
-            self._selfknowledge.updateSelfAction(action)
-        else: self._selfknowledge.updateOppAction(action)
-
-    def informHint(self, action, il):
-        self._selfknowledge.updateHandAge()
-        if action.player_num ==self._player:
-            self._selfknowledge.updateOppWithHint(action.feature, il)
-        else: self._selfknowledge.updateWithHint(action.feature, il)
-
     def playable(self, card):
         top = self._game.topPlayedCards()
         if isinstance(card, UnknownCard):
@@ -101,24 +89,24 @@ class Hanabot():
 
     def fullHint(self):
         hint_list = self.generateHint()
-        return Hint(self._game, self._player, feature=self.hintCmp(hint_list))
+        return Hint(self._player, feature=self.hintCmp(hint_list))
 
     def discardRandom(self):
         hand = self._selfknowledge._hand
-        return Discard(self._game, self._game, random.randrange(len(hand)))
+        return Discard(self._player, random.randrange(len(hand)))
 
     def basicAction(self, mode, hint_list=None):
         hand = self._selfknowledge._hand
         playables = self.playables(hand)
         if playables:
-            return PlayCard(self._game, self._player, random.choice(playables))
+            return PlayCard(self._player, random.choice(playables))
         discardables = self.discardable(hand)
         if discardables:
-            return Discard(self._game, self._player, random.choice(discardables))
+            return Discard(self._player, random.choice(discardables))
         if mode == 1:
             return self.fullHint()
         if mode == 2:
-            return Hint(self._game, self._player, feature = self.hintRandom(hint_list))
+            return Hint(self._player, feature = self.hintRandom(hint_list))
         if mode == 3:
             return self.discardRandom()
 
@@ -131,8 +119,19 @@ class Hanabot():
         if self._selfknowledge._hintTokens > 0:
             playableHint = self.hintPlayable()
             if playableHint != None:
-                return Hint(self._game, self._player, feature=playableHint)
+                return Hint (self._player, feature=playableHint)
             return self.basicAction(2, hint_list)
         return self.basicAction(3)
         
+    def inform(self, action):
+        self._selfknowledge.updateHandAge()
+        if action.player_num == HANABOT:
+            self._selfknowledge.updateSelfAction(action)
+        else: self._selfknowledge.updateOppAction(action)
+
+    def informHint(self, action, il):
+        self._selfknowledge.updateHandAge()
+        if action.player_num == HANABOT:
+            self._selfknowledge.updateOppWithHint(action.feature, il)
+        else: self._selfknowledge.updateWithHint(action.feature, il)
 
