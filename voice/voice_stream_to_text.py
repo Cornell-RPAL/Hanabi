@@ -139,13 +139,17 @@ def voice_stream_to_text():
             for text in text_generator:
                 yield text
 
-def main(buffer):
+# def main(buffer):
+#     for text in voice_stream_to_text():
+#         buffer.setText(text)
+#     # while True:
+#     #     text = await voice_stream_to_text()
+#     #     print (text)
+
+def main(sender):
     for text in voice_stream_to_text():
-        #print(text)
-        buffer.setText(text)
-    # while True:
-    #     text = await voice_stream_to_text()
-    #     print (text)
+        print("generated: " + text)
+        sender.send(text)
 
 
 # def main():
