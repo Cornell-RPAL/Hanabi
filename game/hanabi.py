@@ -1,5 +1,6 @@
 import curses
-from game import Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint, NoHintTokens
+from game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
+NoHintTokens, NoErrorTokens)
 from consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
@@ -68,6 +69,9 @@ class Hanabi():
                              "number from 0 to " + str(NUMBER_IN_HAND))
         except NoHintTokens:
             self._message += ("No more hint tokens, you may only play/discard")
+        except NoErrorTokens:
+            self._message += ("No more error tokens, the game has ended")
+            self._state = STATE_COMPLETE
         except IncorrectArgumentNumber:
             self._message += ("Invalid number of arguments, type [help] \
                     for help. \n")

@@ -13,19 +13,20 @@ class SelfKnowledge():
         self._player = player
         self._game = game
         self._partnerHand = game.getHand(1 - player)
-        self._hand = [UnknownCard() for _ in range(NUMBER_IN_HAND)]
         self._hintTokens = self._board._hintTokens
         self._errorTokens = self._board._errorTokens
         self._discarded = self._board._discardPile
         self._played = self._board._playedPile
-        self._layer = layer
-
+        self._hand = [UnknownCard() for _ in range(NUMBER_IN_HAND)]
+        # self._curHints = [(-1, '') for _ in range(NUMBER_IN_HAND)]
+        self._drawSet = Counter(ALL_CARDS)
         if layer == 0:
             self._oppKnowledge = SelfKnowledge(game, (1-player), layer = 1, opp_knowledge=self)
-        #print(self._partnerHand, '\n')
+        # #print(self._partnerHand, '\n')
         for card in self._partnerHand:
+            self._drawSet[card] -= 1
             for ukCard in self._hand:
-                ukCard.exclude(card)
+                ukCard.setDraw(self._drawSet)
 
     @property
     def board(self):
@@ -39,20 +40,31 @@ class SelfKnowledge():
     def hand(self):
         return self._hand
 
-    # def newKnowledge(self):
-        
+    # def hintReceived(self):
+
+
+    # # def newKnowledge(self):
+    
+    def updateHandAge(self):
+        for ukcard in self._hand:
+            ukcard.updateAge()
 
     def excludeCard(self, card):
+        if self._drawSet[card]:
+            self._drawSet[card] -= 1
         for ukCard in self._hand:
             if ukCard._possibleCards[card]:
                 ukCard.exclude(card)
 
     def updateSelfAction(self, action):
+        card_ix = action.card_ix
         if isinstance(action, PlayCard):
-            card = self._played[-1]
+            last_card = self._played[-1]
         else:
-            card = self._discarded[-1]
-        self.excludeCard(card)
+            last_card = self._discarded[-1]
+        if self._drawSet[last_card]:
+            self._drawSet[last_card] -= 1
+        self._hand[card_ix].setDraw(self._drawSet)
 
     def updateOppAction(self):
         for card in self._partnerHand:

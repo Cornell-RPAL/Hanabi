@@ -14,6 +14,7 @@ class Hanabot():
         self._possibleHints = []
 
     def inform(self, action, il=None):
+        self._selfknowledge.updateHandAge()
         if action.player_num == self._player:
             if isinstance(action, Hint):
                 self._selfknowledge.updateOppWithHint(action.feature, il)
@@ -115,11 +116,14 @@ class Hanabot():
         if mode == 1:
             return self.fullHint()
         if mode == 2:
-            return self.hintRandom(hint_list)
+            return Hint(self._game, self._player, feature = self.hintRandom(hint_list))
         if mode == 3:
             return self.discardRandom()
 
     def decideAction(self):
+        # know = self._selfknowledge._hand
+        # opp = self._selfknowledge._partnerHand
+        # return PlayCard(self._game, self._player, card_ix= 0)
         opp_knowledge = self._selfknowledge.getOppHandKnowledge
         hint_list = self.generateHint()
         if self.playables(opp_knowledge) or self.discardable(opp_knowledge):

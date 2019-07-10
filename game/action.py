@@ -46,4 +46,4 @@ class Hint(Action):
         bot.inform(self, il)
 
     def __str__(self):
-        return "Your partner hinted that your cards at indices " + str(self.il) + " are "+ str(self.feature) +"\n"
+        return str(self.il) + " are "+ str(self.feature) +"\n"

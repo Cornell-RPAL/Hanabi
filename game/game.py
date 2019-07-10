@@ -13,6 +13,9 @@ class InvalidHint(Exception):
 class NoHintTokens(Exception):
     pass
 
+class NoErrorTokens(Exception):
+    pass
+
 class IncorrectArgumentNumber(Exception):
     pass
 
@@ -103,7 +106,8 @@ class Game:
             the opponent's hand.
         """
         assert player in [0, 1]
-        assert self.board.errorTokens > 0
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
 
         if self.board.hintTokens <= 0:
             raise NoHintTokens
@@ -138,7 +142,8 @@ class Game:
         """
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
-        assert self.board.errorTokens > 0
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
 
         success = True
 
@@ -172,6 +177,8 @@ class Game:
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
 
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
         card = self.getHand(player)[card_ix]
 
         self.board.discardPile.append(card)
