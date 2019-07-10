@@ -108,7 +108,7 @@ class Hanabi():
         elif self._state == STATE_COMPLETE:
             stdscr.clear()
             stdscr.addstr(self._game.message)
-            stdscr.addstr('Your final score is ' + self._game.score)
+            stdscr.addstr('Your final score is ' + str(self._game.score))
             stdscr.refresh()
             while stdscr.getstr():
                 pass

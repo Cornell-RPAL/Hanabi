@@ -43,7 +43,7 @@ class Hint(Action):
     def act(self, bot):
         il = self.game.hintTo(player = 1-self.player_num, feature = self.feature)
         self.il = il
-        bot.inform(self, il)
+        bot.informHint(self, il)
 
     def __str__(self):
         return str(self.il) + " are "+ str(self.feature) +"\n"

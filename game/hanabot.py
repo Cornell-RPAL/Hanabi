@@ -13,24 +13,27 @@ class Hanabot():
         self._player = player
         self._possibleHints = []
 
-    def inform(self, action, il=None):
+    def inform(self, action):
         self._selfknowledge.updateHandAge()
         if action.player_num == self._player:
-            if isinstance(action, Hint):
-                self._selfknowledge.updateOppWithHint(action.feature, il)
-            else: self._selfknowledge.updateSelfAction(action)
-        elif isinstance(action, Hint):
-                self._selfknowledge.updateWithHint(action.feature, il)
+            self._selfknowledge.updateSelfAction(action)
         else: self._selfknowledge.updateOppAction()
 
+    def informHint(self, action, il):
+        self._selfknowledge.updateHandAge()
+        if action.player_num ==self._player:
+            self._selfknowledge.updateOppWithHint(action.feature, il)
+        else: self._selfknowledge.updateWithHint(action.feature, il)
+
     def playable(self, card):
+        top = self._game.topPlayedCards()
         if isinstance(card, UnknownCard):
             for possible_card in card._possibleCards:
-                num = self._game.topPlayedCards().get(possible_card.color)
+                num = top.get(possible_card.color)
                 if num != possible_card.number-1:
                     return False
             return True
-        num = self._game.topPlayedCards().get(card.color)
+        num = top.get(card.color)
         return num == card.number-1
 
     def playables(self, hand):
