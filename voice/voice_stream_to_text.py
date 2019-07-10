@@ -112,7 +112,7 @@ class TextStream(object):
                 else:
                     yield (transcript + overwrite_chars)
             
-async def voice_stream_to_text():
+def voice_stream_to_text():
     language_code = 'en-US'  # a BCP-47 language tag
 
     client = speech.SpeechClient()
@@ -139,13 +139,17 @@ async def voice_stream_to_text():
             for text in text_generator:
                 yield text
 
-async def main(buffer):
-    async for text in voice_stream_to_text():
-        print(text)
-        buffer.setText(text)
-    # while True:
-    #     text = await voice_stream_to_text()
-    #     print (text)
+# def main(buffer):
+#     for text in voice_stream_to_text():
+#         buffer.setText(text)
+#     # while True:
+#     #     text = await voice_stream_to_text()
+#     #     print (text)
+
+def main(sender):
+    for text in voice_stream_to_text():
+        print("generated: " + text)
+        sender.send(text)
 
 
 # def main():
