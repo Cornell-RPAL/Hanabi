@@ -24,6 +24,8 @@ class UnknownCard():
         self._possibleCards = Counter(dict([pair
                                             for pair in self._possibleCards.items() if f(pair[0])]))
 
+    def setDraw(self, drawSet):
+        self._possibleCards = drawSet
     # def updateFeature(self, feature, applies=True):
     #     """
     #       Removes cards from possible cards
@@ -46,6 +48,9 @@ class UnknownCard():
         assert self._possibleCards[card]
 
         self._possibleCards[card] -= 1
+
+    def updateAge(self):
+        self._handAge += 1
 
     def __str__(self):
         return '[Unknown card that could be ' + str(self._possibleCards) + ']'

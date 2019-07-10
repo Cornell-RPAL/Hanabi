@@ -1,4 +1,5 @@
-from consts import (STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
+from consts import (
+    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE, COLORS, NUMBER_IN_HAND
 )
 from board import Board, ALL_CARDS
 from card import Card, isValidColor, isValidNumber
@@ -12,14 +13,14 @@ class InvalidHint(Exception):
 class NoHintTokens(Exception):
     pass
 
+class NoErrorTokens(Exception):
+    pass
 
 class IncorrectArgumentNumber(Exception):
     pass
 
-
 class InvalidCommand(Exception):
     pass
-
 
 class Game:
     """
@@ -105,7 +106,8 @@ class Game:
             the opponent's hand.
         """
         assert player in [0, 1]
-        assert self.board.errorTokens > 0
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
 
         if self.board.hintTokens <= 0:
             raise NoHintTokens
@@ -140,7 +142,8 @@ class Game:
         """
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
-        assert self.board.errorTokens > 0
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
 
         success = True
 
@@ -174,6 +177,8 @@ class Game:
         assert card_ix in range(NUMBER_IN_HAND)
         assert player in [0, 1]
 
+        if self.board.errorTokens <= 0:
+            raise NoErrorTokens
         card = self.getHand(player)[card_ix]
 
         self.board.discardPile.append(card)
@@ -206,56 +211,56 @@ class Game:
             self._message = "You have used up all the rounds! Game complete\n"
             self._state = STATE_COMPLETE
 
-    def update(self, player, command):
-        wl = command.split(' ')
-        verb = wl[0]
-        args = wl[1:]
+    # def update(self, player, command):
+    #     wl = command.split(' ')
+    #     verb = wl[0]
+    #     args = wl[1:]
 
-        try:
-            if verb == "help":
-                self._message = 'You can either "play [card index]",\
-                    "discard [card index]", or "hint [number or color]"\n'
-            else:
-                if len(args) != 1:
-                    raise IncorrectArgumentNumber
-                elif verb not in ["play", "discard", "hint"]:
-                    raise InvalidCommand
-                else:
-                    if verb == "play":
-                        self._message = "Your partner played " + \
-                            str(
-                                self.getHand(player)[int(args[0])]
-                            )
-                        self.playCard(player, int(args[0]))
-                    elif verb == "discard":
-                        self.discard(player, int(args[0]))
-                        self._message = "Your partner discarded " + \
-                            str(args[0])
-                    elif verb == "hint":
-                        if args[0].isdigit():
-                            il = self.hintTo(1 - player, int(args[0]))
-                        else:
-                            il = self.hintTo(1 - player, args[0])
-                        self._message = ("Your partner hinted that your cards " 
-                                         + "at indices " + str(il) + " are " + 
-                                         str(args[0]))
-                    self._state = STATE_CONTINUE
-                    self._message += '\n'
-                    return True
+    #     try:
+    #         if verb == "help":
+    #             self._message = 'You can either "play [card index]",\
+    #                 "discard [card index]", or "hint [number or color]"\n'
+    #         else:
+    #             if len(args) != 1:
+    #                 raise IncorrectArgumentNumber
+    #             elif verb not in ["play", "discard", "hint"]:
+    #                 raise InvalidCommand
+    #             else:
+    #                 if verb == "play":
+    #                     self._message = "Your partner played " + \
+    #                         str(
+    #                             self.getHand(player)[int(args[0])]
+    #                         )
+    #                     self.playCard(player, int(args[0]))
+    #                 elif verb == "discard":
+    #                     self.discard(player, int(args[0]))
+    #                     self._message = "Your partner discarded " + \
+    #                         str(args[0])
+    #                 elif verb == "hint":
+    #                     if args[0].isdigit():
+    #                         il = self.hintTo(1 - player, int(args[0]))
+    #                     else:
+    #                         il = self.hintTo(1 - player, args[0])
+    #                     self._message = ("Your partner hinted that your cards " 
+    #                                      + "at indices " + str(il) + " are " + 
+    #                                      str(args[0]))
+    #                 self._state = STATE_CONTINUE
+    #                 self._message += '\n'
+    #                 return True
 
-        except InvalidHint:
-            self._message = ("Invalid feature, please enter color, or" +
-                             "number from 0 to " + str(NUMBER_IN_HAND))
-        except NoHintTokens:
-            self._message = ("No more hint tokens, you may only play/discard")
-        except IncorrectArgumentNumber:
-            self._message = "Invalid number of arguments, type [help] \
-                    for help. \n"
-        except InvalidCommand:
-            self._message = "Invalid command! Type [help] for help."
-        self._message += '\n'
-        self._checkState()
-        return False
+    #     except InvalidHint:
+    #         self._message = ("Invalid feature, please enter color, or" +
+    #                          "number from 0 to " + str(NUMBER_IN_HAND))
+    #     except NoHintTokens:
+    #         self._message = ("No more hint tokens, you may only play/discard")
+    #     except IncorrectArgumentNumber:
+    #         self._message = "Invalid number of arguments, type [help] \
+    #                 for help. \n"
+    #     except InvalidCommand:
+    #         self._message = "Invalid command! Type [help] for help."
+    #     self._message += '\n'
+    #     self._checkState()
+    #     return False
 
     def _checkInvariant(self):
 

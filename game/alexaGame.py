@@ -1,15 +1,18 @@
 import curses
-from game import Game
+from game import Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint, NoHintTokens
+from action import Action, PlayCard, Discard, Hint
+from hanabot import Hanabot
 from consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
-
+from consts import NUMBER_IN_HAND
 
 class Hanabi():
 
     def __init__(self):
         self._game = Game()
         self._player = 0
+        self._bot = Hanabot(self._game, 1-self._player)
         self._state = STATE_ACTIVE
         self._prevCommand = ""
         self._prevError = ""
@@ -18,12 +21,64 @@ class Hanabi():
     @property
     def output(self):
         return self._output
+    
+    def parseCommand(self, player, command):
+        wl = command.split(' ')
+        verb = wl[0]
+        args = wl[1:]
+
+        try:
+            if verb == "help":
+                self._message = 'You can either "play [card index]",\
+                    "discard [card index]", or "hint [number or color]"\n'
+            else:
+                if len(args) != 1:
+                    raise IncorrectArgumentNumber
+                elif verb not in ["play", "discard", "hint"]:
+                    raise InvalidCommand
+                else:
+                    if verb == "play":
+                        player_action = PlayCard(self._game, player, card_ix= int(args[0]))
+                        player_action.act()
+                        self._message=player_action.__str__()
+                    elif verb == "discard":
+                        player_action = Discard(self._game, player, card_ix= int(args[0]))
+                        player_action.act()
+                        self._message=player_action.__str__()
+                    elif verb == "hint":
+                        if args[0].isdigit():
+                            player_action = Hint(self._game, player, feature= int(args[0]))
+                        else:
+                            player_action = Hint(self._game, player, feature= args[0])
+                        il = player_action.act()
+                        self._message = ("Your partner hinted that your cards " 
+                                         + "at indices " + str(il) + " are " + 
+                                         str(args[0]))
+                    self._state = STATE_CONTINUE
+                    self._message += '\n'
+                    self._bot.inform(player_action)
+                   # bot_act = self._bot.decideAction(self._game)
+                    return True
+
+        except InvalidHint:
+            self._message = ("Invalid feature, please enter color, or" +
+                             "number from 0 to " + str(NUMBER_IN_HAND))
+        except NoHintTokens:
+            self._message = ("No more hint tokens, you may only play/discard")
+        except IncorrectArgumentNumber:
+            self._message = "Invalid number of arguments, type [help] \
+                    for help. \n"
+        except InvalidCommand:
+            self._message = "Invalid command! Type [help] for help."
+        self._message += '\n'
+        self._game._checkState()
+        return False
 
     def update(self, command):
         if self._state in [STATE_ACTIVE, STATE_LAST_ROUND]:
             self._displayGame(self._game, self._player)
 
-            if self._game.update(self._player, command):
+            if self.parseCommand(self._player, command):
                 self._prevCommand = self._game.message
                 self._prevError = ''
                 self._player = 1 - self._player
