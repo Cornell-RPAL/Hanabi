@@ -3,21 +3,20 @@ from game import Game
 from selfKnowledge import SelfKnowledge
 from action import Action, PlayCard, Discard, Hint
 from board import Board, ALL_CARDS
-from consts import NUMBER_IN_HAND
+from consts import NUMBER_IN_HAND, HANABOT
 from unknownCard import UnknownCard
 
 class Hanabot():
-    def __init__(self, game, player):
+    def __init__(self, game):
         self._game = game
-        self._selfknowledge = SelfKnowledge(game, player, layer = 0)
-        self._player = player
-        self._possibleHints = []
+        self._selfknowledge = SelfKnowledge(game, HANABOT)
+        self._player = HANABOT
 
     def inform(self, action):
         self._selfknowledge.updateHandAge()
         if action.player_num == self._player:
             self._selfknowledge.updateSelfAction(action)
-        else: self._selfknowledge.updateOppAction()
+        else: self._selfknowledge.updateOppAction(action)
 
     def informHint(self, action, il):
         self._selfknowledge.updateHandAge()
@@ -45,13 +44,16 @@ class Hanabot():
         return playables
 
     def checkDup(self, hand):
+        dups = []
+        s = set()
         for i in range(NUMBER_IN_HAND):
-            for j in range(i+1, NUMBER_IN_HAND):
-                try:
-                    if hand[i].color==hand[j].color and hand[i].number == hand[j].number:
-                        return i
-                except Exception : return -1
-        return -1
+            card = hand[i]
+            try:
+                if card in s:
+                    dups.append(card)
+            except Exception : continue
+            s.add(card)
+        return dups
 
     def discardableCard(self, card):
         if isinstance(card, UnknownCard):
@@ -62,10 +64,7 @@ class Hanabot():
         return card in self._selfknowledge._played
 
     def discardable(self, hand):
-        discardables = []
-        i = self.checkDup(hand)
-        if i != -1:
-            discardables.append(hand[i])
+        discardables = self.checkDup(hand)
         for j in range(len(hand)):
             card = hand[j]
             if self.discardableCard(card):
@@ -124,9 +123,7 @@ class Hanabot():
             return self.discardRandom()
 
     def decideAction(self):
-        # know = self._selfknowledge._hand
-        # opp = self._selfknowledge._partnerHand
-        # return PlayCard(self._game, self._player, card_ix= 0)
+        #know = self._selfknowledge._hand
         opp_knowledge = self._selfknowledge.getOppHandKnowledge
         hint_list = self.generateHint()
         if self.playables(opp_knowledge) or self.discardable(opp_knowledge):

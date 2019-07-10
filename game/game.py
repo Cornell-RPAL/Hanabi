@@ -28,20 +28,6 @@ class Game:
     """
 
     def __init__(self):
-        # self.board.hintTokens = NUMBER_OF_HINT_TOKENS
-        # self.board.errorTokens = NUMBER_OF_ERROR_TOKENS
-
-        # shuffle(ALL_CARDS)
-        # self._cards = ALL_CARDS
-        # self._hands = (self._cards[:NUMBER_IN_HAND],
-        #                self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
-
-        # self._discardPile = []
-        # self._drawPile = self._cards[NUMBER_IN_HAND * 2:]
-
-        # # self._played_cards = dict(zip(COLORS, [0]*5))
-        # self._playedPile = []
-
         self._board = Board()
 
         self._message = ""
@@ -210,57 +196,6 @@ class Game:
                 self._turn == self._lastTurn):
             self._message = "You have used up all the rounds! Game complete\n"
             self._state = STATE_COMPLETE
-
-    # def update(self, player, command):
-    #     wl = command.split(' ')
-    #     verb = wl[0]
-    #     args = wl[1:]
-
-    #     try:
-    #         if verb == "help":
-    #             self._message = 'You can either "play [card index]",\
-    #                 "discard [card index]", or "hint [number or color]"\n'
-    #         else:
-    #             if len(args) != 1:
-    #                 raise IncorrectArgumentNumber
-    #             elif verb not in ["play", "discard", "hint"]:
-    #                 raise InvalidCommand
-    #             else:
-    #                 if verb == "play":
-    #                     self._message = "Your partner played " + \
-    #                         str(
-    #                             self.getHand(player)[int(args[0])]
-    #                         )
-    #                     self.playCard(player, int(args[0]))
-    #                 elif verb == "discard":
-    #                     self.discard(player, int(args[0]))
-    #                     self._message = "Your partner discarded " + \
-    #                         str(args[0])
-    #                 elif verb == "hint":
-    #                     if args[0].isdigit():
-    #                         il = self.hintTo(1 - player, int(args[0]))
-    #                     else:
-    #                         il = self.hintTo(1 - player, args[0])
-    #                     self._message = ("Your partner hinted that your cards " 
-    #                                      + "at indices " + str(il) + " are " + 
-    #                                      str(args[0]))
-    #                 self._state = STATE_CONTINUE
-    #                 self._message += '\n'
-    #                 return True
-
-    #     except InvalidHint:
-    #         self._message = ("Invalid feature, please enter color, or" +
-    #                          "number from 0 to " + str(NUMBER_IN_HAND))
-    #     except NoHintTokens:
-    #         self._message = ("No more hint tokens, you may only play/discard")
-    #     except IncorrectArgumentNumber:
-    #         self._message = "Invalid number of arguments, type [help] \
-    #                 for help. \n"
-    #     except InvalidCommand:
-    #         self._message = "Invalid command! Type [help] for help."
-    #     self._message += '\n'
-    #     self._checkState()
-    #     return False
 
     def _checkInvariant(self):
 

@@ -6,19 +6,13 @@ class Message():
         self._game = game
 
     def startMessage(self):
-        return "Welcome to Hanabi!"
+        return "Welcome to Hanabi. I'm ready to play a game."
 
-    def hintMessage(self, action):
-        return "Hint: your card at indices " + str(action) 
+    def actionMessage(self, action):
+        return "I would "+ str(action)
     
-    def playMessge(self, action):
-        return ''
-
-    def discardMessage(self, action):
-        return ''
-    
-    def respond(self):
-        return ''
+    def respond(self, action):
+        return actionMessage(action)
     
 class TerminalText(Message):
 

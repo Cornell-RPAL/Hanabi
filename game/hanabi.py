@@ -2,7 +2,7 @@ import curses
 from game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
 NoHintTokens, NoErrorTokens)
 from consts import (
-    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
+    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE, HANABOT
 )
 from consts import NUMBER_IN_HAND
 from action import Action, PlayCard, Discard, Hint
@@ -10,18 +10,13 @@ from hanabot import Hanabot
 
 stdscr = curses.initscr()
 
-# stdscr.addstr("Hello World!\n")
-# stdscr.refresh()
-# s = stdscr.getstr()
-
-
 class Hanabi():
 
     def __init__(self):
         curses.echo()
         self._game = Game()
-        self._player = 0
-        self._bot = Hanabot(self._game, 1-self._player)
+        self._player = 1- HANABOT
+        self._bot = Hanabot(self._game)
         self._state = STATE_ACTIVE
         self._prevCommand = ""
         self._prevError = ""
@@ -44,19 +39,19 @@ class Hanabi():
                     raise InvalidCommand
                 else:
                     if verb == "play":
-                        player_action = PlayCard(self._game, player, card_ix= int(args[0]))
-                        player_action.act(self._bot)
+                        player_action = PlayCard(self._game, player, int(args[0]))
+                        player_action.act(self._game, self._bot)
                         self._message += (player_action.__str__())
                     elif verb == "discard":
-                        player_action = Discard(self._game, player, card_ix= int(args[0]))
-                        player_action.act(self._bot)
+                        player_action = Discard(self._game, player, int(args[0]))
+                        player_action.act(self._game, self._bot)
                         self._message +=(player_action.__str__())
                     elif verb == "hint":
                         if args[0].isdigit():
                             player_action = Hint(self._game, player, feature= int(args[0]))
                         else:
                             player_action = Hint(self._game, player, feature= args[0])
-                        player_action.act(self._bot)
+                        player_action.act(self._game, self._bot)
                     self._state = STATE_CONTINUE
                     self._message += ('\n')
                     bot_act = self._bot.decideAction()
@@ -89,7 +84,6 @@ class Hanabi():
             if self.parseCommand(self._player, command):
                 self._prevCommand = self._game.message
                 self._prevError = ''
-                #self._player = 1 - self._player
             else:
                 self._prevError = self._game.message
             self._state = self._game.state
@@ -97,8 +91,6 @@ class Hanabi():
 
         elif self._state == STATE_CONTINUE:
             stdscr.clear()
-            self._message +=("It is player " + str(self._player) + "'s turn. " +
-                          "Press enter to continue.")
             stdscr.refresh()
             while stdscr.getstr():
                 pass

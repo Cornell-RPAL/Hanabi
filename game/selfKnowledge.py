@@ -2,13 +2,12 @@ from game import Game, ALL_CARDS
 from board import Board
 from unknownCard import UnknownCard
 from collections import Counter
-from consts import NUMBER_IN_HAND, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS
+from consts import NUMBER_IN_HAND, HANABOT, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS
 from card import isValidColor, isValidNumber
 from action import Action, PlayCard, Discard, Hint
 
-
 class SelfKnowledge():
-    def __init__(self, game, player, layer, opp_knowledge=None):
+    def __init__(self, game, player, opp_knowledge=None):
         self._board = game.board
         self._player = player
         self._game = game
@@ -19,14 +18,14 @@ class SelfKnowledge():
         self._played = self._board._playedPile
         self._hand = [UnknownCard() for _ in range(NUMBER_IN_HAND)]
         # self._curHints = [(-1, '') for _ in range(NUMBER_IN_HAND)]
-        self._drawSet = Counter(ALL_CARDS)
-        if layer == 0:
-            self._oppKnowledge = SelfKnowledge(game, (1-player), layer = 1, opp_knowledge=self)
-        # #print(self._partnerHand, '\n')
+        self._drawCards = Counter(ALL_CARDS)
+        if player == HANABOT:
+            self._oppKnowledge = SelfKnowledge(game, (1-player), opp_knowledge=self)
+        else: self._oppKnowledge = opp_knowledge
         for card in self._partnerHand:
-            self._drawSet[card] -= 1
+            self._drawCards[card] -= 1
             for ukCard in self._hand:
-                ukCard.setDraw(self._drawSet)
+                ukCard.setDraw(self._drawCards)
 
     @property
     def board(self):
@@ -50,25 +49,28 @@ class SelfKnowledge():
             ukcard.updateAge()
 
     def excludeCard(self, card):
-        if self._drawSet[card]:
-            self._drawSet[card] -= 1
+        if self._drawCards[card]:
+            self._drawCards[card] -= 1
         for ukCard in self._hand:
             if ukCard._possibleCards[card]:
                 ukCard.exclude(card)
 
+    def updateHelper(self, action):
+        card = self._partnerHand[action.card_ix]
+        self.excludeCard(card)
+
     def updateSelfAction(self, action):
-        card_ix = action.card_ix
+        self._oppKnowledge.updateHelper(action)
         if isinstance(action, PlayCard):
             last_card = self._played[-1]
         else:
             last_card = self._discarded[-1]
-        if self._drawSet[last_card]:
-            self._drawSet[last_card] -= 1
-        self._hand[card_ix].setDraw(self._drawSet)
+        if self._drawCards[last_card]:
+            self._drawCards[last_card] -= 1
+        self._hand[action.card_ix].setDraw(self._drawCards)
 
-    def updateOppAction(self):
-        for card in self._partnerHand:
-            self.excludeCard(card)
+    def updateOppAction(self, action):
+        self._oppKnowledge.updateSelfAction(action)
 
     def updateWithHint(self, feature, indexList):
         assert(isValidColor(feature) or isValidNumber(feature))
