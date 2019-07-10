@@ -3,7 +3,7 @@ class SensoryBuffer():
         self._text = "a"
 
     def setText(self, text):
-        print("setting " + text)
+        print("Set in a buffer: " + text)
         self._text = text
 
     @property

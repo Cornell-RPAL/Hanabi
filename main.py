@@ -1,6 +1,5 @@
 import asyncio
-import concurrent.futures
-from multiprocessing import Process, Queue, Pipe
+from multiprocessing import Process, Pipe
 
 from sensoryBuffer import SensoryBuffer
 from voice.voice_stream_to_text import main as v2tloop
@@ -13,9 +12,9 @@ class Main():
     async def _display(self):
         while True:
             await asyncio.sleep(0.5)
-            print (self._sensoryBuffer.text)
+            #print (self._sensoryBuffer.text)
             if len(self._sensoryBuffer.text) != self._oldLength:
-                print("hi")
+                print("Main.buffer change detected: ")
                 print (self._sensoryBuffer.text)
                 self._oldLength = len(self._sensoryBuffer.text)
 
