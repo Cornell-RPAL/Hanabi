@@ -1,3 +1,5 @@
+from game.action import Action
+
 class SensoryBuffer():
     def __init__(self):
         self._text = "a"
@@ -9,3 +11,7 @@ class SensoryBuffer():
     @property
     def text(self):
         return self._text
+
+    def textToAction(self):
+        
+

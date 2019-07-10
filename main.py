@@ -27,20 +27,20 @@ class Main():
     
     async def run(self):
         #v2t = asyncio.create_task(v2tloop(self._sensoryBuffer))
-        d = asyncio.create_task(self._display())
+        display = asyncio.create_task(self._display())
         
         
 
         #executor = concurrent.futures.ProcessPoolExecutor()
         #executor.submit(v2tloop, self._sensoryBuffer)
         v2t_end, main_end = Pipe()
-        l = asyncio.create_task(self.listen(main_end))
-        p = Process(target = v2tloop, args = (v2t_end,))
-        p.start()
+        listen = asyncio.create_task(self.listen(main_end))
+        v2t = Process(target = v2tloop, args = (v2t_end,))
+        v2t.start()
         #self._sensoryBuffer.setText(main_end.recv())
 
-        await asyncio.gather(d, l)
-        p.join()
+        await asyncio.gather(display, listen)
+        v2t.join()
         # with concurrent.futures.ProcessPoolExecutor() as pool:
         #     await loop.run_in_executor(pool, v2tloop(self._sensoryBuffer))
         # with concurrent.futures.ProcessPoolExecutor() as pool:
