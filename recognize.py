@@ -3,11 +3,12 @@ import os
 import cv2
 from cv2 import imshow
 
-visualization = False
+visualization = True
 current_loc = os.path.dirname(os.path.abspath(__file__))
 print(current_loc)
-read_path = current_loc + "/vision/data/before/hand_far.png"
-save_path = current_loc + "/vision/data/after/hand_far.png"
+file_name = 'hand_far.png'
+read_path = current_loc + "/vision/data/before/" + file_name
+save_path = current_loc + "/vision/data/after/" + file_name
 
 
 at_detector = apriltags3.Detector(families='tagStandard41h12',
@@ -16,7 +17,7 @@ at_detector = apriltags3.Detector(families='tagStandard41h12',
                         quad_sigma=0.0,
                         refine_edges=1,
                         decode_sharpening=0.25,
-                        debug=0)
+                        debug=1)
 
 print("\n\nTESTING WITH MULTIPLE TAGS IMAGES")
 
@@ -26,7 +27,11 @@ time_sum = 0
 
 img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
 
+img = cv2.flip( img, 1 )
+
+
 tags = at_detector.detect(img)
+print(at_detector)
 
 def id_to_card(id_):
     assert id_ < 60
