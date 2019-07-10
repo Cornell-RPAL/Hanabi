@@ -12,16 +12,4 @@ class Message():
         return "I would "+ str(action)
     
     def respond(self, action):
-        return actionMessage(action)
-    
-class TerminalText(Message):
-
-    def startMessage(self):
-
-    def hintMessage(self, action):
-    
-    def playMessge(self, action):
-
-    def discardMessage(self, action):
-
-    def respond(self):
+        return self.actionMessage(action)
