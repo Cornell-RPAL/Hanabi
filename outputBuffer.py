@@ -9,8 +9,12 @@ class OutputBuffer():
     @property
     def text(self):
         return self._text
+
+    @property
+    def action(self):
+        return self._action
     
-    @property.setter
+    @action.setter
     def action(self, a):
         self._action = a
 

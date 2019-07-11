@@ -1,10 +1,10 @@
-from game import Game, ALL_CARDS
-from board import Board
-from unknownCard import UnknownCard
+from .game import Game, ALL_CARDS
+from .board import Board
+from .unknownCard import UnknownCard
 from collections import Counter
-from consts import NUMBER_IN_HAND, HANABOT, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS
-from card import isValidColor, isValidNumber
-from action import Action, PlayCard, Discard, Hint
+from .consts import NUMBER_IN_HAND, HANABOT, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS
+from .card import isValidColor, isValidNumber
+from .action import Action, PlayCard, Discard, Hint
 
 class SelfKnowledge():
     def __init__(self, game, player, opp_knowledge=None):

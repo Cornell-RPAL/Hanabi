@@ -1,5 +1,5 @@
-from game.action import Hint
-from game.consts import HANABOT, PLAYER
+from model.action import Hint
+from model.consts import HANABOT, PLAYER
 
 class CommandParser():
     def __init__(self):

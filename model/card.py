@@ -1,4 +1,4 @@
-from consts import COLORS, NUMBERS
+from .consts import COLORS, NUMBERS
 
 
 class Card:

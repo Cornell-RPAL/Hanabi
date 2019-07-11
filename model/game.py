@@ -1,8 +1,8 @@
-from consts import (
+from .consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE, COLORS, NUMBER_IN_HAND
 )
-from board import Board, ALL_CARDS
-from card import Card, isValidColor, isValidNumber
+from .board import Board, ALL_CARDS
+from .card import Card, isValidColor, isValidNumber
 from collections import Counter
 from random import shuffle
 

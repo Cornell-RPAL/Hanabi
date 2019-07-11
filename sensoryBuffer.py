@@ -1,4 +1,4 @@
-from game.action import Action
+from model.action import Action
 from commandParser import CommandParser
 import asyncio
 

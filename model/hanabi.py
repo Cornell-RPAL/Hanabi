@@ -1,12 +1,12 @@
 import curses
-from game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
+from .game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
 NoHintTokens, NoErrorTokens)
-from consts import (
+from .consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE, HANABOT
 )
-from consts import NUMBER_IN_HAND
-from action import Action, PlayCard, Discard, Hint
-from hanabot import Hanabot
+from .consts import NUMBER_IN_HAND
+from .action import Action, PlayCard, Discard, Hint
+from .hanabot import Hanabot
 
 stdscr = curses.initscr()
 

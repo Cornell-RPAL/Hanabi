@@ -1,9 +1,9 @@
-from consts import (
+from .consts import (
     NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS,
     COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
 )
-from card import Card
+from .card import Card
 from collections import Counter
 from random import shuffle
 

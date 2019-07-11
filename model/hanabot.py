@@ -1,10 +1,10 @@
 import random
-from game import Game
-from selfKnowledge import SelfKnowledge
-from action import Action, PlayCard, Discard, Hint
-from board import Board, ALL_CARDS
-from consts import NUMBER_IN_HAND, HANABOT
-from unknownCard import UnknownCard
+from .game import Game
+from .selfKnowledge import SelfKnowledge
+from .action import Action, PlayCard, Discard, Hint
+from .board import Board, ALL_CARDS
+from .consts import NUMBER_IN_HAND, HANABOT
+from .unknownCard import UnknownCard
 
 class Hanabot():
     def __init__(self, game):

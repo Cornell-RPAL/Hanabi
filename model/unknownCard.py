@@ -1,5 +1,5 @@
-from card import Card
-from game import ALL_CARDS
+from .card import Card
+from .game import ALL_CARDS
 from collections import Counter
 
 
