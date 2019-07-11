@@ -2,8 +2,8 @@
 
 class Message():
 
-    def __init__(self, game):
-        self._game = game
+    def __init__(self):
+        pass
 
     def startMessage(self):
         return "Welcome to Hanabi. I'm ready to play a game."

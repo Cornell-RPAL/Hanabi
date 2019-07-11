@@ -1,10 +1,12 @@
 from game.action import Hint
+from game.consts import HANABOT, PLAYER
 
 class CommandParser():
     def __init__(self):
         pass
 
-    def parse(self, text):
+    @staticmethod
+    def parse(text):
         # HINT:
         # "Your card at index 3 is red" (currently support)
         # "Your first, second and last cards are white"
@@ -31,5 +33,5 @@ class CommandParser():
         except ValueError:
             feature = word_list[i]
         
-        return 
+        return Hint(PLAYER, feature = feature)
             
