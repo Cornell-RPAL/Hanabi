@@ -3,13 +3,14 @@ class OutputBuffer():
         self._text = ''
         self._action = None
 
-    def setText(self, text):
-        self._text = text
-
     @property
     def text(self):
         return self._text
 
+    @text.setter
+    def text(self, text):
+        self._text = text
+    
     @property
     def action(self):
         return self._action

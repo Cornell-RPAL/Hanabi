@@ -13,7 +13,7 @@ class SensoryBuffer():
         self._frame_num = frame_num
 
         # output
-        self._action = None
+        self._action = []
 
     def setText(self, text):
         print("Set in a buffer: " + text)
@@ -37,14 +37,11 @@ class SensoryBuffer():
     async def process(self):
         while True:
             await asyncio.sleep(0.05)
-            self._action = CommandParser.parse(self._text)
+            self._action += [CommandParser.parse(self._text)]
 
     @property
     def action(self):
-        a = self._action
-        self._action = None
-        return a
-
-
-        
-
+        if self._action:
+            return self._action.pop()
+        else:
+            return None

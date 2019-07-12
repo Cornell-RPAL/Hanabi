@@ -11,27 +11,34 @@ class CommandParser():
         # "Your card at index 3 is red" (currently support)
         # "Your first, second and last cards are white"
 
-        word_list = ' '.split(text)
-        if 'index' in word_list:
-            i = word_list.index("index")
-        elif 'indeces' in word_list:
-            i = word_list.index("indeces")
+        word_list = text.split(' ')
+        # if 'index' in word_list:
+        #     i = word_list.index("index")
+        # elif 'indeces' in word_list:
+        #     i = word_list.index("indeces")
+        # else:
+        #     i = 0
         
-        index_list = []
-        while True:
-            i += 1
-            try:
-                if word_list[i] == 'and':
-                    continue
-                n = int(word_list[i])
-                index_list.append(n)
-            except:
-                break
-        i += 1 # 'is', 'are'
-        try:
-            feature = int(word_list[i])
-        except ValueError:
-            feature = word_list[i]
+        # index_list = []
+        # while True:
+        #     i += 1
+        #     try:
+        #         if word_list[i] == 'and':
+        #             continue
+        #         n = int(word_list[i])
+        #         index_list.append(n)
+        #     except:
+        #         break
+        # i += 1 # 'is', 'are'
+        # try:
+        #     feature = int(word_list[i])
+        # except ValueError:
+        #     feature = word_list[i]
+
+        feature = word_list[-1]
+        if feature == 'one':
+            feature = 1
+        print('feature: ' + str(feature))
         
         return Hint(PLAYER, feature = feature)
             

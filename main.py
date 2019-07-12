@@ -26,7 +26,7 @@ class Main():
             if len(self._sensoryBuffer.text) != self._oldLength:
                 print("Main.buffer change detected: ")
                 print (self._sensoryBuffer.text)
-                self._oldLength = len(self._ssensoryBuffer.text)
+                self._oldLength = len(self._sensoryBuffer.text)
 
     async def listen(self, end):
         while True:
@@ -50,16 +50,20 @@ class Main():
         hanabot_processing = asyncio.create_task(
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
         )
+
+        t2v = asyncio.create_task(self.textToSpeech())
     
         await asyncio.gather(display, listen, input_processing,\
-            hanabot_processing)
+            hanabot_processing, t2v)
         v2t.join()
 
     async def runHanabot(self, iBuffer, oBuffer):
         while True:
-            if iBuffer.action:
+            await asyncio.sleep(0.05)
+            observedAction = iBuffer.action
+            if observedAction:
                 # act in the game and inform hanabot
-                iBuffer.action.act(self._game, self._hanabot) 
+                observedAction.act(self._game, self._hanabot) 
                 #self._hanabot.inform(iBuffer.action)
 
                 action = self._hanabot.decideAction()
@@ -75,6 +79,7 @@ class Main():
     async def textToSpeech(self):
         oldText = ''
         while True:
+            await asyncio.sleep(0.05)
             if oldText != self._outputBuffer.text:
                 t2s(self._outputBuffer.text)
                 oldText = self._outputBuffer.text
