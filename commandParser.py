@@ -14,8 +14,8 @@ class CommandParser():
         word_list = text.split(' ')
         # if 'index' in word_list:
         #     i = word_list.index("index")
-        # elif 'indeces' in word_list:
-        #     i = word_list.index("indeces")
+        # elif 'indices' in word_list:
+        #     i = word_list.index("indices")
         # else:
         #     i = 0
         

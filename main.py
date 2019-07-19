@@ -3,10 +3,12 @@ from multiprocessing import Process, Pipe
 
 from sensoryBuffer import SensoryBuffer
 from outputBuffer import OutputBuffer
+from frameStream import FrameStream
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
+
 
 from model.consts import HANABOT
 from model.game import Game
@@ -18,6 +20,7 @@ class Main():
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
+        self._fs = FrameStream()
         
     async def _display(self):
         while True:
@@ -46,6 +49,7 @@ class Main():
         v2t.start()
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
+        frame_processing = asyncio.create_task(self.fs.rec_board_state())
 
         hanabot_processing = asyncio.create_task(
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
@@ -54,7 +58,7 @@ class Main():
         t2v = asyncio.create_task(self.textToSpeech())
     
         await asyncio.gather(display, listen, input_processing,\
-            hanabot_processing, t2v)
+            hanabot_processing, frame_processing, t2v)
         v2t.join()
 
     async def runHanabot(self, iBuffer, oBuffer):

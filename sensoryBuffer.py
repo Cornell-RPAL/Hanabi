@@ -1,5 +1,7 @@
 from model.action import Action
+from model.card import Card
 from commandParser import CommandParser
+from frameStream import FrameStream
 import asyncio
 
 TEXT_BUFFER_LENGTH = 10
@@ -7,13 +9,14 @@ TEXT_BUFFER_LENGTH = 10
 class SensoryBuffer():
     def __init__(self, frame_num=30):
         # inputs and buffers
+
+        # voice
         self._text = ''
         self._textHistory = []
-        self._frames = []
-        self._frame_num = frame_num
 
         # output
-        self._action = []
+        self.action = []
+
 
     def setText(self, text):
         print("Set in a buffer: " + text)
@@ -25,6 +28,11 @@ class SensoryBuffer():
     @property
     def text(self):
         return self._text
+
+    @property
+    def board(self):
+        return self._board
+    
 
     # def getFrame(self):
     #     return self._frames.pop()
@@ -39,9 +47,11 @@ class SensoryBuffer():
             await asyncio.sleep(0.05)
             self._action += [CommandParser.parse(self._text)]
 
+    
+
     @property
     def action(self):
-        if self._action:
-            return self._action.pop()
+        if self.action:
+            return self.action.pop()
         else:
             return None
