@@ -18,5 +18,3 @@ class OutputBuffer():
     @action.setter
     def action(self, a):
         self._action = a
-
-    

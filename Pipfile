@@ -12,6 +12,8 @@ speechrecognition = "*"
 pyaudio = "*"
 google-cloud-speech = "*"
 google-cloud-texttospeech = "*"
+opencv-python = "*"
+pip = "*"
 
 [requires]
 python_version = "3.7"
