@@ -15,7 +15,7 @@ class SensoryBuffer():
         self._textHistory = []
 
         # output
-        self.action = []
+        self._action = []
 
 
     def setText(self, text):
@@ -29,9 +29,9 @@ class SensoryBuffer():
     def text(self):
         return self._text
 
-    @property
-    def board(self):
-        return self._board
+    # @property
+    # def board(self):
+    #     return self._board
     
 
     # def getFrame(self):
@@ -51,7 +51,7 @@ class SensoryBuffer():
 
     @property
     def action(self):
-        if self.action:
-            return self.action.pop()
+        if self._action:
+            return self._action.pop()
         else:
             return None
