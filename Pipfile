@@ -14,6 +14,7 @@ google-cloud-speech = "*"
 google-cloud-texttospeech = "*"
 opencv-python = "*"
 pip = "*"
+toolz = "*"
 
 [requires]
 python_version = "3.7"
