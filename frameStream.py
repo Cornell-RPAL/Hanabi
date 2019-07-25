@@ -12,7 +12,8 @@ class FrameStream():
 
     def __init__(self):
         self.cap = cv2.VideoCapture(0)
-        self.prev_state = detectState(getTags(self.cap.read()[1]))
+        g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
+        self.prev_state = detectState(getTags(g_img))
 
     def _updateState(self, other):
         self.prev_state = {
@@ -23,7 +24,10 @@ class FrameStream():
 
     def rec_board_state(self):
         ret, frame = cap.read()
-        new_state = detectState(getTags(frame))
+        #may need to flip frame horizontally
+        g_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        print(g_img.shape)
+        new_state = detectState(getTags(g_img))
         if new_state != prev_state:
             if Counter(new_state['hand']) != Counter(self.prev_state['hand']):
                 used = [e not in prev_state['board'] for e in new_state['board']]

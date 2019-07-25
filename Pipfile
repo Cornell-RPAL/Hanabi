@@ -9,11 +9,11 @@ pylint = "*"
 [packages]
 requests = "*"
 speechrecognition = "*"
-pyaudio = "*"
 google-cloud-speech = "*"
 google-cloud-texttospeech = "*"
 opencv-python = "*"
 pip = "*"
+pyaudio = "*"
 
 [requires]
 python_version = "3.7"

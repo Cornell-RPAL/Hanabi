@@ -56,9 +56,10 @@ class Main():
         )
 
         t2v = asyncio.create_task(self.textToSpeech())
-    
-        await asyncio.gather(display, listen, input_processing,\
-            hanabot_processing, frame_processing, t2v)
+        
+        await asyncio.gather(frame_processing)
+        # await asyncio.gather(display, listen, input_processing,\
+        #     hanabot_processing, frame_processing, t2v)
         v2t.join()
 
     async def runHanabot(self, iBuffer, oBuffer):
