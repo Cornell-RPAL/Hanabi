@@ -83,7 +83,7 @@ def detectState(tags):
 
 
 
-def getTags(img, verbose=True, save=True, visualize=True):
+def getTags(img, verbose=False, save=False, visualize=False):
     res = cv2.flip(img, 1)
     tags = at_detector.detect(res)
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
@@ -98,19 +98,19 @@ def getTags(img, verbose=True, save=True, visualize=True):
                     fontScale=0.8,
                     color=(0, 0, 255))
 
-    if verbose:
-        tag_ids = [tag.tag_id for tag in tags]
-        print(len(tags), " tags found.")
-        print(len(tags), " cards found: ", [id_to_card(id_) for id_ in tag_ids])
+    # if verbose:
+    #     tag_ids = [tag.tag_id for tag in tags]
+    #     print(len(tags), " tags found.")
+    #     print(len(tags), " cards found: ", [id_to_card(id_) for id_ in tag_ids])
 
-    if save:
-        cv2.imwrite(save_path, color_img)
+    # if save:
+    #     cv2.imwrite(save_path, color_img)
 
-    if visualize:
-        cv2.imshow('Detected tags', color_img)
-        k = cv2.waitKey(0)
-        if k == 27:         # wait for ESC key to exit
-                cv2.destroyAllWindows()
+    # if visualize:
+    #     cv2.imshow('Detected tags', color_img)
+    #     k = cv2.waitKey(0)
+    #     if k == 27:         # wait for ESC key to exit
+    #             cv2.destroyAllWindows()
 
     return tags, color_img
 
