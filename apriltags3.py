@@ -423,7 +423,7 @@ image of type numpy.uint8.'''
 
 if __name__ == '__main__':
 
-    visualization = True
+    visualization = False
     try:
         import cv2
     except:

@@ -73,19 +73,20 @@ def detectState(tags):
 
 
 def getTags(img, verbose=True, save=True, visualize=True):
-    res = cv2.flip(img, 1)
+    # res = cv2.flip(img, 1)
+    res = img
     tags = at_detector.detect(res)
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 
-    for tag in tags:
-        for idx in range(len(tag.corners)):
-            cv2.line(color_img, tuple(tag.corners[idx-1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
+    # for tag in tags:
+    #     for idx in range(len(tag.corners)):
+    #         cv2.line(color_img, tuple(tag.corners[idx-1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
 
-        cv2.putText(color_img, str(tag.tag_id),
-                    org=(tag.corners[0, 0].astype(int)+10,tag.corners[0, 1].astype(int)+10),
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=0.8,
-                    color=(0, 0, 255))
+    #     cv2.putText(color_img, str(tag.tag_id),
+    #                 org=(tag.corners[0, 0].astype(int)+10,tag.corners[0, 1].astype(int)+10),
+    #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+    #                 fontScale=0.8,
+    #                 color=(0, 0, 255))
 
     if verbose:
         tag_ids = [tag.tag_id for tag in tags]
@@ -95,13 +96,13 @@ def getTags(img, verbose=True, save=True, visualize=True):
     if save:
         cv2.imwrite(save_path, color_img)
 
-    if visualize:
-        cv2.imshow('Detected tags', color_img)
-        k = cv2.waitKey(0)
-        if k == 27:         # wait for ESC key to exit
-                cv2.destroyAllWindows()
+    # if visualize:
+    #     cv2.imshow('Detected tags', color_img)
+    #     k = cv2.waitKey(0)
+    #     if k == 27:         # wait for ESC key to exit
+    #             cv2.destroyAllWindows()
 
-    return tags, color_img
+    return tags
 
 
 #print(detectState(getTags(img, visualize=False)[0]))

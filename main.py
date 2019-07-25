@@ -46,10 +46,10 @@ class Main():
 
         # As microphone needs to be on constantly, multiprocessing is necessary
         v2t = Process(target = v2tloop, args = (v2t_end,))
-        v2t.start()
+        # v2t.start()
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
-        frame_processing = asyncio.create_task(self.fs.rec_board_state())
+        frame_processing = asyncio.create_task(self._fs.rec_board_state())
 
         hanabot_processing = asyncio.create_task(
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
@@ -60,7 +60,7 @@ class Main():
         await asyncio.gather(frame_processing)
         # await asyncio.gather(display, listen, input_processing,\
         #     hanabot_processing, frame_processing, t2v)
-        v2t.join()
+        # v2t.join()
 
     async def runHanabot(self, iBuffer, oBuffer):
         while True:

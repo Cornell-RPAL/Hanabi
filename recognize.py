@@ -1,7 +1,7 @@
 import apriltags3
 import os
 import cv2
-from cv2 import imshow
+# from cv2 import imshow
 
 visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
@@ -83,8 +83,11 @@ def detectState(tags):
 
 
 
-def getTags(img, verbose=False, save=False, visualize=False):
-    res = cv2.flip(img, 1)
+def getTags(img, flip=True, verbose=False, save=False, visualize=False):
+    if flip:
+        res = cv2.flip(img, 1)
+    else:
+        res = img
     tags = at_detector.detect(res)
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 
@@ -113,7 +116,3 @@ def getTags(img, verbose=False, save=False, visualize=False):
     #             cv2.destroyAllWindows()
 
     return tags, color_img
-
-
-print(detectState(getTags(img, visualize=False)[0]))
-

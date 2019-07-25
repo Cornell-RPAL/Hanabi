@@ -11,7 +11,7 @@ from model.consts import HANABOT, PLAYER
 class FrameStream():
 
     def __init__(self):
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)#USE 1 if personal computer, 0 if baxter workstation
         g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
         self.prev_state = detectState(getTags(g_img))
 
@@ -23,14 +23,14 @@ class FrameStream():
         }
 
     def rec_board_state(self):
-        ret, frame = cap.read()
+        ret, frame = self.cap.read()
         #may need to flip frame horizontally
         g_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         print(g_img.shape)
         new_state = detectState(getTags(g_img))
-        if new_state != prev_state:
+        if new_state != self.prev_state:
             if Counter(new_state['hand']) != Counter(self.prev_state['hand']):
-                used = [e not in prev_state['board'] for e in new_state['board']]
+                used = [e not in self.prev_state['board'] for e in new_state['board']]
                 if used:
                     used = used[0]
                 #should probably throw an error here
