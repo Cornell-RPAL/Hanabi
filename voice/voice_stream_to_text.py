@@ -115,11 +115,14 @@ class TextStream(object):
 def voice_stream_to_text():
     language_code = 'en-US'  # a BCP-47 language tag
 
+    contexts = types.SpeechContext(phrases = ['cards', 'red'])
+
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=RATE,
-        language_code=language_code)
+        language_code=language_code,
+        speech_contexts=[contexts])
     streaming_config = types.StreamingRecognitionConfig(
         config=config,
         interim_results=True
