@@ -49,7 +49,7 @@ class Main():
         # v2t.start()
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
-        frame_processing = asyncio.create_task(self._fs.rec_board_state())
+        frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
         hanabot_processing = asyncio.create_task(
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
