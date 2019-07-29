@@ -5,6 +5,7 @@ Note: ssml must be well-formed according to:
 """
 from google.cloud import texttospeech
 from os import system
+import platform
 
 def text_to_speech(text):
     # Instantiates a client
@@ -35,7 +36,10 @@ def text_to_speech(text):
         out.write(response.audio_content)
         print('Audio content written to file "output.mp3"')
 
-    system('afplay output.mp3')
+    if platform.system() == 'Darwin':
+        system('afplay output.mp3')
+    else:
+        system('play output.mp3')
 
 if __name__ == '__main__':
     text_to_speech('Your card is three. Actually, only these two are. How are you? What do youu remember about your card? I understood! Did you mean that these two cards are white? Oh, I see. Thank you!')
