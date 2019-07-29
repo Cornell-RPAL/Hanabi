@@ -22,7 +22,8 @@ def text_to_speech(text):
 
     # Select the type of audio file you want returned
     audio_config = texttospeech.types.AudioConfig(
-        audio_encoding=texttospeech.enums.AudioEncoding.MP3)
+        audio_encoding=texttospeech.enums.AudioEncoding.MP3,
+        speaking_rate=0.85)
 
     # Perform the text-to-speech request on the text input with the selected
     # voice parameters and audio file type
@@ -35,3 +36,6 @@ def text_to_speech(text):
         print('Audio content written to file "output.mp3"')
 
     system('afplay output.mp3')
+
+if __name__ == '__main__':
+    text_to_speech('Your card is three. Actually, only these two are. How are you? What do youu remember about your card? I understood! Did you mean that these two cards are white? Oh, I see. Thank you!')
