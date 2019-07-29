@@ -67,12 +67,15 @@ class Main():
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
         )
 
-        if not cv_off:
-            await asyncio.gather(frame_processing)
-        if not voice_off:
-            await asyncio.gather(t2v, listen)
+        tasks = (display, input_processing, hanabot_processing)
 
-        await asyncio.gather(display, input_processing, hanabot_processing)
+        if not cv_off:
+            tasks += (frame_processing, )
+
+        if not voice_off:
+            tasks += (t2v, listen)
+
+        await asyncio.gather(tasks)
 
         if not voice_off:
             v2t.join()
