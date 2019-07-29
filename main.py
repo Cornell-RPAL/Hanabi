@@ -75,7 +75,7 @@ class Main():
         if not voice_off:
             tasks += (t2v, listen)
 
-        await asyncio.gather(tasks)
+        await asyncio.gather(*tasks)
 
         if not voice_off:
             v2t.join()
