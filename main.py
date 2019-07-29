@@ -3,7 +3,6 @@ from multiprocessing import Process, Pipe
 
 from sensoryBuffer import SensoryBuffer
 from outputBuffer import OutputBuffer
-from frameStream import FrameStream
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
@@ -11,17 +10,23 @@ from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
 
+try:
+    from frameStream import FrameStream
+except:
+    pass
+
 import argparse
 parser = argparse.ArgumentParser()
 
 class Main():
-    def __init__(self):
+    def __init__(self, cv_off=False):
         self._sensoryBuffer = SensoryBuffer()
         self._oldLength = 1
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
-        self._fs = FrameStream()
+        if not cv_off:
+            self._fs = FrameStream()
         
     async def _display(self):
         while True:
@@ -105,6 +110,6 @@ parser.add_argument('-cv', action='store_true', help='no computer vision')
 parser.add_argument('-v', action='store_true', help='no t2v or v2t')
 
 if __name__ == '__main__':
-    m = Main()
     args = parser.parse_args()
+    m = Main(cv_off=args.cv)
     asyncio.run(m.run(voice_off=args.v, cv_off=args.cv))
