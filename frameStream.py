@@ -42,14 +42,25 @@ class FrameStream():
         # check if exactly one card id in hand is different
 
         if new_state != self.prev_state:
-            if Counter(new_state['hand']) != Counter(self.prev_state['hand']):
-                
-                
-                        return PlayCard(PLAYER, used)
-                
+            if self._permanence > 5: #should set in const later
+                self._permanence = 0
+                new_set = set(new_state['hand'])
+                old_set = set(self.prev_state['hand'])
+                if len(new_set & old_set) == 4:
+                    action_card = (new_set - old_set).pop()
+                    if action_card in set(new_state['board']):
+                        return PlayCard(PLAYER, action_card)
+                    if action_card in set(new_state['discard']):
+                        return DiscardCard(PLAYER, action_card)
+                     else:
+                        # should probably raise error here, for now will just ignore
+                        pass
+            else:
+                self._permanence += 1
+        else:
+            # something is moving probably
+            return None
 
-                        return Discard(PLAYER, used)
-        return None
 
     async def frame_process(self, buffer, fps=10):
         print('Starting frame process...')
