@@ -3,7 +3,7 @@ from multiprocessing import Process, Pipe
 
 from sensoryBuffer import SensoryBuffer
 from outputBuffer import OutputBuffer
-#from frameStream import FrameStream
+from frameStream import FrameStream
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
@@ -21,7 +21,7 @@ class Main():
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
-        #self._fs = FrameStream()
+        self._fs = FrameStream()
         
     async def _display(self):
         while True:

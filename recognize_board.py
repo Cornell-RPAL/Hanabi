@@ -2,6 +2,7 @@ import apriltags3
 import os
 import cv2
 from cv2 import imshow
+from model.card import Card
 
 visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
@@ -45,7 +46,7 @@ def id_to_card(id_):
     color = colors[id_ // 10]
     number = numbers.get(id_ % 10)
 
-    return color, number
+    return Card(color, number, id_)
 
 def flatness(points):
     assert len(points) == 4
@@ -63,16 +64,16 @@ def detectState(tags):
     board = []
     discard = None
     for t in tags:
-        if center(t)[0] < 300:
+        if center(t)[0] > 1000 and center(t)[1] > 700:
             discard = [id_to_card(t.tag_id)]
-        if center(t)[1] < 750:
+        elif center(t)[1] < 750:
             hand.append(id_to_card(t.tag_id))
         else:
             board.append(id_to_card(t.tag_id))
     return {"discard": discard, "hand": hand, "board": board}
 
 
-def getTags(img, verbose=True, save=True, visualize=True):
+def getTags(img, verbose=False, save=False, visualize=False):
     # res = cv2.flip(img, 1)
     res = img
     tags = at_detector.detect(res)
