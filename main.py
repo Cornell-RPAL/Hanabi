@@ -10,10 +10,7 @@ from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
 
-try:
-    from frameStream import FrameStream
-except:
-    pass
+from frameStream import FrameStream
 
 import argparse
 parser = argparse.ArgumentParser()

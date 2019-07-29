@@ -32,16 +32,16 @@ def id_to_card(id_):
     assert id_ >= 0
     colors = ['green', 'blue', 'red', 'yellow', 'white']
     numbers = {
-    0: '1',
-    1: '1',
-    2: '1',
-    3: '2',
-    4: '2',
-    5: '3',
-    6: '3',
-    7: '4',
-    8: '4',
-    9: '5'
+    0: 1,
+    1: 1,
+    2: 1,
+    3: 2,
+    4: 2,
+    5: 3,
+    6: 3,
+    7: 4,
+    8: 4,
+    9: 5
     }
     color = colors[id_ // 10]
     number = numbers.get(id_ % 10)

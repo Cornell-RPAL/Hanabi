@@ -52,7 +52,7 @@ class FrameStream():
                         return PlayCard(PLAYER, action_card)
                     if action_card in set(new_state['discard']):
                         return DiscardCard(PLAYER, action_card)
-                     else:
+                    else:
                         # should probably raise error here, for now will just ignore
                         pass
             else:
