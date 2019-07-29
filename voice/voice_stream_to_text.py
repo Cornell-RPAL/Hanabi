@@ -112,10 +112,28 @@ class TextStream(object):
                 else:
                     yield (transcript + overwrite_chars)
             
+
+colors = ['red', 'white', 'blue', 'green', 'yellow']
+numbers = ['1', '2', '3', '4', '5']
+tokens = ['hint token', 'life token', 'hint tokens', 'life tokens']
+
+
+color_cards = [(color + 'card') for color in colors] 
+color_cards += [(color + 'cards') for color in colors]
+color_number = [(color + number) for color in colors for number in numbers]
+determiners = ['your', 'my', 'these', 'those']
+units = ['card', 'cards']
+noun_phrases = [(det + unit) for det in determiners for unit in units]
+common_phrases = ['you have']
+filler_words = ['uh', 'um', 'ah']
+
+terminologies = (colors + numbers + color_cards + color_number + noun_phrases +
+    tokens)
+
 def voice_stream_to_text():
     language_code = 'en-US'  # a BCP-47 language tag
 
-    contexts = types.SpeechContext(phrases = ['cards', 'red'])
+    contexts = types.SpeechContext(phrases = terminologies)
 
     client = speech.SpeechClient()
     config = types.RecognitionConfig(

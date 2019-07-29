@@ -3,24 +3,30 @@ from multiprocessing import Process, Pipe
 
 from sensoryBuffer import SensoryBuffer
 from outputBuffer import OutputBuffer
-from frameStream import FrameStream
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
-
-
 from model.consts import HANABOT
 from model.game import Game
 
+try:
+    from frameStream import FrameStream
+except:
+    pass
+
+import argparse
+parser = argparse.ArgumentParser()
+
 class Main():
-    def __init__(self):
+    def __init__(self, cv_off=False):
         self._sensoryBuffer = SensoryBuffer()
         self._oldLength = 1
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
-        self._fs = FrameStream()
+        if not cv_off:
+            self._fs = FrameStream()
         
     async def _display(self):
         while True:
@@ -38,29 +44,38 @@ class Main():
             if info:
                 self._sensoryBuffer.setText(info)
     
-    async def run(self):
-        # display = asyncio.create_task(self._display())
+    async def run(self, cv_off = False, voice_off = False):
+        display = asyncio.create_task(self._display())
 
-        # v2t_end, main_end = Pipe() # communication pipe for across processes
-        # listen = asyncio.create_task(self.listen(main_end))
+        if not voice_off:
+            v2t_end, main_end = Pipe() # communication pipe for across processes
+            listen = asyncio.create_task(self.listen(main_end))
 
-        # # As microphone needs to be on constantly, multiprocessing is necessary
-        # v2t = Process(target = v2tloop, args = (v2t_end,))
-        # v2t.start()
+            # multiprocessing is necessary for microphone stream
+            v2t = Process(target = v2tloop, args = (v2t_end,))
+            v2t.start()
+
+        if not voice_off:
+            t2v = asyncio.create_task(self.textToSpeech())
+
+        if not cv_off:
+            frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
-        frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
-
-        # hanabot_processing = asyncio.create_task(
-            # self.runHanabot(self._sensoryBuffer, self._outputBuffer)
-        # )
-
-        # t2v = asyncio.create_task(self.textToSpeech())
         
-        await asyncio.gather(frame_processing, input_processing)
-        # await asyncio.gather(display, listen, input_processing,\
-        #     hanabot_processing, frame_processing, t2v)
-        # v2t.join()
+        hanabot_processing = asyncio.create_task(
+            self.runHanabot(self._sensoryBuffer, self._outputBuffer)
+        )
+
+        if not cv_off:
+            await asyncio.gather(frame_processing)
+        if not voice_off:
+            await asyncio.gather(t2v, listen)
+
+        await asyncio.gather(display, input_processing, hanabot_processing)
+
+        if not voice_off:
+            v2t.join()
 
     async def runHanabot(self, iBuffer, oBuffer):
         while True:
@@ -89,5 +104,12 @@ class Main():
                 t2s(self._outputBuffer.text)
                 oldText = self._outputBuffer.text
 
-m = Main()
-asyncio.run(m.run())
+
+
+parser.add_argument('-cv', action='store_true', help='no computer vision')
+parser.add_argument('-v', action='store_true', help='no t2v or v2t')
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    m = Main(cv_off=args.cv)
+    asyncio.run(m.run(voice_off=args.v, cv_off=args.cv))
