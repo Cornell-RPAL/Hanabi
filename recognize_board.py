@@ -61,7 +61,7 @@ def detectState(tags):
     def find_center(tag):
         return sum(tag.corners)/4
 
-    center_ids = [(find_center(tag), tag_id) for tag in tags]
+    center_ids = [(find_center(tag), tag.tag_id) for tag in tags]
     hand = []
     board = []
     rightmost_tag = center_ids[0] #furthest right
