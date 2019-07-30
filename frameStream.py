@@ -43,9 +43,12 @@ class FrameStream():
 
         if new_state != self.prev_state:
             if self._permanence > 5: #should set in const later
-                self._permanence = 0
                 new_set = set(new_state['hand'])
                 old_set = set(self.prev_state['hand'])
+                if new_set == old_set:
+                    pass
+                else:
+                    self._permanence = 0
                 if len(new_set & old_set) == 4:
                     action_card = (new_set - old_set).pop()
                     if action_card in set(new_state['board']):

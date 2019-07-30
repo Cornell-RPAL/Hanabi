@@ -72,7 +72,7 @@ def detectState(tags):
         if center_id[0][0] > rightmost_tag[0][0]:
             rightmost_tag = center_id
 
-    avg_height = avg_height / len(avg_height)
+    avg_height = avg_height / len(center_ids)
     for center_id in center_ids[1:]:
         if center_id[0][1] < avg_height:
             hand.append(id_to_card(center_id[1]))
