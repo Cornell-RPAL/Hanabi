@@ -64,7 +64,7 @@ class Main():
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
         )
 
-        tasks = (display, input_processing, hanabot_processing)
+        tasks = (display, input_processing) #, hanabot_processing)
 
         if not cv_off:
             tasks += (frame_processing, )

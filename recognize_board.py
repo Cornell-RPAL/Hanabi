@@ -60,17 +60,28 @@ def center(tag):
     return sum(tag.corners)/4
 
 def detectState(tags):
+    center_ids = [(center(tag), tag_id) for tag in tags]
     hand = []
     board = []
-    discard = None
-    for t in tags:
-        if center(t)[0] > 1000 and center(t)[1] > 700:
-            discard = [id_to_card(t.tag_id)]
-        elif center(t)[1] < 750:
-            hand.append(id_to_card(t.tag_id))
+    rightmost_tag = center_ids[0] #furthest right
+    avg_height = center_ids[0][1]
+    for center_id in center_ids[1:]:
+        center, id_ = center_id
+        avg_height += center[1]
+        if center[0] > rightmost_tag[0][0]:
+            rightmost_tag = center_id
+
+    avg_height = avg_height/len(avg_height)
+    for center_id in center_ids[1:]:
+        if center_id[0][1] < avg_height:
+            hand.append(id_to_card(center_id[1]))
         else:
-            board.append(id_to_card(t.tag_id))
-    return {"discard": discard, "hand": hand, "board": board}
+            board.append(id_to_card(center_id[1]))
+    board.remove(id_to_card(rightmost_tag[1]))
+        
+    assert len(hand) == 5
+        
+    return {"discard": right_most[1], "hand": hand, "board": board}
 
 
 def getTags(img, verbose=False, save=False, visualize=False):
