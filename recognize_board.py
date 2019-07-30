@@ -56,22 +56,23 @@ def flatness(points):
     ys.sort()
     return (sum(ys[2:])-sum(ys[:2]))/(sum(xs[2:])-sum(xs[:2]))
 
-def center(tag):
-    return sum(tag.corners)/4
-
 def detectState(tags):
-    center_ids = [(center(tag), tag_id) for tag in tags]
+
+    def find_center(tag):
+        return sum(tag.corners)/4
+
+    center_ids = [(find_center(tag), tag_id) for tag in tags]
     hand = []
     board = []
     rightmost_tag = center_ids[0] #furthest right
     avg_height = center_ids[0][1]
+
     for center_id in center_ids[1:]:
-        center, id_ = center_id
-        avg_height += center[1]
-        if center[0] > rightmost_tag[0][0]:
+        avg_height += center_id[0][1]
+        if center_id[0][0] > rightmost_tag[0][0]:
             rightmost_tag = center_id
 
-    avg_height = avg_height/len(avg_height)
+    avg_height = avg_height / len(avg_height)
     for center_id in center_ids[1:]:
         if center_id[0][1] < avg_height:
             hand.append(id_to_card(center_id[1]))
