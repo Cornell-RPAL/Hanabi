@@ -49,24 +49,27 @@ class FrameStream():
                 if len(new_set & old_set) == 4:
                     action_card = (new_set - old_set).pop()
                     if action_card in set(new_state['board']):
+                        print('played', action_card)
                         return PlayCard(PLAYER, action_card)
                     if action_card in set(new_state['discard']):
+                        print('discarded', action_card)
                         return DiscardCard(PLAYER, action_card)
                     else:
                         # should probably raise error here, for now will just ignore
                         pass
             else:
                 self._permanence += 1
+                print('waiting for still frame')
         else:
             # something is moving probably
+            print('nothing is happening')
             return None
 
 
     async def frame_process(self, buffer, fps=10):
         print('Starting frame process...')
         while True:
-            await asyncio.sleep(0.05)
-            print('frame ', self.frame_num)
+            await asyncio.sleep(0.2)
             self.frame_num += 1
             action = self.rec_action()
             print(self.prev_state)

@@ -72,7 +72,7 @@ def detectState(tags):
         if center_id[0][0] > rightmost_tag[0][0]:
             rightmost_tag = center_id
 
-    avg_height = avg_height / len(avg_height)
+    avg_height = avg_height / len(center_ids)
     for center_id in center_ids[1:]:
         if center_id[0][1] < avg_height:
             hand.append(id_to_card(center_id[1]))
@@ -80,9 +80,7 @@ def detectState(tags):
             board.append(id_to_card(center_id[1]))
     board.remove(id_to_card(rightmost_tag[1]))
         
-    assert len(hand) == 5
-        
-    return {"discard": right_most[1], "hand": hand, "board": board}
+    return {"discard": id_to_card(rightmost_tag[1]), "hand": hand, "board": board}
 
 
 def getTags(img, verbose=False, save=False, visualize=False):
