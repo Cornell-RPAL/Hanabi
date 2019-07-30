@@ -80,9 +80,7 @@ def detectState(tags):
             board.append(id_to_card(center_id[1]))
     board.remove(id_to_card(rightmost_tag[1]))
         
-    assert len(hand) == 5
-        
-    return {"discard": right_most[1], "hand": hand, "board": board}
+    return {"discard": id_to_card(rightmost_tag[1]), "hand": hand, "board": board}
 
 
 def getTags(img, verbose=False, save=False, visualize=False):
