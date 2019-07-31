@@ -32,16 +32,16 @@ def id_to_card(id_):
     assert id_ >= 0
     colors = ['green', 'blue', 'red', 'yellow', 'white']
     numbers = {
-    0: '1',
-    1: '1',
-    2: '1',
-    3: '2',
-    4: '2',
-    5: '3',
-    6: '3',
-    7: '4',
-    8: '4',
-    9: '5'
+    0: 1,
+    1: 1,
+    2: 1,
+    3: 2,
+    4: 2,
+    5: 3,
+    6: 3,
+    7: 4,
+    8: 4,
+    9: 5
     }
     color = colors[id_ // 10]
     number = numbers.get(id_ % 10)
@@ -56,21 +56,31 @@ def flatness(points):
     ys.sort()
     return (sum(ys[2:])-sum(ys[:2]))/(sum(xs[2:])-sum(xs[:2]))
 
-def center(tag):
-    return sum(tag.corners)/4
-
 def detectState(tags):
+
+    def find_center(tag):
+        return sum(tag.corners)/4
+
+    center_ids = [(find_center(tag), tag.tag_id) for tag in tags]
     hand = []
     board = []
-    discard = None
-    for t in tags:
-        if center(t)[0] > 1000 and center(t)[1] > 700:
-            discard = [id_to_card(t.tag_id)]
-        elif center(t)[1] < 750:
-            hand.append(id_to_card(t.tag_id))
+    rightmost_tag = center_ids[0] #furthest right
+    avg_height = center_ids[0][1]
+
+    for center_id in center_ids[1:]:
+        avg_height += center_id[0][1]
+        if center_id[0][0] > rightmost_tag[0][0]:
+            rightmost_tag = center_id
+
+    avg_height = avg_height / len(center_ids)
+    for center_id in center_ids[1:]:
+        if center_id[0][1] < avg_height:
+            hand.append(id_to_card(center_id[1]))
         else:
-            board.append(id_to_card(t.tag_id))
-    return {"discard": discard, "hand": hand, "board": board}
+            board.append(id_to_card(center_id[1]))
+    board.remove(id_to_card(rightmost_tag[1]))
+        
+    return {"discard": id_to_card(rightmost_tag[1]), "hand": hand, "board": board}
 
 
 def getTags(img, verbose=False, save=False, visualize=False):

@@ -11,10 +11,7 @@ from model.consts import HANABOT
 from model.game import Game
 from process_monitor import checkIfProcessRunning
 
-# try:
-#     from frameStream import FrameStream
-# except:
-#     pass
+from frameStream import FrameStream
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -68,10 +65,6 @@ class Main():
 
         #if not cv_off:
             # frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
-
-        
-        
-        
 
         process_managing = asyncio.create_task(
             self.manageProcess(v2t, v2t_end)
