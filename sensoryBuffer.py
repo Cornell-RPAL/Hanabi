@@ -29,23 +29,13 @@ class SensoryBuffer():
     def text(self):
         return self._text
 
-    # @property
-    # def board(self):
-    #     return self._board
-    
-
-    # def getFrame(self):
-    #     return self._frames.pop()
-
-    # def addFrame(self, frame):
-    #     if len(self._frames >= frame_num:
-    #         self._frames.pop(0)
-    #     self._frames.append(frame)
-
     async def process(self):
+        oldText = ''
         while True:
             await asyncio.sleep(0.05)
-            self._action += [CommandParser.parse(self._text)]
+            if self._text and self._text != oldText:
+                print ('input buffer processing...')
+                self._action += [CommandParser.parse(self._text)]
 
     
 
@@ -55,3 +45,7 @@ class SensoryBuffer():
             return self._action.pop()
         else:
             return None
+
+    @action.setter
+    def action(self, new_action):
+        self._action += [new_action]

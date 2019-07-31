@@ -22,7 +22,7 @@ class FrameStream():
 
     def _updateState(self, other):
         self.prev_state = {
-        'discard_pile': other['discard'] + self.prev_state['discard'],
+        'discard': other['discard'] + self.prev_state['discard'],
         'hand': other['hand'],
         'board': other['board']
         }
@@ -49,14 +49,15 @@ class FrameStream():
                     pass
                 else:
                     self._permanence = 0
-                if len(new_set & old_set) == 4:
-                    action_card = (new_set - old_set).pop()
+                if len(old_set - new_set) == 1:
+                    self._updateState(new_state)
+                    action_card = (old_set - new_set).pop()
                     if action_card in set(new_state['board']):
                         print('played', action_card)
                         return PlayCard(PLAYER, action_card)
-                    if action_card in set(new_state['discard']):
+                    if action_card in set(new_state['discard']): #could also just check top card
                         print('discarded', action_card)
-                        return DiscardCard(PLAYER, action_card)
+                        return Discard(PLAYER, action_card)
                     else:
                         # should probably raise error here, for now will just ignore
                         pass
@@ -78,5 +79,5 @@ class FrameStream():
             print(self.prev_state)
             if action:
                 print('Writing to buffer!')
-                buffer.setAction([action])
+                buffer.action = action
 
