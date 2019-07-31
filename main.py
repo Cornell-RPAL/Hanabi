@@ -11,7 +11,10 @@ from model.consts import HANABOT
 from model.game import Game
 from process_monitor import checkIfProcessRunning
 
-from frameStream import FrameStream
+try:
+    from frameStream import FrameStream
+except:
+    pass
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -23,8 +26,8 @@ class Main():
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
-        # if not cv_off:
-        #     self._fs = FrameStream()
+        if not cv_off:
+            self._fs = FrameStream()
         
     
     async def _display(self):
@@ -63,20 +66,18 @@ class Main():
         if not voice_off:
             t2v = asyncio.create_task(self.textToSpeech())
 
-        #if not cv_off:
-            # frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
+        if not cv_off:
+            frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
         process_managing = asyncio.create_task(
             self.manageProcess(v2t, v2t_end)
         )
 
-        tasks = (display, listen, input_processing, hanabot_processing, t2v, process_managing, )
+        if cv_off:
+            tasks = (display, listen, input_processing, hanabot_processing, t2v, process_managing, )
 
-        # if not cv_off:
-        #     tasks += (frame_processing, )
-
-        # if not voice_off:
-        #     tasks += (t2v, listen)
+        if voice_off:
+            tasks = (display, frame_processing, input_processing, hanabot_processing, process_managing, )
 
         await asyncio.gather(*tasks)
 
