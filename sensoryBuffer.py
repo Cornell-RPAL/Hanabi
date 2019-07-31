@@ -36,6 +36,7 @@ class SensoryBuffer():
             if self._text and self._text != oldText:
                 print ('input buffer processing...')
                 self._action += [CommandParser.parse(self._text)]
+                oldText = self._text
 
     
 
