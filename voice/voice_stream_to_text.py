@@ -66,8 +66,9 @@ class MicrophoneStream(object):
             chunk = self._buff.get()
             if chunk is None:
                 return
-            data = [chunk]
 
+            data = [chunk]
+            
             # Now consume whatever other data's still buffered.
             while True:
                 try:
@@ -79,6 +80,8 @@ class MicrophoneStream(object):
                     break
 
             yield b''.join(data)
+
+# if not checkIfProcessRunning('afplay'):
 
 class TextStream(object):
     def __init__(self):

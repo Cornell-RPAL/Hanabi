@@ -1,5 +1,5 @@
 import asyncio
-from multiprocessing import Process, Pipe
+from multiprocessing import Process, Pipe, Lock
 
 from sensoryBuffer import SensoryBuffer
 from outputBuffer import OutputBuffer
@@ -9,11 +9,12 @@ from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
+from process_monitor import checkIfProcessRunning
 
-try:
-    from frameStream import FrameStream
-except:
-    pass
+# try:
+#     from frameStream import FrameStream
+# except:
+#     pass
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -25,9 +26,10 @@ class Main():
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
-        if not cv_off:
-            self._fs = FrameStream()
+        # if not cv_off:
+        #     self._fs = FrameStream()
         
+    
     async def _display(self):
         while True:
             await asyncio.sleep(0.5)
@@ -55,30 +57,38 @@ class Main():
             v2t = Process(target = v2tloop, args = (v2t_end,))
             v2t.start()
 
-        if not voice_off:
-            t2v = asyncio.create_task(self.textToSpeech())
-
-        if not cv_off:
-            frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
-
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
-        
+
         hanabot_processing = asyncio.create_task(
             self.runHanabot(self._sensoryBuffer, self._outputBuffer)
         )
 
-        tasks = (display, input_processing, hanabot_processing)
-
-        if not cv_off:
-            tasks += (frame_processing, )
-
         if not voice_off:
-            tasks += (t2v, listen)
+            t2v = asyncio.create_task(self.textToSpeech())
+
+        #if not cv_off:
+            # frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
+
+        
+        
+        
+
+        process_managing = asyncio.create_task(
+            self.manageProcess(v2t, v2t_end)
+        )
+
+        tasks = (display, listen, input_processing, hanabot_processing, t2v, process_managing, )
+
+        # if not cv_off:
+        #     tasks += (frame_processing, )
+
+        # if not voice_off:
+        #     tasks += (t2v, listen)
 
         await asyncio.gather(*tasks)
 
         if not voice_off:
-            v2t.join()
+            v2t.terminate()
 
     async def runHanabot(self, iBuffer, oBuffer):
         while True:
@@ -104,8 +114,22 @@ class Main():
         while True:
             await asyncio.sleep(0.05)
             if oldText != self._outputBuffer.text:
+                print ('synthesizing text from output buffer')
                 t2s(self._outputBuffer.text)
                 oldText = self._outputBuffer.text
+    
+    async def manageProcess(self, v2t, v2t_end):
+        while True:
+            await asyncio.sleep(0.01)
+            print('managing processes')
+            if checkIfProcessRunning('afplay'):
+                print('afplay detected')
+                v2t.terminate()
+            elif not v2t.is_alive():
+                v2t = Process(target = v2tloop, args = (v2t_end,))
+                v2t.start()
+
+                
 
 
 

@@ -45,6 +45,7 @@ class SensoryBuffer():
     async def process(self):
         while True:
             await asyncio.sleep(0.05)
+            print ('input buffer processing...')
             self._action += [CommandParser.parse(self._text)]
 
     

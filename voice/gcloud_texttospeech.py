@@ -5,6 +5,7 @@ Note: ssml must be well-formed according to:
 """
 from google.cloud import texttospeech
 from os import system
+from time import sleep
 import platform
 
 def text_to_speech(text):
