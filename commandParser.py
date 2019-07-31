@@ -36,8 +36,17 @@ class CommandParser():
         #     feature = word_list[i]
 
         feature = word_list[-1]
-        if feature == 'one':
-            feature = 1
+
+        dn = {
+            'one': 1,
+            'two': 2,
+            'three': 3,
+            'four': 4,
+            'five': 5
+        }
+
+        if feature in dn:
+            feature = dn[feature]
         print('feature: ' + str(feature))
         
         return Hint(PLAYER, feature = feature)

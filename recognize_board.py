@@ -78,7 +78,11 @@ def detectState(tags):
             hand.append(id_to_card(center_id[1]))
         else:
             board.append(id_to_card(center_id[1]))
-    board.remove(id_to_card(rightmost_tag[1]))
+
+    if rightmost_tag != center_ids[0]: #if rightmost tag happened to be initialized correctly we good
+        print('rm tag: ', rightmost_tag)
+        print('board: ' board)
+        board.remove(id_to_card(rightmost_tag[1]))
         
     return {"discard": [id_to_card(rightmost_tag[1])], "hand": hand, "board": board}
 

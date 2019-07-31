@@ -15,6 +15,7 @@ opencv-python = "*"
 pip = "*"
 toolz = "*"
 pyaudio = "*"
+psutil = "*"
 
 [requires]
 python_version = "3.7.3"
