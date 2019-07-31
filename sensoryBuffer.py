@@ -46,3 +46,7 @@ class SensoryBuffer():
             return self._action.pop()
         else:
             return None
+
+    @action.setter
+    def action(self, new_action):
+        self._action += [new_action]

@@ -15,14 +15,14 @@ class FrameStream():
     def __init__(self):
         self.cap = cv2.VideoCapture(0)#USE 1 if personal computer, 0 if baxter workstation
         g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
-        print('Initial State:')
         self.prev_state = detectState(getTags(g_img))
+        print('Initial State:', self.prev_state)
         self._permanence = 0
         self.frame_num = 0
 
     def _updateState(self, other):
         self.prev_state = {
-        'discard_pile': other['discard'] + self.prev_state['discard'],
+        'discard': other['discard'] + self.prev_state['discard'],
         'hand': other['hand'],
         'board': other['board']
         }
@@ -45,18 +45,20 @@ class FrameStream():
             if self._permanence > 5: #should set in const later
                 new_set = set(new_state['hand'])
                 old_set = set(self.prev_state['hand'])
+                print('new state:', self.new_state)
                 if new_set == old_set:
                     pass
                 else:
                     self._permanence = 0
-                if len(new_set & old_set) == 4:
-                    action_card = (new_set - old_set).pop()
+                if len(old_set - new_set) == 1:
+                    self._updateState(new_state)
+                    action_card = (old_set - new_set).pop()
                     if action_card in set(new_state['board']):
                         print('played', action_card)
                         return PlayCard(PLAYER, action_card)
-                    if action_card in set(new_state['discard']):
+                    if action_card in set(new_state['discard']): #could also just check top card
                         print('discarded', action_card)
-                        return DiscardCard(PLAYER, action_card)
+                        return Discard(PLAYER, action_card)
                     else:
                         # should probably raise error here, for now will just ignore
                         pass
@@ -64,8 +66,7 @@ class FrameStream():
                 self._permanence += 1
                 print('waiting for still frame')
         else:
-            # something is moving probably
-            print('nothing is happening')
+            # print('nothing is happening')
             return None
 
 
@@ -75,8 +76,7 @@ class FrameStream():
             await asyncio.sleep(0.2)
             self.frame_num += 1
             action = self.rec_action()
-            print(self.prev_state)
             if action:
                 print('Writing to buffer!')
-                buffer.setAction([action])
+                buffer.action = action
 
