@@ -15,8 +15,8 @@ class FrameStream():
     def __init__(self):
         self.cap = cv2.VideoCapture(0)#USE 1 if personal computer, 0 if baxter workstation
         g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
-        print('Initial State:')
         self.prev_state = detectState(getTags(g_img))
+        print('Initial State:', self.prev_state)
         self._permanence = 0
         self.frame_num = 0
 
@@ -45,6 +45,7 @@ class FrameStream():
             if self._permanence > 5: #should set in const later
                 new_set = set(new_state['hand'])
                 old_set = set(self.prev_state['hand'])
+                print('new state:', self.new_state)
                 if new_set == old_set:
                     pass
                 else:
@@ -64,8 +65,7 @@ class FrameStream():
                 self._permanence += 1
                 print('waiting for still frame')
         else:
-            # something is moving probably
-            print('nothing is happening')
+            # print('nothing is happening')
             return None
 
 
@@ -75,7 +75,6 @@ class FrameStream():
             await asyncio.sleep(0.2)
             self.frame_num += 1
             action = self.rec_action()
-            print(self.prev_state)
             if action:
                 print('Writing to buffer!')
                 buffer.setAction([action])
