@@ -1,4 +1,5 @@
 import asyncio
+import psutil
 from multiprocessing import Process, Pipe, Lock
 
 from sensoryBuffer import SensoryBuffer
@@ -9,7 +10,6 @@ from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
-from process_monitor import checkIfProcessRunning
 
 try:
     from frameStream import FrameStream
@@ -26,6 +26,7 @@ class Main():
         self._outputBuffer = OutputBuffer()
         self._game = Game()
         self._hanabot = Hanabot(self._game)
+        self._childPid = -1
         if not cv_off:
             self._fs = FrameStream()
         
@@ -57,6 +58,7 @@ class Main():
             # multiprocessing is necessary for microphone stream
             v2t = Process(target = v2tloop, args = (v2t_end,))
             v2t.start()
+            self._childPid = v2t.pid
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
 
@@ -70,15 +72,15 @@ class Main():
         if not cv_off:
             frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
-        process_managing = asyncio.create_task(
-            self.manageProcess(v2t, v2t_end)
-        )
+        # process_managing = asyncio.create_task(
+        #     self.manageProcess(v2t, v2t_end)
+        # )
 
         if cv_off:
-            tasks = (process_managing, display, listen, input_processing, hanabot_processing, t2v,  )
+            tasks = (display, listen, input_processing, hanabot_processing, t2v,  )
 
         if voice_off:
-            tasks = (display, frame_processing, input_processing, hanabot_processing, process_managing, )
+            tasks = (display, frame_processing, input_processing, hanabot_processing, )
 
         await asyncio.gather(*tasks)
 
@@ -109,8 +111,11 @@ class Main():
         while True:
             await asyncio.sleep(0.05)
             if oldText != self._outputBuffer.text:
-                print ('synthesizing text from output buffer')
+                p = psutil.Process(self._childPid)
+                p.suspend() # prevent computer from hearing itself
+                print ('synthesizing text from output buffer') 
                 t2s(self._outputBuffer.text)
+                p.resume()
                 oldText = self._outputBuffer.text
     
     async def manageProcess(self, v2t, v2t_end):
