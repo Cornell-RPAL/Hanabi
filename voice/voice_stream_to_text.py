@@ -163,48 +163,7 @@ def voice_stream_to_text():
             for text in text_generator:
                 yield text
 
-# def main(buffer):
-#     for text in voice_stream_to_text():
-#         buffer.setText(text)
-#     # while True:
-#     #     text = await voice_stream_to_text()
-#     #     print (text)
-
 def main(sender):
     for text in voice_stream_to_text():
         print("generated: " + text)
         sender.send(text)
-
-
-# def main():
-#     # See http://g.co/cloud/speech/docs/languages
-#     # for a list of supported languages.
-#     language_code = 'en-US'  # a BCP-47 language tag
-
-#     client = speech.SpeechClient()
-#     config = types.RecognitionConfig(
-#         encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
-#         sample_rate_hertz=RATE,
-#         language_code=language_code)
-#     streaming_config = types.StreamingRecognitionConfig(
-#         config=config,
-#         interim_results=True
-#         )
-
-#     with MicrophoneStream(RATE, CHUNK) as stream:
-#         audio_generator = stream.generator()
-#         requests = (types.StreamingRecognizeRequest(audio_content=content)
-#                     for content in audio_generator)
-
-#         responses = client.streaming_recognize(streaming_config, requests)
-
-#         # Now, put the transcription responses to use.
-#         # listen_print_loop(responses)
-#         with TextStream() as ts:
-#             text_generator = ts.generator(responses)
-#             for text in text_generator:
-#                 print (text)
-
-
-# if __name__ == '__main__':
-#     asyncio.run(main())

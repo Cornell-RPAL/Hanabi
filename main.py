@@ -42,9 +42,10 @@ class Main():
     async def listen(self, end):
         while True:
             await asyncio.sleep(0.05)
-            info = end.recv()
-            if info:
-                self._sensoryBuffer.setText(info)
+            if end.poll():
+                info = end.recv()
+                if info:
+                    self._sensoryBuffer.setText(info)
     
     async def run(self, cv_off = False, voice_off = False):
         display = asyncio.create_task(self._display())
@@ -74,7 +75,7 @@ class Main():
         )
 
         if cv_off:
-            tasks = (display, listen, input_processing, hanabot_processing, t2v, process_managing, )
+            tasks = (process_managing, display, listen, input_processing, hanabot_processing, t2v,  )
 
         if voice_off:
             tasks = (display, frame_processing, input_processing, hanabot_processing, process_managing, )
@@ -114,7 +115,7 @@ class Main():
     
     async def manageProcess(self, v2t, v2t_end):
         while True:
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.02)
             print('managing processes')
             if checkIfProcessRunning('afplay'):
                 print('afplay detected')
