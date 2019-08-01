@@ -20,15 +20,21 @@ class FrameStream():
         self._permanence = 0
         self.frame_num = 0
 
-    def _updateState(self, other):
+    def _updateDiscard(self, new_state):
         self.prev_state = {
-        'discard': other['discard'] + self.prev_state['discard'],
-        'hand': other['hand'],
-        'board': other['board']
+        'discard': new_state['discard'] + self.prev_state['discard'],
+        'hand': new_state['hand'],
+        'board': new_state['board']
         }
 
-    def card_played(self, other):
-        return sum([i for i in range(5) if self.prev_state['hand'][i] == other['hand'][i]]) == 1
+
+    def stateChange(self, new_state): #maybe should change (does only hand matter??)
+        visible = self.prev_state
+        visible['discard'] = [visible['discard'][0]]
+        return visible != new_state
+
+    def card_played(self, new_state):
+        return sum([i for i in range(5) if self.prev_state['hand'][i] == new_state['hand'][i]]) == 1
 
 
 
@@ -41,32 +47,43 @@ class FrameStream():
         # should be still for 3 frames
         # check if exactly one card id in hand is different
 
-        if new_state != self.prev_state:
+        if self.stateChange(new_state):
             if self._permanence > 5: #should set in const later
-                new_set = set(new_state['hand'])
-                old_set = set(self.prev_state['hand'])
-                print('new state:', self.new_state)
-                if new_set == old_set:
-                    pass
+
+                self._permanence = 0
+
+                if len(new_state['hand']) == 5:
+
+                    new_hand = set(new_state['hand'])
+                    old_hand = set(self.prev_state['hand'])
+                    
+
+                    
+                    if len(old_hand - new_hand) == 1:
+                        action_card = (old_hand - new_hand).pop()
+
+                        if action_card in set(new_state['board']):
+                            self.prev_state = new_state
+                            print('played', action_card)
+                            print('new stable state:', self.prev_state)
+                            return PlayCard(PLAYER, card_ix = 0)
+
+                        if action_card in set(new_state['discard']): #could also just check top card
+                            self._updateDiscard(new_state)
+                            print('discarded', action_card)
+                            print('new stable state:', self.prev_state)
+                            return Discard(PLAYER, card_ix = 0)
+
+                        else:
+                            print('a card just disappeared? very bad')
+
                 else:
-                    self._permanence = 0
-                if len(old_set - new_set) == 1:
-                    self._updateState(new_state)
-                    action_card = (old_set - new_set).pop()
-                    if action_card in set(new_state['board']):
-                        print('played', action_card)
-                        return PlayCard(PLAYER, action_card)
-                    if action_card in set(new_state['discard']): #could also just check top card
-                        print('discarded', action_card)
-                        return Discard(PLAYER, action_card)
-                    else:
-                        # should probably raise error here, for now will just ignore
-                        pass
+                    print('waiting to draw new card')
             else:
                 self._permanence += 1
                 print('waiting for still frame')
         else:
-            # print('nothing is happening')
+            print('nothing is happening')
             return None
 
 

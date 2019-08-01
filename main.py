@@ -11,10 +11,7 @@ from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
 
-try:
-    from frameStream import FrameStream
-except:
-    pass
+from frameStream import FrameStream
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -79,9 +76,12 @@ class Main():
         if cv_off:
             tasks = (display, listen, input_processing, hanabot_processing, t2v,  )
 
-        if voice_off:
+        elif voice_off:
             tasks = (display, frame_processing, input_processing, hanabot_processing, )
 
+        else:
+            tasks = (display, listen, frame_processing, input_processing, hanabot_processing, t2v,)
+        
         await asyncio.gather(*tasks)
 
         if not voice_off:

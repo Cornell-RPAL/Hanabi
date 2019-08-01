@@ -62,27 +62,35 @@ def detectState(tags):
         return sum(tag.corners)/4
 
     center_ids = [(find_center(tag), tag.tag_id) for tag in tags]
+    #  print([id_to_card(tag.tag_id) for tag in tags])
     hand = []
     board = []
     rightmost_tag = center_ids[0] #furthest right
+    init = rightmost_tag
     avg_height = center_ids[0][1]
 
-    for center_id in center_ids[1:]:
+    for center_id in center_ids:
         avg_height += center_id[0][1]
         if center_id[0][0] > rightmost_tag[0][0]:
             rightmost_tag = center_id
 
     avg_height = avg_height / len(center_ids)
-    for center_id in center_ids[1:]:
+    for center_id in center_ids:
         if center_id[0][1] < avg_height:
             hand.append(id_to_card(center_id[1]))
         else:
             board.append(id_to_card(center_id[1]))
 
-    if rightmost_tag != center_ids[0]: #if rightmost tag happened to be initialized correctly we good
-        print('rm tag: ', rightmost_tag)
-        print('board: ' board)
-        board.remove(id_to_card(rightmost_tag[1]))
+    
+    if rightmost_tag[1] != init[1]: #if rightmost tag happened to be initialized correctly we good
+        #print('rm tag: ', rightmost_tag)
+        #print('board: ', board)
+        if id_to_card(rightmost_tag[1]) in board:
+            board.remove(id_to_card(rightmost_tag[1]))
+        
+    # print('board len:', len(board), board)
+    # print('hand len:', len(hand), hand)	
+    # print('discard: 1 ' , id_to_card(rightmost_tag[1]))
         
     return {"discard": [id_to_card(rightmost_tag[1])], "hand": hand, "board": board}
 
@@ -92,7 +100,7 @@ def getTags(img, verbose=False, save=False, visualize=False):
     res = img
     tags = at_detector.detect(res)
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
-
+    ###print(len(tags))
     # for tag in tags:
     #     for idx in range(len(tag.corners)):
     #         cv2.line(color_img, tuple(tag.corners[idx-1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
