@@ -28,8 +28,10 @@ img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
 
 
 def id_to_card(id_):
+
     assert id_ < 60
     assert id_ >= 0
+
     colors = ['green', 'blue', 'red', 'yellow', 'white']
     numbers = {
     0: 1,
@@ -43,73 +45,68 @@ def id_to_card(id_):
     8: 4,
     9: 5
     }
+
     color = colors[id_ // 10]
     number = numbers.get(id_ % 10)
 
     return Card(color, number, id_)
 
-def flatness(points):
-    assert len(points) == 4
-    xs = [point[0] for point in points]
-    ys = [point[1] for point in points]
-    xs.sort()
-    ys.sort()
-    return (sum(ys[2:])-sum(ys[:2]))/(sum(xs[2:])-sum(xs[:2]))
 
-def detectState(tags):
+
+def detectState(tags, empty_draw_pile = False, discard_threshold=100, hand_threshold=50, nearness_threshold=1.5):
 
     def find_center(tag):
         return sum(tag.corners)/4
 
-    center_ids = [(find_center(tag), tag.tag_id) for tag in tags]
-    #  print([id_to_card(tag.tag_id) for tag in tags])
-    hand = []
-    board = []
-    rightmost_tag = center_ids[0] #furthest right
-    init = rightmost_tag
-    avg_height = center_ids[0][1]
+    def find_width(tag):
+        return (tag.corners[1][0] - tag.corners[0][0]) #* (tag.corners[2][1] - tag.corners[0][1])
 
-    for center_id in center_ids:
-        avg_height += center_id[0][1]
-        if center_id[0][0] > rightmost_tag[0][0]:
-            rightmost_tag = center_id
 
-    avg_height = avg_height / len(center_ids)
-    for center_id in center_ids:
-        if center_id[0][1] < avg_height:
-            hand.append(id_to_card(center_id[1]))
-        else:
-            board.append(id_to_card(center_id[1]))
+    width_sorted = sorted(tags, key=find_width)
+    if empty_draw_pile and (find_center(width_sorted[-1])[1] > (find_center(width_sorted[-2])[1] * nearness_threshold)):
+        gripper = width_sorted[-1]
+    else:
+        gripper = []    
 
+    # print('BIGGEST', id_to_card(width_sorted[-1].tag_id), find_width(width_sorted[-1]))
+    # print('2nd BIG', id_to_card(width_sorted[-2].tag_id), find_width(width_sorted[-2]))
+
+    y_sorted = sorted(tags, key=lambda tag: find_center(tag)[1])
+    x_sorted = sorted(tags, key=lambda tag: find_center(tag)[0])
+    if empty_draw_pile and (find_center(y_sorted[4])[1] > (find_center(y_sorted[3])[1] + hand_threshold)):
+        hand = sorted(y_sorted[:4], key=lambda tag: find_center(tag)[0])
+    else:
+        hand = sorted(y_sorted[:5], key=lambda tag: find_center(tag)[0])
+
+    # print(id_to_card(x_sorted[-1].tag_id), find_center(x_sorted[-1]))
+    # print(id_to_card(x_sorted[-2].tag_id), find_center(x_sorted[-2]))
+
+    if find_center(x_sorted[-1])[0] > (find_center(x_sorted[-2])[0] + discard_threshold):
+        discard = [x_sorted[-1]]
+        assert discard not in hand
+    else:
+        discard = []
+
+    board = [tag for tag in x_sorted if ((tag not in hand) and (tag not in discard))]
+
+    res = {"discard": discard, "hand": hand, "board": board, "gripper": gripper}
+
+    for key in res:
+        res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
+    print(res)
+    return res
+
+
+
+def getTags(img, flip=False, verbose=False, save=False):
     
-    if rightmost_tag[1] != init[1]: #if rightmost tag happened to be initialized correctly we good
-        #print('rm tag: ', rightmost_tag)
-        #print('board: ', board)
-        if id_to_card(rightmost_tag[1]) in board:
-            board.remove(id_to_card(rightmost_tag[1]))
-        
-    # print('board len:', len(board), board)
-    # print('hand len:', len(hand), hand)	
-    # print('discard: 1 ' , id_to_card(rightmost_tag[1]))
-        
-    return {"discard": [id_to_card(rightmost_tag[1])], "hand": hand, "board": board}
+    if flip:
+        res = cv2.flip(img, 1)
+    else:
+        res = img
 
-
-def getTags(img, verbose=False, save=False, visualize=False):
-    # res = cv2.flip(img, 1)
-    res = img
     tags = at_detector.detect(res)
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
-    ###print(len(tags))
-    # for tag in tags:
-    #     for idx in range(len(tag.corners)):
-    #         cv2.line(color_img, tuple(tag.corners[idx-1, :].astype(int)), tuple(tag.corners[idx, :].astype(int)), (0, 255, 0))
-
-    #     cv2.putText(color_img, str(tag.tag_id),
-    #                 org=(tag.corners[0, 0].astype(int)+10,tag.corners[0, 1].astype(int)+10),
-    #                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-    #                 fontScale=0.8,
-    #                 color=(0, 0, 255))
 
     if verbose:
         tag_ids = [tag.tag_id for tag in tags]
@@ -119,14 +116,4 @@ def getTags(img, verbose=False, save=False, visualize=False):
     if save:
         cv2.imwrite(save_path, color_img)
 
-    # if visualize:
-    #     cv2.imshow('Detected tags', color_img)
-    #     k = cv2.waitKey(0)
-    #     if k == 27:         # wait for ESC key to exit
-    #             cv2.destroyAllWindows()
-
     return tags
-
-
-#print(detectState(getTags(img, visualize=False)[0]))
-
