@@ -11,7 +11,6 @@ from model.message import Message
 from model.consts import HANABOT
 from model.game import Game
 
-from frameStream import FrameStream
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -26,8 +25,8 @@ class Main():
         self._childPid = -1
         if not cv_off:
             self._fs = FrameStream()
-        
-    
+
+
     async def _display(self):
         while True:
             await asyncio.sleep(0.5)
@@ -44,7 +43,7 @@ class Main():
                 info = end.recv()
                 if info:
                     self._sensoryBuffer.setText(info)
-    
+
     async def run(self, cv_off = False, voice_off = False):
         display = asyncio.create_task(self._display())
 
@@ -81,7 +80,7 @@ class Main():
 
         else:
             tasks = (display, listen, frame_processing, input_processing, hanabot_processing, t2v,)
-        
+
         await asyncio.gather(*tasks)
 
         if not voice_off:
@@ -93,7 +92,7 @@ class Main():
             observedAction = iBuffer.action
             if observedAction:
                 # act in the game and inform hanabot
-                observedAction.act(self._game, self._hanabot) 
+                observedAction.act(self._game, self._hanabot)
                 #self._hanabot.inform(iBuffer.action)
 
                 action = self._hanabot.decideAction()
@@ -113,11 +112,11 @@ class Main():
             if oldText != self._outputBuffer.text:
                 p = psutil.Process(self._childPid)
                 p.suspend() # prevent computer from hearing itself
-                print ('synthesizing text from output buffer') 
+                print ('synthesizing text from output buffer')
                 t2s(self._outputBuffer.text)
                 p.resume()
                 oldText = self._outputBuffer.text
-    
+
     async def manageProcess(self, v2t, v2t_end):
         while True:
             await asyncio.sleep(0.02)
@@ -129,7 +128,7 @@ class Main():
                 v2t = Process(target = v2tloop, args = (v2t_end,))
                 v2t.start()
 
-                
+
 
 
 

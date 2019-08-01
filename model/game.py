@@ -71,7 +71,7 @@ class Game:
         The value is [0] if there is no cards of the color.
         """
         d = dict(zip(COLORS, [0]*5))
-        for c in self.board.playedPile:
+        for c in self.playedPile:
             if d[c.color] < c.number:
                 d[c.color] = c.number
         return d

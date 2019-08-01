@@ -5,3 +5,5 @@
 *.pnm
 *.ps
 output.mp3
+*.pyc
+**/*.pyc

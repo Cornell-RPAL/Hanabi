@@ -1,35 +1,42 @@
 import random
 from .game import Game
 from .selfKnowledge import SelfKnowledge
-from .action import Action, PlayCard, Discard, Hint
+from .action import Action, Play, Discard, Hint
 from .board import Board, ALL_CARDS
 from .consts import NUMBER_IN_HAND, HANABOT
 from .unknownCard import UnknownCard
 
 class Hanabot():
-    def __init__(self, game):
-        self._game = game
+    def __init__(self, board):
+        self._board = board
         self._selfknowledge = SelfKnowledge(game, HANABOT)
         self._player = HANABOT
 
-    def playable(self, card):
-        top = self._game.topPlayedCards()
+    def isPlayable(self, card):
+        top = self._board.topPlayedCards()
         if isinstance(card, UnknownCard):
-            for possible_card in card._possibleCards:
-                num = top.get(possible_card.color)
-                if num != possible_card.number-1:
+            for possibleCard in card._possibleCards:
+                num = top[possibleCard.color]
+                if num != possibleCard.number - 1:
                     return False
             return True
-        num = top.get(card.color)
-        return num == card.number-1
+        else:
+            num = top.get(card.color)
+            return (num == card.number - 1)
 
     def playables(self, hand):
-        playables = []
-        for j in range(len(hand)):
-            card = hand[j]
-            if self.playable(card):
-                playables.append(j)
-        return playables
+        return [i for i, card in enumerate(hand) if self.isPlayable(card)]
+
+    def isDiscardable(self, card):
+        if isinstance(card, UnknownCard):
+            for possible_card in card._possibleCards:
+                if possible_card not in self._selfknowledge._played:
+                    return False
+            return True
+        return card in self._selfknowledge._played
+
+    def discardables(self, hand):
+        return [i for i, card in enumerate(hand) if self.isDiscardable(card)]
 
     def checkDup(self, hand):
         dups = []
@@ -43,95 +50,78 @@ class Hanabot():
             s.add(card)
         return dups
 
-    def discardableCard(self, card):
-        if isinstance(card, UnknownCard):
-            for possible_card in card._possibleCards:
-                if possible_card not in self._selfknowledge._played:
-                    return False
-            return True
-        return card in self._selfknowledge._played
+    def partnerFeatures(self):
+        friendHand = self._selfknowledge.partnerHand
+        allFeatures = [card.number for card in friendHand] + \
+                [card.color for card in friendHand]
 
-    def discardable(self, hand):
-        discardables = self.checkDup(hand)
-        for j in range(len(hand)):
-            card = hand[j]
-            if self.discardableCard(card):
-                discardables.append(j)
-        return discardables
+        return list(set(allFeatures))
 
-    def generateHint(self):
+    def hintRandom(self, hintList):
+        return random.choice(hintList)
+
+    def getPlayableHint(self):
         oppHand = self._selfknowledge.partnerHand
-
-        feature_list = []
-        for card in oppHand:
-            if card.number not in feature_list:
-                feature_list.append (card.number)
-            if card.color not in feature_list:
-                feature_list.append (card.color)
-        return feature_list
-
-    def hintRandom(self, hint_list):
-        return random.choice(hint_list)
-
-    def hintPlayable(self):
-        oppHand = self._selfknowledge._partnerHand
         playables = self.playables(oppHand)
         if playables:
             card = oppHand[random.choice(playables)]
             return random.choice([card.color, card.number])
-        else: return None
+        else: 
+            return None
 
-    def hintCmp(self, hint_list):
-        playableHint = self.hintPlayable()
-        if playableHint != None:
-            return playableHint
-        return self.hintRandom(hint_list)
+    def hintCmp(self, hintList):
+        playableHint = self.getPlayableHint()
+        return playableHint or self.hintRandom(hintList)
 
     def fullHint(self):
-        hint_list = self.generateHint()
-        return Hint(self._player, feature=self.hintCmp(hint_list))
+        hintList = self.partnerFeatures()
+        return Hint(self._player, feature=self.hintCmp(hintList))
 
     def discardRandom(self):
-        hand = self._selfknowledge._hand
+        hand = self._selfknowledge.hand
         return Discard(self._player, random.randrange(len(hand)))
 
-    def basicAction(self, mode, hint_list=None):
-        hand = self._selfknowledge._hand
+    def getBasicAction(self):
+        hand = self._selfknowledge.hand
+
         playables = self.playables(hand)
+        discardables = self.discardables(hand)
+
         if playables:
-            return PlayCard(self._player, random.choice(playables))
-        discardables = self.discardable(hand)
-        if discardables:
+            return Play(self._player, random.choice(playables))
+        elif discardables:
             return Discard(self._player, random.choice(discardables))
-        if mode == 1:
-            return self.fullHint()
-        if mode == 2:
-            return Hint(self._player, feature = self.hintRandom(hint_list))
-        if mode == 3:
-            return self.discardRandom()
+        else:
+            return None
 
     def decideAction(self):
-        #know = self._selfknowledge._hand
-        opp_knowledge = self._selfknowledge.getOppHandKnowledge
-        hint_list = self.generateHint()
-        if self.playables(opp_knowledge) or self.discardable(opp_knowledge):
-            return self.basicAction(1, hint_list)
-        if self._selfknowledge._hintTokens > 0:
-            playableHint = self.hintPlayable()
-            if playableHint != None:
-                return Hint (self._player, feature=playableHint)
-            return self.basicAction(2, hint_list)
-        return self.basicAction(3)
+        partnerHandKnowledge = self._selfknowledge.getPartnerHandKnowledge()
+        hintList = self.partnerFeatures()
+        basicAction = self.getBasicAction()
+        if basicAction:
+            return basicAction
+        elif (self.playables(partnerHandKnowledge) \
+            or self.discardables(partnerHandKnowledge)):
+            return self.fullHint()
+        elif self._board.hintTokens > 0:
+            playableHint = self.getPlayableHint()
+            if playableHint:
+                return Hint (self._player, feature = playableHint)
+            return Hint(self._player, feature = self.hintRandom(hintList))
+        else:
+            return self.discardRandom()
         
     def inform(self, action):
         self._selfknowledge.updateHandAge()
         if action.player_num == HANABOT:
             self._selfknowledge.updateSelfAction(action)
-        else: self._selfknowledge.updateOppAction(action)
+        else: 
+            self._selfknowledge.updateOppAction(action)
 
     def informHint(self, action, il):
         self._selfknowledge.updateHandAge()
         if action.player_num == HANABOT:
             self._selfknowledge.updateOppWithHint(action.feature, il)
-        else: self._selfknowledge.updateWithHint(action.feature, il)
+        else: 
+            self._selfknowledge.updateWithHint(action.feature, il)
 

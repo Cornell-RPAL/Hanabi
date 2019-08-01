@@ -88,9 +88,8 @@ class SelfKnowledge():
     def updateOppWithHint(self, feature, indexList):
         self._oppKnowledge.updateWithHint(feature, indexList)
 
-    @property
-    def getOppHandKnowledge(self):
-        return self._oppKnowledge._hand
+    def getPartnerHandKnowledge(self):
+        return self._oppKnowledge.hand
 
     def __str__(self):
         s = 'Self knowledge of own hand: \n'
