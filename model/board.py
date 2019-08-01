@@ -68,5 +68,15 @@ class Board():
     def playedPile(self, val):
         self._playedPile = val
 
-    
+    def topPlayedCards(self):
+        """
+        A dictionary representing the top card of each color. 
+
+        The value is [0] if there is no cards of the color.
+        """
+        d = dict(zip(COLORS, [0]*5))
+        for c in self.playedPile:
+            if d[c.color] < c.number:
+                d[c.color] = c.number
+        return d
 
