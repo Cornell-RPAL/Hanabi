@@ -86,9 +86,6 @@ class Main():
         if not voice_off:
             v2t.terminate()
 
-    async def runHanabot(self, iBuffer, oBuffer):
-        
-
     async def textToSpeech(self):
         oldText = ''
         while True:
