@@ -13,7 +13,7 @@ def recognize_action(prev_state, new_state, permanence):
             }
 
         if new_state['gripper']:
-            return 'attempt play', new_state['gripper'][0]
+            return 'attempt play', new_state['gripper']
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different

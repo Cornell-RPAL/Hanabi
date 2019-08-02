@@ -78,8 +78,11 @@ class SensoryBuffer():
             }
 
         print('state', new_state)
+        if new_state is None:
+            return []
+        
         if new_state['gripper'] is not None:
-            return 'attempt play', new_state['gripper'][0]
+            return 'attempt play', new_state['gripper']
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different
