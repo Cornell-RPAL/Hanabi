@@ -27,7 +27,6 @@ class AttemptPlay(Action):
             bot.inform(Fail(self._player, self._board))
             
 
-
 class Play(Action):
 
     def act(self, game, bot):
