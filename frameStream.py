@@ -44,6 +44,9 @@ class FrameStream():
         g_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         new_state = detectState(getTags(g_img))
 
+        if new_state['gripper']:
+            return 'attempt play', new_state['gripper'][0]
+
         # should be still for 3 frames
         # check if exactly one card id in hand is different
 
@@ -62,17 +65,17 @@ class FrameStream():
                     if len(old_hand - new_hand) == 1:
                         action_card = (old_hand - new_hand).pop()
 
-                        if action_card in set(new_state['board']):
+                        if action_card in new_state['board']:
                             self.prev_state = new_state
                             print('played', action_card)
                             print('new stable state:', self.prev_state)
-                            return PlayCard(PLAYER, card_ix = 0)
+                            return PlayCard(PLAYER, card_ix = new_state['board'].index(action_card))
 
-                        if action_card in set(new_state['discard']): #could also just check top card
+                        if action_card in new_state['discard']: #could also just check top card
                             self._updateDiscard(new_state)
                             print('discarded', action_card)
                             print('new stable state:', self.prev_state)
-                            return Discard(PLAYER, card_ix = 0)
+                            return Discard(PLAYER, card_ix = new_state['discard'].index(action_card))
 
                         else:
                             print('a card just disappeared? very bad')

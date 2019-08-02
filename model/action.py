@@ -22,6 +22,7 @@ class Action:
     def indices(self):
         return self._indices
 
+
 class PlaySuccess(Action):
     pass
 
