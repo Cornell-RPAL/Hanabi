@@ -26,6 +26,9 @@ class Card:
     def number(self):
         return self._number
 
+    def hasFeature(self, feature):
+        return self.color == feature or self.number == feature
+
     def __repr__(self):
         return ('Card: ' + self.color + ' ' + str(self.number) + 
             'ID: ' + str(self._id))
@@ -38,6 +41,7 @@ class Card:
 
     def __hash__(self):
         return hash(str(self))
+
 
 def isValidColor(color):
     return color in COLORS

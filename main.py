@@ -87,23 +87,7 @@ class Main():
             v2t.terminate()
 
     async def runHanabot(self, iBuffer, oBuffer):
-        while True:
-            await asyncio.sleep(0.05)
-            observedAction = iBuffer.action
-            if observedAction:
-                # act in the game and inform hanabot
-                observedAction.act(self._game, self._hanabot)
-                #self._hanabot.inform(iBuffer.action)
-
-                action = self._hanabot.decideAction()
-                oBuffer.action = action
-
-                action.act(self._game, self._hanabot)
-
-                m = Message()
-                text = m.respond(action)
-
-                oBuffer.text = text
+        
 
     async def textToSpeech(self):
         oldText = ''

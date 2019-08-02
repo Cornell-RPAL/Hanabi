@@ -1,30 +1,25 @@
 from .consts import (
-    NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS,
-    COLORS, NUMBERS, AMTS, NUMBER_IN_HAND,
-    STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE
+    NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, COLORS
 )
 from .card import Card
 from collections import Counter
 from random import shuffle
 
-ALL_CARDS = [Card(c, n)
-             for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
 class Board():
-    def __init__(self):
+    """
+    The physical board state that Hanabot can observe (mainly through CV).
+    """
+    def __init__(self, partnerHand):
         self._hintTokens = NUMBER_OF_HINT_TOKENS
         self._errorTokens = NUMBER_OF_ERROR_TOKENS
 
-        shuffle(ALL_CARDS)
-        self._cards = ALL_CARDS
-        self._hands = (self._cards[:NUMBER_IN_HAND],
-                       self._cards[NUMBER_IN_HAND: NUMBER_IN_HAND * 2])
+        self._partnerHand = partnerHand # initialize partnerHand from CV
 
         self._discardPile = []
-        self._drawPile = self._cards[NUMBER_IN_HAND * 2:]
-
-        # self._played_cards = dict(zip(COLORS, [0]*5))
         self._playedPile = []
+
+        self._cardInGripper = None
 
     @property
     def hintTokens(self):
@@ -67,6 +62,22 @@ class Board():
     @playedPile.setter
     def playedPile(self, val):
         self._playedPile = val
+
+    @property
+    def cardInGripper(self):
+        return self._cardInGripper
+        
+    @cardInGripper.setter
+    def cardInGripper(self, val):
+        self._cardInGripper = val
+
+    @property
+    def partnerHand(self):
+        return self._partnerHand
+
+    @partnerHand.setter
+    def partnerHand(self, val):
+        self._partnerHand = val
 
     def topPlayedCards(self):
         """

@@ -1,16 +1,58 @@
 import random
-from .game import Game
+import asyncio
 from .selfKnowledge import SelfKnowledge
-from .action import Action, Play, Discard, Hint
-from .board import Board, ALL_CARDS
+from .intent import PlayIntent, DiscardIntent, HintIntent
+from .action import PlaySuccess, PlayFail, Discard, Hint
+from .board import Board
 from .consts import NUMBER_IN_HAND, HANABOT
 from .unknownCard import UnknownCard
+from .message import Message
 
 class Hanabot():
     def __init__(self, board):
-        self._board = board
-        self._selfknowledge = SelfKnowledge(game, HANABOT)
+        self._board = board # stores pointer so always updated with reality
+        self._selfknowledge = SelfKnowledge(board, HANABOT)
         self._player = HANABOT
+        self._currentIntent = None
+
+    async def react(self, iBuffer, oBuffer):
+        while True:
+            await asyncio.sleep(0.05)
+            # react to player action
+            observedAction = iBuffer.action
+            if observedAction:             
+                self.inform(observedAction)
+
+                intent = self.decideAction()
+                oBuffer.intent = intent
+                oBuffer.baxterCommand = intent.baxterCommand
+
+                if isinstance(self._currentIntent, HintIntent):
+                    cards = [card for card in self._selfknowledge.partnerHand \
+                        if card.hasFeature(self._currentIntent.feature)]
+                    self.inform(self._currentIntent.complete(cards))
+                    self._currentIntent = None 
+
+                m = Message()
+                text = m.respond(intent)
+                oBuffer.text = text
+
+            # react to self action (intent)
+            card = iBuffer._board.cardInGripper
+            if card:
+                if isinstance(self._currentIntent, PlayIntent):
+                    if card.isPlayable():
+                        action = self._currentIntent.complete(card, success=True)
+                        oBuffer.baxterCommand = ("play", )
+                    else:
+                        action = self._currentIntent.complete(card, success=False)
+                        oBuffer.baxterCommand = ("discard", )
+                elif isinstance(self._currentIntent, DiscardIntent):
+                    action = self._currentIntent.complete(card)
+                    oBuffer.baxterCommand = ("discard", )
+
+                self.inform(action)
+                self._currentIntent = None 
 
     def isPlayable(self, card):
         top = self._board.topPlayedCards()
@@ -73,13 +115,19 @@ class Hanabot():
         playableHint = self.getPlayableHint()
         return playableHint or self.hintRandom(hintList)
 
+    def indicesOfFeature(self, feature):
+        return [i for card, i in enumerate(self._selfknowledge.partnerHand) \
+            if card.hasFeature(feature)]
+
     def fullHint(self):
         hintList = self.partnerFeatures()
-        return Hint(self._player, feature=self.hintCmp(hintList))
+        feature = self.hintCmp(hintList)
+        indices = self.indicesOfFeature(feature)
+        return HintIntent(feature, indices)
 
     def discardRandom(self):
         hand = self._selfknowledge.hand
-        return Discard(self._player, random.randrange(len(hand)))
+        return DiscardIntent([random.randrange(len(hand))])
 
     def getBasicAction(self):
         hand = self._selfknowledge.hand
@@ -88,9 +136,9 @@ class Hanabot():
         discardables = self.discardables(hand)
 
         if playables:
-            return Play(self._player, random.choice(playables))
+            return PlayIntent([random.choice(playables)])
         elif discardables:
-            return Discard(self._player, random.choice(discardables))
+            return DiscardIntent([random.choice(discardables)])
         else:
             return None
 
@@ -98,30 +146,34 @@ class Hanabot():
         partnerHandKnowledge = self._selfknowledge.getPartnerHandKnowledge()
         hintList = self.partnerFeatures()
         basicAction = self.getBasicAction()
+        
         if basicAction:
             return basicAction
+
         elif (self.playables(partnerHandKnowledge) \
             or self.discardables(partnerHandKnowledge)):
             return self.fullHint()
+
         elif self._board.hintTokens > 0:
             playableHint = self.getPlayableHint()
-            if playableHint:
-                return Hint (self._player, feature = playableHint)
-            return Hint(self._player, feature = self.hintRandom(hintList))
+            feature = playableHint or self.hintRandom(hintList)
+            indices = self.indicesOfFeature(feature)
+            return HintIntent(feature = feature, indices = indices)
+
         else:
             return self.discardRandom()
-        
+
     def inform(self, action):
         self._selfknowledge.updateHandAge()
-        if action.player_num == HANABOT:
+        if isinstance(action, Hint):
+            indices = self.indicesOfFeature(action.feature)
+            if action.player_num == HANABOT:
+                self._selfknowledge.updateOppWithHint(action.feature, indices)
+            else: 
+                self._selfknowledge.updateWithHint(action.feature, indices)
+        elif action.player_num == HANABOT:
             self._selfknowledge.updateSelfAction(action)
         else: 
             self._selfknowledge.updateOppAction(action)
-
-    def informHint(self, action, il):
-        self._selfknowledge.updateHandAge()
-        if action.player_num == HANABOT:
-            self._selfknowledge.updateOppWithHint(action.feature, il)
-        else: 
-            self._selfknowledge.updateWithHint(action.feature, il)
+        
 
