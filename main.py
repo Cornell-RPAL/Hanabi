@@ -3,6 +3,7 @@ import psutil
 from multiprocessing import Process, Pipe, Lock, Condition
 
 from sensoryBuffer import SensoryBuffer
+from frameStream import FrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
@@ -43,7 +44,7 @@ class Main():
 
     async def _runHanabot(self):
         await asyncio.sleep(0.5)
-        self._hanabot = Hanabot(self._sensoryBuffer.cv['hand'])
+        self._hanabot = Hanabot(self._sensoryBuffer.cvState['hand'])
         self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
     async def run(self, cv_off = False, voice_off = False):
