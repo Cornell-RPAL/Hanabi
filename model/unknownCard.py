@@ -1,6 +1,10 @@
 from .card import Card
-from .game import ALL_CARDS
+from .consts import NUMBERS, COLORS, AMTS
+
 from collections import Counter
+
+ALL_CARDS = [Card(c, n)
+             for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
 
 class UnknownCard():
@@ -26,22 +30,6 @@ class UnknownCard():
 
     def setDraw(self, drawSet):
         self._possibleCards = drawSet
-    # def updateFeature(self, feature, applies=True):
-    #     """
-    #       Removes cards from possible cards
-    #       feature: []
-    #     """
-    #     assert(Card.isValidColor(feature) or Card.isValidNumber(feature))
-    #     result = []
-
-    #     def nxor(b1, b2):
-    #         return (b1 and b2) or (not(b1) and not(b2))
-
-    #     for card in self.possible_cards:
-    #         if nxor(applies, card.color == feature or card.number == feature):
-    #             result.append(card)
-
-    #     self.possible_cards = result
 
     def exclude(self, card):
         assert isinstance(card, Card)
