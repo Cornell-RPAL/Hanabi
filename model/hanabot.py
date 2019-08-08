@@ -55,7 +55,7 @@ class Hanabot():
                 self._currentIntent = None 
 
     def isPlayable(self, card):
-        top = self._board.topPlayedCards()
+        top = self._board.tpartnerlayedCards()
         if isinstance(card, UnknownCard):
             for possibleCard in card._possibleCards:
                 num = top[possibleCard.color]
@@ -103,10 +103,10 @@ class Hanabot():
         return random.choice(hintList)
 
     def getPlayableHint(self):
-        oppHand = self._selfknowledge.partnerHand
-        playables = self.playables(oppHand)
+        partnerHand = self._selfknowledge.partnerHand
+        playables = self.playables(partnerHand)
         if playables:
-            card = oppHand[random.choice(playables)]
+            card = partnerHand[random.choice(playables)]
             return random.choice([card.color, card.number])
         else: 
             return None
@@ -168,12 +168,12 @@ class Hanabot():
         if isinstance(action, Hint):
             indices = self.indicesOfFeature(action.feature)
             if action.player_num == HANABOT:
-                self._selfknowledge.updateOppWithHint(action.feature, indices)
+                self._selfknowledge.updatePartnerWithHint(action.feature, indices)
             else: 
                 self._selfknowledge.updateWithHint(action.feature, indices)
         elif action.player_num == HANABOT:
             self._selfknowledge.updateSelfAction(action)
         else: 
-            self._selfknowledge.updateOppAction(action)
+            self._selfknowledge.updatePartnerAction(action)
         
 
