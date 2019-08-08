@@ -6,7 +6,7 @@ from sensoryBuffer import SensoryBuffer
 from frameStream import FrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
-from voice.gcloud_texttospeech import text_to_speech as t2s
+from voice.text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
@@ -46,7 +46,6 @@ class Main():
     async def _runHanabot(self):
         await asyncio.sleep(0.5)
         self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
-        await self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
     async def run(self, cv_off = False, voice_off = False):
         display = asyncio.create_task(self._display())
