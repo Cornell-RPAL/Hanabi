@@ -42,3 +42,9 @@ class UnknownCard():
 
     def __str__(self):
         return '[Unknown card that could be ' + str(self._possibleCards) + ']'
+
+    def __eq__(self, other):
+        possibleCards1 = self._possibleCards.items()
+        possibleCards2 = other.possible_cards.items()
+        return (possibleCards1.__len__==1 and possibleCards2.__len__ ==1
+            and possibleCards1[0][0] == possibleCards2[0][0])

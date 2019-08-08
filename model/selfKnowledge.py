@@ -8,7 +8,6 @@ from .card import Card, isValidColor, isValidNumber
 from .action import PlaySuccess, PlayFail, Discard, Hint
 
 
-
 class SelfKnowledge():
     def __init__(self, board, player, partnerKnowledge=None):
         self._board = board
@@ -18,16 +17,16 @@ class SelfKnowledge():
         self._discarded = self._board.discardPile
         self._played = self._board.playedPile
         self._hand = [UnknownCard() for _ in range(NUMBER_IN_HAND)]
+        self._drawCards = Counter(ALL_CARDS)
         if player == HANABOT:
             self._partnerHand = board.partnerHand
             self._partnerKnowledge = SelfKnowledge(board, 1 - HANABOT, \
                 partnerKnowledge=self)
+            for card in self._partnerHand:
+                self._drawCards[card] -= 1
+                for ukCard in self._hand:
+                    ukCard.setDraw(self._drawCards)
         else: self._partnerKnowledge = partnerKnowledge
-        self._drawCards = Counter(ALL_CARDS)
-        for card in self._partnerHand:
-            self._drawCards[card] -= 1
-            for ukCard in self._hand:
-                ukCard.setDraw(self._drawCards)
 
     @property
     def board(self):
@@ -57,15 +56,16 @@ class SelfKnowledge():
         self.excludeCard(card)
 
     def updateSelfAction(self, action):
-        self._partnerKnowledge.updateHelper(action)
+        if self._player != HANABOT:
+            self._partnerKnowledge.updateHelper(action)
         card = action.card
         if isinstance(action, PlayFail):
             self._errorTokens -= 1
-        if self._drawCards[card]:
+        if self._drawCards[card] and self._player == HANABOT:
             self._drawCards[card] -= 1
         self._hand[action.indices[0]].setDraw(self._drawCards)
 
-    def updateOppAction(self, action):
+    def updatePartnerAction(self, action):
         self._partnerKnowledge.updateSelfAction(action)
 
     def updateWithHint(self, feature, indexList):
@@ -86,7 +86,7 @@ class SelfKnowledge():
             else:
                 self._hand[i].filter(f)
 
-    def updateOppWithHint(self, feature, indexList):
+    def updatePartnerWithHint(self, feature, indexList):
         self._partnerKnowledge.updateWithHint(feature, indexList)
 
     def getPartnerHandKnowledge(self):
