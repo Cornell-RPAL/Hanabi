@@ -167,11 +167,11 @@ class Hanabot():
         self._selfknowledge.updateHandAge()
         if isinstance(action, Hint):
             indices = self.indicesOfFeature(action.feature)
-            if action.player_num == HANABOT:
+            if action.player == HANABOT:
                 self._selfknowledge.updatePartnerWithHint(action.feature, indices)
             else:
                 self._selfknowledge.updateWithHint(action.feature, indices)
-        elif action.player_num == HANABOT:
+        elif action.player == HANABOT:
             self._selfknowledge.updateSelfAction(action)
         else:
             self._selfknowledge.updatePartnerAction(action)
