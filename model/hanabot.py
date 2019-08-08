@@ -20,7 +20,7 @@ class Hanabot():
             await asyncio.sleep(0.05)
             # react to player action
             observedAction = iBuffer.action
-            if observedAction:             
+            if observedAction:
                 self.inform(observedAction)
 
                 intent = self.decideAction()
@@ -31,7 +31,7 @@ class Hanabot():
                     cards = [card for card in self._selfknowledge.partnerHand \
                         if card.hasFeature(self._currentIntent.feature)]
                     self.inform(self._currentIntent.complete(cards))
-                    self._currentIntent = None 
+                    self._currentIntent = None
 
                 m = Message()
                 text = m.respond(intent)
@@ -52,7 +52,7 @@ class Hanabot():
                     oBuffer.baxterCommand = ("discard", )
 
                 self.inform(action)
-                self._currentIntent = None 
+                self._currentIntent = None
 
     def isPlayable(self, card):
         top = self._board.tpartnerlayedCards()
@@ -108,7 +108,7 @@ class Hanabot():
         if playables:
             card = partnerHand[random.choice(playables)]
             return random.choice([card.color, card.number])
-        else: 
+        else:
             return None
 
     def hintCmp(self, hintList):
@@ -146,7 +146,7 @@ class Hanabot():
         partnerHandKnowledge = self._selfknowledge.getPartnerHandKnowledge()
         hintList = self.partnerFeatures()
         basicAction = self.getBasicAction()
-        
+
         if basicAction:
             return basicAction
 
@@ -169,11 +169,11 @@ class Hanabot():
             indices = self.indicesOfFeature(action.feature)
             if action.player_num == HANABOT:
                 self._selfknowledge.updatePartnerWithHint(action.feature, indices)
-            else: 
+            else:
                 self._selfknowledge.updateWithHint(action.feature, indices)
         elif action.player_num == HANABOT:
             self._selfknowledge.updateSelfAction(action)
-        else: 
+        else:
             self._selfknowledge.updatePartnerAction(action)
-        
+
 

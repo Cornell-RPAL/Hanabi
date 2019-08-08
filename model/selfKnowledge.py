@@ -22,22 +22,11 @@ class SelfKnowledge():
             self._partnerHand = board.partnerHand
             self._partnerKnowledge = SelfKnowledge(board, 1 - HANABOT, \
                 partnerKnowledge=self)
-<<<<<<< HEAD
-        else: 
-            self._partnerKnowledge = partnerKnowledge
-        self._drawCards = Counter(ALL_CARDS)
-        
-        for card in self._partnerHand:
-            self._drawCards[card] -= 1
-            for ukCard in self._hand:
-                ukCard.setDraw(self._drawCards)
-=======
             for card in self._partnerHand:
                 self._drawCards[card] -= 1
                 for ukCard in self._hand:
                     ukCard.setDraw(self._drawCards)
-        else: self._partnerKnowledge = partnerKnowledge
->>>>>>> a77d7e8d0246f646b7bd4c6c299093a6e6df69a3
+        else: self._partnerKnowledge = partnerKnowledges
 
     @property
     def board(self):
