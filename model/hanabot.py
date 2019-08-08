@@ -38,7 +38,7 @@ class Hanabot():
                 oBuffer.text = text
 
             # react to self action (intent)
-            card = iBuffer._board.cardInGripper
+            card = iBuffer.cvState['gripper']
             if card:
                 if isinstance(self._currentIntent, PlayIntent):
                     if card.isPlayable():
@@ -55,7 +55,7 @@ class Hanabot():
                 self._currentIntent = None 
 
     def isPlayable(self, card):
-        top = self._board.tpartnerlayedCards()
+        top = self._board.topPlayedCards()
         if isinstance(card, UnknownCard):
             for possibleCard in card._possibleCards:
                 num = top[possibleCard.color]
