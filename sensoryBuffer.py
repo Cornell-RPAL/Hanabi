@@ -128,8 +128,8 @@ class SensoryBuffer():
             await asyncio.sleep(0.05)
             if self._text and self._text != oldText:
                 print('input buffer processing...')
-                self.action += [CommandParser.parse(self._text)]
+                self.action = CommandParser.parse(self._text)
                 oldText = self._text
-            self.action += self.recognize_action(self.cvStateHistory)
+            self.action = self.recognize_action(self.cvStateHistory)
 
 
