@@ -23,7 +23,7 @@ class SelfKnowledge():
             self._partnerKnowledge = SelfKnowledge(board, 1 - HANABOT, \
                 partnerKnowledge=self)
         else: self._partnerKnowledge = partnerKnowledge
-        sself._drawCards = Counter(ALL_CARDS)
+        self._drawCards = Counter(ALL_CARDS)
         for card in self._partnerHand:
             self._drawCards[card] -= 1
             for ukCard in self._hand:
