@@ -26,7 +26,7 @@ class SelfKnowledge():
                 self._drawCards[card] -= 1
                 for ukCard in self._hand:
                     ukCard.setDraw(self._drawCards)
-        else: self._partnerKnowledge = partnerKnowledges
+        else: self._partnerKnowledge = partnerKnowledge
 
     @property
     def board(self):

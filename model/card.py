@@ -30,8 +30,7 @@ class Card:
         return self.color == feature or self.number == feature
 
     def __repr__(self):
-        return ('Card: ' + self.color + ' ' + str(self.number) + 
-            'ID: ' + str(self._id))
+        return 'Card(#' + str(self._id)+ ') : ' + self.color + ' ' + str(self.number)
 
     def __eq__(self, other):
         return (self.color == other.color) and (self.number == other.number)
