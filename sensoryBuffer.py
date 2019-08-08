@@ -64,8 +64,6 @@ class SensoryBuffer():
         self._cvStateHistory.append(new_state)
 
     def recognize_action(self, new_state):
-
-
         def stateChange(new_state): #maybe should change (does only hand matter??)
             visible = self.cvState
             visible['discard'] = [visible['discard'][0]]
@@ -124,15 +122,14 @@ class SensoryBuffer():
         #     print('nothing is happening')
 
 
-
     async def process(self):
         oldText = ''
         while True:
             await asyncio.sleep(0.05)
             if self._text and self._text != oldText:
                 print('input buffer processing...')
-                self._action += [CommandParser.parse(self._text)]
+                self.action += [CommandParser.parse(self._text)]
                 oldText = self._text
-            self._action += self.recognize_action(self.cvStateHistory)
+            self.action += self.recognize_action(self.cvStateHistory)
 
 
