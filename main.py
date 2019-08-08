@@ -1,16 +1,16 @@
 import asyncio
 import psutil
-from multiprocessing import Process, Pipe, Lock
+from multiprocessing import Process, Pipe, Lock, Condition
 
 from sensoryBuffer import SensoryBuffer
+from frameStream import FrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
 from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
-from model.game import Game
-
+from model.board import Board
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -20,8 +20,7 @@ class Main():
         self._sensoryBuffer = SensoryBuffer()
         self._oldLength = 1
         self._outputBuffer = OutputBuffer()
-        self._game = Game()
-        self._hanabot = Hanabot(self._game)
+        self._hanabot = None
         self._childPid = -1
         if not cv_off:
             self._fs = FrameStream()
@@ -44,6 +43,11 @@ class Main():
                 if info:
                     self._sensoryBuffer.setText(info)
 
+    async def _runHanabot(self):
+        await asyncio.sleep(0.5)
+        self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
+        self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
+
     async def run(self, cv_off = False, voice_off = False):
         display = asyncio.create_task(self._display())
 
@@ -58,9 +62,7 @@ class Main():
 
         input_processing = asyncio.create_task(self._sensoryBuffer.process())
 
-        hanabot_processing = asyncio.create_task(
-            self.runHanabot(self._sensoryBuffer, self._outputBuffer)
-        )
+        hanabot_processing = asyncio.create_task(self._runHanabot())
 
         if not voice_off:
             t2v = asyncio.create_task(self.textToSpeech())

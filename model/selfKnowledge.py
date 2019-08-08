@@ -1,13 +1,13 @@
 from .board import Board
-from .unknownCard import UnknownCard
+from .unknownCard import UnknownCard, ALL_CARDS
 from collections import Counter
-from .consts import NUMBER_IN_HAND, HANABOT, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, NUMBERS, COLORS, AMTS
+from .consts import (
+    NUMBER_IN_HAND, HANABOT, NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS
+)
 from .card import Card, isValidColor, isValidNumber
 from .action import PlaySuccess, PlayFail, Discard, Hint
 
 
-ALL_CARDS = [Card(c, n)
-             for n in NUMBERS for c in COLORS for _ in range(AMTS[n])]
 
 class SelfKnowledge():
     def __init__(self, board, player, partnerKnowledge=None):
