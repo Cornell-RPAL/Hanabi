@@ -10,6 +10,7 @@ from voice.gcloud_texttospeech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
+from model.board import Board
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -44,7 +45,7 @@ class Main():
 
     async def _runHanabot(self):
         await asyncio.sleep(0.5)
-        self._hanabot = Hanabot(self._sensoryBuffer.cvState['hand'])
+        self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
         self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
     async def run(self, cv_off = False, voice_off = False):
