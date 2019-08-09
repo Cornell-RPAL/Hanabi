@@ -3,7 +3,7 @@ import psutil
 from multiprocessing import Process, Pipe, Lock, Condition
 
 from sensoryBuffer import SensoryBuffer
-from frameStream import FrameStream
+from vision.frameStream import FrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
 from voice.text_to_speech import text_to_speech as t2s

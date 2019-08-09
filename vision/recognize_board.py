@@ -93,7 +93,6 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=100, hand_thres
 
     for key in res:
         res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
-    #print(res)
     return res
 
 
