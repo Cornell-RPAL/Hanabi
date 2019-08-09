@@ -94,8 +94,8 @@ class SensoryBuffer():
                         action_card = (old_hand - new_hand).pop()
                         if action_card in new_state['board']:
                             self.cvState = new_state
-                            # print('played', action_card)
-                            # print('new stable state:', self.cv2)
+                            print('played', action_card)
+                            print('new stable state:', self.cv2)
                             indices = [new_state['board'].index(action_card)]
                             return PlaySuccess(
                                 PLAYER, action_card, indices=indices)
@@ -103,8 +103,8 @@ class SensoryBuffer():
                             #could also just check top card
                             updateDiscard(new_state)
 
-                            # print('discarded', action_card)
-                            # print('new stable state:', self.prev_state)
+                            print('discarded', action_card)
+                            print('new stable state:', self.prev_state)
                             indices = [new_state['discard'].index(action_card)]
                             
                             return Discard(PLAYER, action_card, indices=indices)
