@@ -1,6 +1,6 @@
 from model.consts import HANABOT
 
-class Action:
+class Action(object):
     """
     An interface that represents the action of a player.
     """
