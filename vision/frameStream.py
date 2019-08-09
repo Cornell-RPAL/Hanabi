@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import asyncio  
 
-from recognize_board import detectState, getTags
+from vision.recognize_board import detectState, getTags
 
 
 

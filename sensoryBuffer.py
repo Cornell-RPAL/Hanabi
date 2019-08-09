@@ -1,7 +1,8 @@
-from model.action import Action
+from model.action import Action, PlaySuccess, PlayFail, Discard
 from model.card import Card
+from model.consts import PLAYER
 from commandParser import CommandParser
-from frameStream import FrameStream
+from vision.frameStream import FrameStream
 import asyncio
 
 TEXT_BUFFER_LENGTH = 10
@@ -43,8 +44,9 @@ class SensoryBuffer():
 
     @action.setter
     def action(self, value):
-        assert isinstance(value, Action)
         if value is not None:
+            if not isinstance(value, Action):
+                raise Exception(f"{value} is not an Action object")
             self._action += [value]
 
     @property
@@ -69,26 +71,19 @@ class SensoryBuffer():
             visible['discard'] = [visible['discard'][0]]
             return visible != new_state
 
-        def updateDiscard(self, new_state):
-            self.cvState = {
+        def updateDiscard(new_state):
+            self._cvState = {
             'discard': new_state['discard'] + self.cvState['discard'],
             'hand': new_state['hand'],
             'board': new_state['board']
             }
 
-        print('state', new_state)
-        if new_state is None:
-            return []
-
-        if new_state['gripper'] is not None:
-            return 'attempt play', new_state['gripper']
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different
 
         if stateChange(new_state):
             if self._permanence > 5: #should set in const later
-
                 self._permanence = 0
                 if len(new_state['hand']) == 5:
 
@@ -101,26 +96,18 @@ class SensoryBuffer():
                             self.cvState = new_state
                             # print('played', action_card)
                             # print('new stable state:', self.cv2)
-                            return PlayCard(PLAYER, card_ix = new_state['board'].index(action_card))
-                        if action_card in new_state['discard']: #could also just check top card
-                            self._updateDiscard(new_state)
+                            indices = [new_state['board'].index(action_card)]
+                            return PlaySuccess(
+                                PLAYER, action_card, indices=indices)
+                        if action_card in new_state['discard']: 
+                            #could also just check top card
+                            updateDiscard(new_state)
+
                             # print('discarded', action_card)
                             # print('new stable state:', self.prev_state)
-                            return Discard(PLAYER, card_ix = new_state['discard'].index(action_card))
-        #                 else:
-        #                     pass
-        #                     print('a card just disappeared? very bad')
-        #         else:
-        #             pass
-        #             print('waiting to draw new card')
-        #     else:
-        #         pass
-        #         self._permanence += 1
-        #         print('waiting for still frame')
-        # else:
-        #     pass
-        #     print('nothing is happening')
-
+                            indices = [new_state['discard'].index(action_card)]
+                            
+                            return Discard(PLAYER, action_card, indices=indices)
 
     async def process(self):
         oldText = ''
