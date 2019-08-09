@@ -1,5 +1,3 @@
-from __future__ import division
-
 import re
 import sys
 
@@ -68,7 +66,7 @@ class MicrophoneStream(object):
                 return
 
             data = [chunk]
-            
+
             # Now consume whatever other data's still buffered.
             while True:
                 try:
@@ -81,7 +79,6 @@ class MicrophoneStream(object):
 
             yield b''.join(data)
 
-# if not checkIfProcessRunning('afplay'):
 
 class TextStream(object):
     def __init__(self):
@@ -96,7 +93,7 @@ class TextStream(object):
 
     def generator(self, responses):
         while not self.closed:
-            num_chars_printed = 0    
+            num_chars_printed = 0
 
             for response in responses:
                 if not response.results:
@@ -105,7 +102,7 @@ class TextStream(object):
                 result = response.results[0]
                 if not result.alternatives:
                     continue
-                
+
                 transcript = result.alternatives[0].transcript
 
                 overwrite_chars = ' ' * (num_chars_printed - len(transcript))
@@ -114,14 +111,14 @@ class TextStream(object):
                     num_chars_printed = len(transcript)
                 else:
                     yield (transcript + overwrite_chars)
-            
+
 
 colors = ['red', 'white', 'blue', 'green', 'yellow']
 numbers = ['1', '2', '3', '4', '5']
 tokens = ['hint token', 'life token', 'hint tokens', 'life tokens']
 
 
-color_cards = [(color + 'card') for color in colors] 
+color_cards = [(color + 'card') for color in colors]
 color_cards += [(color + 'cards') for color in colors]
 color_number = [(color + number) for color in colors for number in numbers]
 determiners = ['your', 'my', 'these', 'those']
@@ -165,5 +162,5 @@ def voice_stream_to_text():
 
 def main(sender):
     for text in voice_stream_to_text():
-        print("generated: " + text)
+        print(f"generated {text}")
         sender.send(text)

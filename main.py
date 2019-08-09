@@ -18,22 +18,11 @@ parser = argparse.ArgumentParser()
 class Main():
     def __init__(self, cv_off=False):
         self._sensoryBuffer = SensoryBuffer()
-        self._oldLength = 1
         self._outputBuffer = OutputBuffer()
         self._hanabot = None
         self._childPid = -1
         if not cv_off:
             self._fs = FrameStream()
-
-
-    async def _display(self):
-        while True:
-            await asyncio.sleep(0.5)
-            #print (self._sensoryBuffer.text)
-            if len(self._sensoryBuffer.text) != self._oldLength:
-                print("Main.buffer change detected: ")
-                print (self._sensoryBuffer.text)
-                self._oldLength = len(self._sensoryBuffer.text)
 
     async def listen(self, end):
         while True:
@@ -47,8 +36,7 @@ class Main():
         await asyncio.sleep(0.5)
         self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
 
-    async def run(self, cv_off = False, voice_off = False):
-        display = asyncio.create_task(self._display())
+    async def run(self, cv_off=False, voice_off=False):
 
         if not voice_off:
             v2t_end, main_end = Pipe() # communication pipe for across processes
@@ -74,13 +62,13 @@ class Main():
         # )
 
         if cv_off:
-            tasks = (display, listen, input_processing, hanabot_processing, t2v,  )
+            tasks = (listen, input_processing, hanabot_processing, t2v,  )
 
         elif voice_off:
-            tasks = (display, frame_processing, input_processing, hanabot_processing, )
+            tasks = (frame_processing, input_processing, hanabot_processing, )
 
         else:
-            tasks = (display, listen, frame_processing, input_processing, hanabot_processing, t2v,)
+            tasks = (listen, frame_processing, input_processing, hanabot_processing, t2v,)
 
         await asyncio.gather(*tasks)
 
@@ -109,9 +97,6 @@ class Main():
             elif not v2t.is_alive():
                 v2t = Process(target = v2tloop, args = (v2t_end,))
                 v2t.start()
-
-
-
 
 
 parser.add_argument('-cv', action='store_true', help='no computer vision')
