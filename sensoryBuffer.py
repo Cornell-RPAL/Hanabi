@@ -81,8 +81,9 @@ class SensoryBuffer():
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different
-
+        print(prev_state)
         if stateChange(new_state):
+            print('detected state change')
             if self._permanence > 5: #should set in const later
                 self._permanence = 0
                 if len(new_state['hand']) == 5:

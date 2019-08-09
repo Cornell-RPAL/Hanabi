@@ -7,3 +7,4 @@ __pycache__
 output.mp3
 *.pyc
 HanabiTesting-6471f1c977bb.json
+*.swap
