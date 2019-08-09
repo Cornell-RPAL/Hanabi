@@ -21,6 +21,18 @@ class Action:
     @property
     def indices(self):
         return self._indices
+    
+    @property
+    def player(self):
+        return self._player
+
+    @property 
+    def feature(self):
+        return self._feature
+
+    @property
+    def baxterCommand(self):
+        return self._baxterCommand
 
 
 class PlaySuccess(Action):

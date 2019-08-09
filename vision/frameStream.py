@@ -25,4 +25,4 @@ class FrameStream():
             self.frame_num += 1
             ret, frame = self.cap.read()
             gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            buffer.cv_state_history.append(detectState(getTags(gray_img)))
+            buffer.cvStateHistory = detectState(getTags(gray_img))

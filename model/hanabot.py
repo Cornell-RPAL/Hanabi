@@ -20,7 +20,7 @@ class Hanabot():
             await asyncio.sleep(0.05)
             # react to player action
             observedAction = iBuffer.action
-            if observedAction:             
+            if observedAction:
                 self.inform(observedAction)
 
                 intent = self.decideAction()
@@ -31,14 +31,14 @@ class Hanabot():
                     cards = [card for card in self._selfknowledge.partnerHand \
                         if card.hasFeature(self._currentIntent.feature)]
                     self.inform(self._currentIntent.complete(cards))
-                    self._currentIntent = None 
+                    self._currentIntent = None
 
                 m = Message()
                 text = m.respond(intent)
                 oBuffer.text = text
 
             # react to self action (intent)
-            card = iBuffer._board.cardInGripper
+            card = iBuffer.cvState['gripper']
             if card:
                 if isinstance(self._currentIntent, PlayIntent):
                     if card.isPlayable():
@@ -52,7 +52,7 @@ class Hanabot():
                     oBuffer.baxterCommand = ("discard", )
 
                 self.inform(action)
-                self._currentIntent = None 
+                self._currentIntent = None
 
     def isPlayable(self, card):
         top = self._board.topPlayedCards()
@@ -103,12 +103,12 @@ class Hanabot():
         return random.choice(hintList)
 
     def getPlayableHint(self):
-        oppHand = self._selfknowledge.partnerHand
-        playables = self.playables(oppHand)
+        partnerHand = self._selfknowledge.partnerHand
+        playables = self.playables(partnerHand)
         if playables:
-            card = oppHand[random.choice(playables)]
+            card = partnerHand[random.choice(playables)]
             return random.choice([card.color, card.number])
-        else: 
+        else:
             return None
 
     def hintCmp(self, hintList):
@@ -146,7 +146,7 @@ class Hanabot():
         partnerHandKnowledge = self._selfknowledge.getPartnerHandKnowledge()
         hintList = self.partnerFeatures()
         basicAction = self.getBasicAction()
-        
+
         if basicAction:
             return basicAction
 
@@ -167,13 +167,13 @@ class Hanabot():
         self._selfknowledge.updateHandAge()
         if isinstance(action, Hint):
             indices = self.indicesOfFeature(action.feature)
-            if action.player_num == HANABOT:
-                self._selfknowledge.updateOppWithHint(action.feature, indices)
-            else: 
+            if action.player == HANABOT:
+                self._selfknowledge.updatePartnerWithHint(action.feature, indices)
+            else:
                 self._selfknowledge.updateWithHint(action.feature, indices)
-        elif action.player_num == HANABOT:
+        elif action.player == HANABOT:
             self._selfknowledge.updateSelfAction(action)
-        else: 
-            self._selfknowledge.updateOppAction(action)
-        
+        else:
+            self._selfknowledge.updatePartnerAction(action)
+
 

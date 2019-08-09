@@ -1,9 +1,9 @@
-**/__pycache__
-**/.DS_Store
-**/.vscod**/.DS_Store
+__pycache__
+.DS_Store
+.vscode
 .DS_Store
 *.pnm
 *.ps
 output.mp3
 *.pyc
-**/*.pyc
+HanabiTesting-6471f1c977bb.json

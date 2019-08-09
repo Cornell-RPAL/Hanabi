@@ -20,8 +20,8 @@ class SensoryBuffer():
         self._cvState = self._initial_state
         self._cvStateHistory = []
 
-        # 
-        self._action = [] 
+        #
+        self._action = []
 
     @property
     def text(self):
@@ -34,7 +34,7 @@ class SensoryBuffer():
             self._textHistory.pop(0)
         self._textHistory.append(text)
 
-    @property    
+    @property
     def action(self):
         if self._action:
             return self._action.pop()
@@ -42,14 +42,15 @@ class SensoryBuffer():
             return None
 
     @action.setter
-    def action(self, new_action):
-        if new_action is not None:
-            self._action += [new_action]
+    def action(self, value):
+        assert isinstance(value, Action)
+        if value is not None:
+            self._action += [value]
 
     @property
     def cvState(self):
         return self._cvState
-    
+
 
     @property
     def cvStateHistory(self):
@@ -63,8 +64,6 @@ class SensoryBuffer():
         self._cvStateHistory.append(new_state)
 
     def recognize_action(self, new_state):
-
-
         def stateChange(new_state): #maybe should change (does only hand matter??)
             visible = self.cvState
             visible['discard'] = [visible['discard'][0]]
@@ -78,8 +77,11 @@ class SensoryBuffer():
             }
 
         print('state', new_state)
+        if new_state is None:
+            return []
+
         if new_state['gripper'] is not None:
-            return 'attempt play', new_state['gripper'][0]
+            return 'attempt play', new_state['gripper']
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different
@@ -92,7 +94,7 @@ class SensoryBuffer():
 
                     new_hand = set(new_state['hand'])
                     old_hand = set(self.cvState['hand'])
-        
+
                     if len(old_hand - new_hand) == 1:
                         action_card = (old_hand - new_hand).pop()
                         if action_card in new_state['board']:
@@ -120,15 +122,14 @@ class SensoryBuffer():
         #     print('nothing is happening')
 
 
-
     async def process(self):
         oldText = ''
         while True:
             await asyncio.sleep(0.05)
             if self._text and self._text != oldText:
                 print('input buffer processing...')
-                self._action += [CommandParser.parse(self._text)]
+                self.action = CommandParser.parse(self._text)
                 oldText = self._text
-            self._action += self.recognize_action(self.cvStateHistory)
+            self.action = self.recognize_action(self.cvStateHistory)
 
-    
+
