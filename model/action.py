@@ -1,10 +1,10 @@
-from .consts import HANABOT
+from model.consts import HANABOT
 
 class Action:
     """
     An interface that represents the action of a player.
     """
-    def __init__ (self, player, card = None, feature = None, indices=[]):
+    def __init__ (self, player, card=None, feature=None, indices=[]):
         """
         [feature] is [None] iff action is [Play] or [Discard].
         """
@@ -21,12 +21,12 @@ class Action:
     @property
     def indices(self):
         return self._indices
-    
+
     @property
     def player(self):
         return self._player
 
-    @property 
+    @property
     def feature(self):
         return self._feature
 
