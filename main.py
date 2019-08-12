@@ -106,14 +106,12 @@ class Main(object):
 
         frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
-        process_managing = asyncio.create_task(
-            self.manageProcess(v2t, v2t_end)
-        )
+        # process_managing = asyncio.create_task(self.manageProcess(v2t, v2t_end))
 
         baxter_running = asyncio.create_task(self._runBaxter())
 
         tasks = (listen, frame_processing, input_processing, \
-                hanabot_processing, process_managing, t2v, baxter_running)
+                hanabot_processing, t2v, baxter_running)
 
         await asyncio.gather(*tasks)
 
