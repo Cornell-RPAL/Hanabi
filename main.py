@@ -62,8 +62,9 @@ class Main(object):
         while True:
             await asyncio.sleep(0.02)
             print('managing processes')
-            if checkIfProcessRunning('afplay'):
-                print('afplay detected')
+
+            if checkIfProcessRunning('play'):
+                print('play detected')
                 v2t.terminate()
             elif not v2t.is_alive():
                 v2t = Process(target = v2tloop, args = (v2t_end,))
@@ -89,9 +90,9 @@ class Main(object):
 
         frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
 
-        # process_managing = asyncio.create_task(
-        #     self.manageProcess(v2t, v2t_end)
-        # )
+        process_managing = asyncio.create_task(
+            self.manageProcess(v2t, v2t_end)
+        )
 
         tasks = (listen, frame_processing, input_processing, hanabot_processing, t2v,)
 
