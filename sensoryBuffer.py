@@ -92,9 +92,10 @@ class SensoryBuffer():
                     if len(old_hand - new_hand) == 1:
                         action_card = (old_hand - new_hand).pop()
                         if action_card in new_state['board']:
-                            self.cvState = new_state
+                            print(self.cvState, new_state)
+                            self._cvState = new_state
                             print('played', action_card)
-                            print('new stable state:', self.cv2)
+                            print('new stable state:', self.cvState)
                             indices = [new_state['board'].index(action_card)]
                             return PlaySuccess(
                                 PLAYER, action_card, indices=indices)

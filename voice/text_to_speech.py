@@ -40,7 +40,7 @@ def text_to_speech(text):
     if platform.system() == 'Darwin':
         system('afplay output.mp3')
     else:
-        system('play output.mp3')
+        system('play output.mp3 -q')
 
 if __name__ == '__main__':
     text_to_speech('Your card is three. Actually, only these two are. How are you? What do youu remember about your card? I understood! Did you mean that these two cards are white? Oh, I see. Thank you!')

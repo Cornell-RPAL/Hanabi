@@ -55,20 +55,26 @@ class Main(object):
                 p.suspend() # prevent computer from hearing itself
                 print ('synthesizing text from output buffer')
                 t2s(self._outputBuffer.text)
-                p.resume()
+                print ('if you see this only after audio finishies, should be blocking')
+                #p.resume()
                 oldText = self._outputBuffer.text
 
     async def manageProcess(self, v2t, v2t_end):
+        detected = False
         while True:
             await asyncio.sleep(0.02)
-            print('managing processes')
+            if not detected:
+                print('managing processes')
+            else:
+                print("play detected!")
 
             if checkIfProcessRunning('play'):
-                print('play detected')
-                v2t.terminate()
-            elif not v2t.is_alive():
-                v2t = Process(target = v2tloop, args = (v2t_end,))
-                v2t.start()
+                detected = True
+                #    print('play detected')
+            #    v2t.terminate()
+            #elif not v2t.is_alive():
+            #    v2t = Process(target = v2tloop, args = (v2t_end,))
+            #    v2t.start()
 
     async def run(self):
         """
