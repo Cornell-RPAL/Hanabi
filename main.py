@@ -74,7 +74,7 @@ class Main(object):
         Runs all the processes and tasks.
         """
         v2t_end, main_end = Pipe() # communication pipe for across processes
-        listen = asyncio.create_task(self.listen(main_end))
+        listen = asyncio.create_task(self._listen(main_end))
 
         # multiprocessing is necessary for microphone stream
         v2t = Process(target = v2tloop, args = (v2t_end,))
