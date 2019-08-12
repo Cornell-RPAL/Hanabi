@@ -12,11 +12,8 @@ from model.message import Message
 from model.consts import HANABOT
 from model.board import Board
 
-import argparse
-parser = argparse.ArgumentParser()
-
-class Main():
-    def __init__(self, cv_off=False):
+class Main(object):
+    def __init__(self):
         self._sensoryBuffer = SensoryBuffer()
         self._outputBuffer = OutputBuffer()
         self._hanabot = None
@@ -24,7 +21,13 @@ class Main():
         if not cv_off:
             self._fs = FrameStream()
 
-    async def listen(self, end):
+    async def _listen(self, end):
+        """
+        Listens to the child processes for information.
+
+        For right now, the only other process is speech to text, therefore
+        it receives text from v2t and stores it in the sensoryBuffer.
+        """
         while True:
             await asyncio.sleep(0.05)
             if end.poll():
@@ -33,50 +36,17 @@ class Main():
                     self._sensoryBuffer.setText(info)
 
     async def _runHanabot(self):
+        """
+        Initializes the hanabot AI and keeps it running.
+        """
         await asyncio.sleep(0.5)
         self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
         await self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
-    async def run(self, cv_off=False, voice_off=False):
-
-        if not voice_off:
-            v2t_end, main_end = Pipe() # communication pipe for across processes
-            listen = asyncio.create_task(self.listen(main_end))
-
-            # multiprocessing is necessary for microphone stream
-            v2t = Process(target = v2tloop, args = (v2t_end,))
-            v2t.start()
-            self._childPid = v2t.pid
-
-        input_processing = asyncio.create_task(self._sensoryBuffer.process())
-
-        hanabot_processing = asyncio.create_task(self._runHanabot())
-
-        if not voice_off:
-            t2v = asyncio.create_task(self.textToSpeech())
-
-        if not cv_off:
-            frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
-
-        # process_managing = asyncio.create_task(
-        #     self.manageProcess(v2t, v2t_end)
-        # )
-
-        if cv_off:
-            tasks = (listen, input_processing, hanabot_processing, t2v,  )
-
-        elif voice_off:
-            tasks = (frame_processing, input_processing, hanabot_processing, )
-
-        else:
-            tasks = (listen, frame_processing, input_processing, hanabot_processing, t2v,)
-
-        await asyncio.gather(*tasks)
-
-        if not voice_off:
-            v2t.terminate()
-
     async def textToSpeech(self):
+        """
+        Monitors and plays synthesized text in outputBuffer.
+        """
         oldText = ''
         while True:
             await asyncio.sleep(0.05)
@@ -92,18 +62,45 @@ class Main():
         while True:
             await asyncio.sleep(0.02)
             print('managing processes')
-            if checkIfProcessRunning('afplay'):
-                print('afplay detected')
+
+            if checkIfProcessRunning('play'):
+                print('play detected')
                 v2t.terminate()
             elif not v2t.is_alive():
                 v2t = Process(target = v2tloop, args = (v2t_end,))
                 v2t.start()
 
+    async def run(self):
+        """
+        Runs all the processes and tasks.
+        """
+        v2t_end, main_end = Pipe() # communication pipe for across processes
+        listen = asyncio.create_task(self.listen(main_end))
 
-parser.add_argument('-cv', action='store_true', help='no computer vision')
-parser.add_argument('-v', action='store_true', help='no t2v or v2t')
+        # multiprocessing is necessary for microphone stream
+        v2t = Process(target = v2tloop, args = (v2t_end,))
+        v2t.start()
+        self._childPid = v2t.pid
+
+        input_processing = asyncio.create_task(self._sensoryBuffer.process())
+
+        hanabot_processing = asyncio.create_task(self._runHanabot())
+
+        t2v = asyncio.create_task(self.textToSpeech())
+
+        frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
+
+        process_managing = asyncio.create_task(
+            self.manageProcess(v2t, v2t_end)
+        )
+
+        tasks = (listen, frame_processing, input_processing, hanabot_processing, t2v,)
+
+        await asyncio.gather(*tasks)
+
+        v2t.terminate()
+
 
 if __name__ == '__main__':
-    args = parser.parse_args()
-    m = Main(cv_off=args.cv)
-    asyncio.run(m.run(voice_off=args.v, cv_off=args.cv))
+    m = Main()
+    asyncio.run(m.run())

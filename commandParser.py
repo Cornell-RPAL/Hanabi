@@ -18,7 +18,7 @@ class CommandParser():
             i = word_list.index("indices")
         else:
             i = 0
-        
+
         index_list = []
         while True:
             i += 1
@@ -34,7 +34,8 @@ class CommandParser():
             feature = int(word_list[i])
         except ValueError:
             feature = word_list[i]
-
+        except IndexError:
+            return
         # feature = word_list[-1]
 
         dn = {
