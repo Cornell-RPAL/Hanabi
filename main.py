@@ -93,7 +93,8 @@ class Main(object):
             self.manageProcess(v2t, v2t_end)
         )
 
-        tasks = (listen, frame_processing, input_processing, hanabot_processing, t2v,)
+        tasks = (listen, frame_processing, input_processing, \
+                hanabot_processing, process_managing, t2v,)
 
         await asyncio.gather(*tasks)
 
