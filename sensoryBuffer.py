@@ -72,16 +72,14 @@ class SensoryBuffer():
             return visible != new_state
 
         def updateDiscard(new_state):
-            self._cvState = {
-            'discard': new_state['discard'] + self.cvState['discard'],
-            'hand': new_state['hand'],
-            'board': new_state['board']
-            }
+            self.cvState['discard'] = new_state['discard'] + self.cvState['discard']
 
+        if not new_state:
+            return None
 
         # should be still for 3 frames
         # check if exactly one card id in hand is different
-        print(prev_state)
+        # print(self.cvState)
         if stateChange(new_state):
             print('detected state change')
             if self._permanence > 5: #should set in const later
@@ -105,16 +103,17 @@ class SensoryBuffer():
                             updateDiscard(new_state)
 
                             print('discarded', action_card)
-                            print('new stable state:', self.prev_state)
+                            print('new stable state:', self.cvState)
                             indices = [new_state['discard'].index(action_card)]
                             
                             return Discard(PLAYER, action_card, indices=indices)
+            self._permanence += 1
 
     async def process(self):
         oldText = ''
         while True:
             await asyncio.sleep(0.05)
-            if self._text and self._text != oldText:
+            if self._text and self._text != oldText and self.cvStateHistory:
                 print('input buffer processing...')
                 self.action = CommandParser.parse(self._text)
                 oldText = self._text

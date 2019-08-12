@@ -116,7 +116,7 @@ class Hanabot():
         return playableHint or self.hintRandom(hintList)
 
     def indicesOfFeature(self, feature):
-        return [i for card, i in enumerate(self._selfknowledge.partnerHand) \
+        return [i for i, card in enumerate(self._selfknowledge.partnerHand) \
             if card.hasFeature(feature)]
 
     def fullHint(self):
