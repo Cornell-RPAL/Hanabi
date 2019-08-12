@@ -11,6 +11,7 @@ from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
 from model.board import Board
+from process_monitor import checkIfProcessRunning
 
 class Main(object):
     def __init__(self):
