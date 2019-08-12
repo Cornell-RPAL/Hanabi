@@ -18,8 +18,7 @@ class Main(object):
         self._outputBuffer = OutputBuffer()
         self._hanabot = None
         self._childPid = -1
-        if not cv_off:
-            self._fs = FrameStream()
+        self._fs = FrameStream()
 
     async def _listen(self, end):
         """
