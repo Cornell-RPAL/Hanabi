@@ -166,11 +166,10 @@ class Hanabot():
     def inform(self, action):
         self._selfknowledge.updateHandAge()
         if isinstance(action, Hint):
-            indices = self.indicesOfFeature(action.feature)
             if action.player == HANABOT:
-                self._selfknowledge.updatePartnerWithHint(action.feature, indices)
+                self._selfknowledge.updatePartnerWithHint(action.feature, action.indices)
             else:
-                self._selfknowledge.updateWithHint(action.feature, indices)
+                self._selfknowledge.updateWithHint(action.feature, action.indices)
         elif action.player == HANABOT:
             self._selfknowledge.updateSelfAction(action)
         else:
