@@ -94,7 +94,7 @@ class Main(object):
         listen = asyncio.create_task(self._listen(main_rcv))
 
         # multiprocessing is necessary for microphone stream
-        v2t = multiprocessing.Process(target = v2tloop, args = (v2t_send,))
+        v2t = Process(target = v2tloop, args = (v2t_send,))
         v2t.start()
         self._childPid = v2t.pid
 
