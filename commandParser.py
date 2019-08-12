@@ -17,7 +17,7 @@ class CommandParser():
         elif 'indices' in word_list:
             i = word_list.index("indices")
         else:
-            i = 0
+            return
 
         index_list = []
         while True:
