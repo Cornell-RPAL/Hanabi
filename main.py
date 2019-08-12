@@ -1,6 +1,7 @@
 import asyncio
 import psutil
 from multiprocessing import Process, Pipe, Lock, Condition
+from subprocess import Popen
 
 from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
@@ -84,7 +85,7 @@ class Main(object):
             if command:
                 fn = 'baxter/' + command[0] + '.py'
                 args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
-                subprocess.Popen(args, shell=True, )
+                Popen(args, shell=True, )
 
     async def run(self):
         """
