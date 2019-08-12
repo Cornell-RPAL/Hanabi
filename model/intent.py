@@ -21,7 +21,7 @@ class Intent:
                 return PlaySuccess(HANABOT, cardList[0], indices = self._indices)
             else:
                 return PlayFail(HANABOT, cardList[0], indices = self._indices)
-        elif isinstance(self, DiscardIntent): 
+        elif isinstance(self, DiscardIntent):
             return Discard(HANABOT, cardList[0], indices = self._indices)
         elif isinstance(self, HintIntent):
             return Hint(HANABOT, cardList, feature = self._feature, \
@@ -35,7 +35,7 @@ class Intent:
 class PlayIntent(Intent):
     @property
     def baxterCommand(self):
-        return ('look', self._indices[0])
+        return ('look', self._indices)
 
     def __str__(self):
         return " play card at index " + str(self._indices)+"\n"
@@ -43,7 +43,7 @@ class PlayIntent(Intent):
 class DiscardIntent(Intent):
     @property
     def baxterCommand(self):
-        return ('discard', self._indices[0])
+        return ('discard', self._indices)
 
     def __str__(self):
         return " discard card at index " + str(self._indices) +"\n"

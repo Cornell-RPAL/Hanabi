@@ -38,9 +38,9 @@ def text_to_speech(text):
         print('Audio content written to file "output.mp3"')
 
     if platform.system() == 'Darwin':
-        run('afplay', 'output.mp3')
+        run(['afplay', 'output.mp3'])
     else:
-        run('play', 'output.mp3' ,'-q')
+        run(['play', 'output.mp3' ,'-q'])
 
 if __name__ == '__main__':
     text_to_speech('Your card is three. Actually, only these two are. How are you? What do youu remember about your card? I understood! Did you mean that these two cards are white? Oh, I see. Thank you!')

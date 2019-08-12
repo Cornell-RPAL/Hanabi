@@ -43,13 +43,13 @@ class Hanabot():
                 if isinstance(self._currentIntent, PlayIntent):
                     if card.isPlayable():
                         action = self._currentIntent.complete(card, success=True)
-                        oBuffer.baxterCommand = ("play", )
+                        oBuffer.baxterCommand = ("play", [])
                     else:
                         action = self._currentIntent.complete(card, success=False)
-                        oBuffer.baxterCommand = ("discard", )
+                        oBuffer.baxterCommand = ("discard", [])
                 elif isinstance(self._currentIntent, DiscardIntent):
                     action = self._currentIntent.complete(card)
-                    oBuffer.baxterCommand = ("discard", )
+                    oBuffer.baxterCommand = ("discard", [])
 
                 self.inform(action)
                 self._currentIntent = None

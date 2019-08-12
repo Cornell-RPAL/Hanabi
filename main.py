@@ -76,15 +76,25 @@ class Main(object):
             #    v2t = Process(target = v2tloop, args = (v2t_end,))
             #    v2t.start()
 
+    async def _runBaxter(self):
+        while True:
+            await asyncio.sleep(0.05)
+            command = self._outputBuffer.baxterCommand
+
+            if command:
+                fn = 'baxter/' + command[0] + '.py'
+                args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
+                subprocess.Popen(args, shell=True, )
+
     async def run(self):
         """
         Runs all the processes and tasks.
         """
-        v2t_end, main_end = Pipe() # communication pipe for across processes
-        listen = asyncio.create_task(self._listen(main_end))
+        v2t_send, main_rcv = Pipe() # communication pipe for across processes
+        listen = asyncio.create_task(self._listen(main_rcv))
 
         # multiprocessing is necessary for microphone stream
-        v2t = Process(target = v2tloop, args = (v2t_end,))
+        v2t = multiprocessing.Process(target = v2tloop, args = (v2t_send,))
         v2t.start()
         self._childPid = v2t.pid
 
@@ -100,8 +110,10 @@ class Main(object):
             self.manageProcess(v2t, v2t_end)
         )
 
+        baxter_running = asyncio.create_task(self._runBaxter())
+
         tasks = (listen, frame_processing, input_processing, \
-                hanabot_processing, process_managing, t2v,)
+                hanabot_processing, process_managing, t2v, baxter_running)
 
         await asyncio.gather(*tasks)
 
