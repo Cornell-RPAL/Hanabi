@@ -31,17 +31,17 @@ class Main(object):
         self._fs = FrameStream()
 
     @loop
-    async def _listen(self, end):
+    def _listen(self, end):
         """
         Listens to the child processes for information.
 
         For right now, the only other process is speech to text, therefore
         it receives text from v2t and stores it in the sensoryBuffer.
         """
-            if end.poll():
-                info = end.recv()
-                if info:
-                    self._sensoryBuffer.setText(info)
+        if end.poll():
+            info = end.recv()
+            if info:
+                self._sensoryBuffer.setText(info)
 
     async def _runHanabot(self):
         """
@@ -52,7 +52,7 @@ class Main(object):
         await self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
     @loop
-    async def textToSpeech(self):
+    def textToSpeech(self):
         """
         Monitors and plays synthesized text in outputBuffer.
         """
@@ -83,7 +83,7 @@ class Main(object):
             #    v2t.start()
 
     @loop
-    async def _runBaxter(self):
+    def _runBaxter(self):
         command = self._outputBuffer.baxterCommand
         if command:
             # baxter_env = ['cd ~/ros_ws && ./baxter.sh']
