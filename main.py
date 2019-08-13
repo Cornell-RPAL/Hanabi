@@ -38,10 +38,10 @@ class Main(object):
         For right now, the only other process is speech to text, therefore
         it receives text from v2t and stores it in the sensoryBuffer.
         """
-            if end.poll():
-                info = end.recv()
-                if info:
-                    self._sensoryBuffer.setText(info)
+        if end.poll():
+            info = end.recv()
+            if info:
+                self._sensoryBuffer.setText(info)
 
     async def _runHanabot(self):
         """
