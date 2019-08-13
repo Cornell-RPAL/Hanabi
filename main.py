@@ -14,6 +14,14 @@ from model.consts import HANABOT
 from model.board import Board
 from process_monitor import checkIfProcessRunning
 
+
+def loop(func):
+    async def _func(*args, **kwargs):
+        while True:
+            await asyncio.sleep(0.05)
+            func(*args, **kwargs)
+    return _func
+
 class Main(object):
     def __init__(self):
         self._sensoryBuffer = SensoryBuffer()
@@ -22,6 +30,8 @@ class Main(object):
         self._childPid = -1
         self._fs = FrameStream()
 
+
+    @loop
     async def _listen(self, end):
         """
         Listens to the child processes for information.
@@ -29,8 +39,6 @@ class Main(object):
         For right now, the only other process is speech to text, therefore
         it receives text from v2t and stores it in the sensoryBuffer.
         """
-        while True:
-            await asyncio.sleep(0.05)
             if end.poll():
                 info = end.recv()
                 if info:
@@ -77,15 +85,14 @@ class Main(object):
             #    v2t = Process(target = v2tloop, args = (v2t_end,))
             #    v2t.start()
 
+    @loop
     async def _runBaxter(self):
-        while True:
-            await asyncio.sleep(0.05)
-            command = self._outputBuffer.baxterCommand
-
-            if command:
-                fn = 'baxter/' + command[0] + '.py'
-                args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
-                Popen(args, shell=True, )
+        command = self._outputBuffer.baxterCommand
+        if command:
+            # baxter_env = ['cd ~/ros_ws && ./baxter.sh']
+            fn = 'baxter/' + command[0] + '.py'
+            args =['python2.7'] + [fn] + [str(i) for i in command[1]]
+            Popen(args)
 
     async def run(self):
         """
