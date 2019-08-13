@@ -13,7 +13,7 @@ class OutputBuffer():
 
     @text.setter
     def text(self, val):
-        print ('output buffer received: ' + text)
+        print (f'output buffer received: {val}')
         self._text = [val]
 
     @property
