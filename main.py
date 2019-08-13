@@ -30,7 +30,6 @@ class Main(object):
         self._childPid = -1
         self._fs = FrameStream()
 
-
     @loop
     async def _listen(self, end):
         """
@@ -52,21 +51,19 @@ class Main(object):
         self._hanabot = Hanabot(Board(self._sensoryBuffer.cvState['hand']))
         await self._hanabot.react(self._sensoryBuffer, self._outputBuffer)
 
+    @loop
     async def textToSpeech(self):
         """
         Monitors and plays synthesized text in outputBuffer.
         """
-        oldText = ''
-        while True:
-            await asyncio.sleep(0.05)
-            if oldText != self._outputBuffer.text:
-                p = psutil.Process(self._childPid)
-                p.suspend() # prevent computer from hearing itself
-                print ('synthesizing text from output buffer')
-                t2s(self._outputBuffer.text)
-                print ('if you see this only after audio finishies, should be blocking')
-                #p.resume()
-                oldText = self._outputBuffer.text
+        text = self._outputBuffer.text
+        if text:
+            p = psutil.Process(self._childPid)
+            p.suspend() # prevent computer from hearing itself
+            print ('synthesizing text from output buffer')
+            t2s(text)
+            print ('if you see this only after audio finishies, should be blocking')
+            p.resume()
 
     async def manageProcess(self, v2t, v2t_end):
         detected = False

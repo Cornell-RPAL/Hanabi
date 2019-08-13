@@ -1,17 +1,20 @@
 class OutputBuffer():
     def __init__(self):
-        self._text = ''
+        self._text = []
         self._action = None
         self._baxterCommand = []
 
     @property
     def text(self):
-        return self._text
+        if self._text:
+            return self._text.pop()
+        else:
+            return None
 
     @text.setter
-    def text(self, text):
+    def text(self, val):
         print ('output buffer received: ' + text)
-        self._text = text
+        self._text = [val]
 
     @property
     def action(self):
