@@ -127,7 +127,7 @@ class Hanabot():
 
     def discardRandom(self):
         hand = self._selfknowledge.hand
-        return DiscardIntent([random.randrange(len(hand))])
+        return DiscardIntent(indices=[random.randrange(len(hand))])
 
     def getBasicAction(self):
         hand = self._selfknowledge.hand
@@ -136,9 +136,9 @@ class Hanabot():
         discardables = self.discardables(hand)
 
         if playables:
-            return PlayIntent([random.choice(playables)])
+            return PlayIntent(indices=[random.choice(playables)])
         elif discardables:
-            return DiscardIntent([random.choice(discardables)])
+            return DiscardIntent(indices=[random.choice(discardables)])
         else:
             return None
 
