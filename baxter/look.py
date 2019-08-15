@@ -4,7 +4,7 @@ import rospy
 import baxter_interface
 import argparse
 
-from motion_consts import NEUTRAL, POSITIONS
+from motion_consts import NEUTRAL, POSITIONS, LOOK
 
 rospy.init_node('node')
 
@@ -30,3 +30,4 @@ elif int(args.i) in range(0,5):
     pick_up(int(args.i))
 else:
     print 'Give a valid integer in range 0-4 inclusive to specify the index!'
+ 
