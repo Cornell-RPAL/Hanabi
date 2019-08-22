@@ -1,10 +1,10 @@
 import cv2
 import pyopenpose as op
 import numpy as np
-import sys
+import os
 
 params = dict()
-params["model_folder"] = "../../models/"
+params["model_folder"] = "../../../openpose/models/"
 params["hand"] = True
 params["hand_detector"] = 2
 params["body"] = 0
@@ -21,12 +21,25 @@ point_right = []
 point_l_path = "gesture_data/image_data/pointing_left/"
 point_r_path = "gesture_data/image_data/pointing_right/"
 
-try:
-    opWrapper = op.WrapperPython()
-    opWrapper.configure(params)
-    opWrapper.start()
 
-    point_left_images = cv2.imread(point_l_path)
+opWrapper = op.WrapperPython()
+opWrapper.configure(params)
+opWrapper.start()
+
+def append_keypoints(folder, pose):
+    keypoints = []
+    for img in os.listdir(folder):
+        img_process = cv2.imread(os.path.join(folder, img))
+        datum.cvInputData = img_progress
+        opWrapper.emplaceAndPop([datum])
+        if pose == 'left':
+	    point_left.append(datum.handKeypoints[0])
+        elif pose == 'right':
+	    point_right.append(datum.handKeypoints[1])
+
+append_keypoints(point_l_path, 'left')
+append_keypoints(point_r_path, 'right')
+
     # handRectangles = [
     #     # Left/Right hands person 0
     #     [
@@ -45,25 +58,22 @@ try:
     #     ]
     # ]
 
-    datum.cvInputData = point_left_images
    # datum.handRectangles = handRectangles
 
     # Process and display image
-    opWrapper.emplaceAndPop([datum])
-    print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
-    print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
-    point_left.append(datum.handKeypoints[0])
+#opWrapper.emplaceAndPop([datum])
+#print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
+#print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
+#point_left.append(datum.handKeypoints[0])
 
-    point_right_images = cv2.imread(point_l_path)
-    datum.cvInputData = point_right_images
-    opWrapper.emplaceAndPop([datum])
-    print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
-    print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
-    point_left.append(datum.handKeypoints[0])
+#point_right_images = cv2.imread(point_l_path)
+#datum.cvInputData = point_right_images
+#opWrapper.emplaceAndPop([datum])
+#print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
+#print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
+#point_left.append(datum.handKeypoints[0])
 
-    cv2.waitKey(0)
-except Exception as e:
-    sys.exit(-1)
+#cv2.waitKey(0)
 
 point_left = np.asarray(point_left)
 point_right = np.asarray(point_right)
