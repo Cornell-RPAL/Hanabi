@@ -33,9 +33,9 @@ def append_keypoints(folder, pose):
         datum.cvInputData = img_progress
         opWrapper.emplaceAndPop([datum])
         if pose == 'left':
-	    point_left.append(datum.handKeypoints[0])
+	        point_left.append(datum.handKeypoints[0])
         elif pose == 'right':
-	    point_right.append(datum.handKeypoints[1])
+	        point_right.append(datum.handKeypoints[1])
 
 append_keypoints(point_l_path, 'left')
 append_keypoints(point_r_path, 'right')
