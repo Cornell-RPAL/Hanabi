@@ -30,8 +30,10 @@ def append_keypoints(folder, pose):
     keypoints = []
     for img in os.listdir(folder):
         img_process = cv2.imread(os.path.join(folder, img))
-        datum.cvInputData = img_progress
+        datum.cvInputData = img_process
         opWrapper.emplaceAndPop([datum])
+        print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
+        print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
         if pose == 'left':
 	        point_left.append(datum.handKeypoints[0])
         elif pose == 'right':
