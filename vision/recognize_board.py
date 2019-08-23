@@ -53,7 +53,7 @@ def id_to_card(id_):
 
 
 
-def detectState(tags, empty_draw_pile = False, discard_threshold=100, hand_threshold=50, nearness_threshold=1.5):
+def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_threshold=50, nearness_threshold=1.5):
 
     def find_center(tag):
         return sum(tag.corners)/4
@@ -73,6 +73,10 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=100, hand_thres
 
     y_sorted = sorted(tags, key=lambda tag: find_center(tag)[1])
     x_sorted = sorted(tags, key=lambda tag: find_center(tag)[0])
+
+    # print('y', [id_to_card(tag.tag_id) for tag in y_sorted])
+    # print('x', [id_to_card(tag.tag_id) for tag in x_sorted])
+
     if empty_draw_pile and (find_center(y_sorted[4])[1] > (find_center(y_sorted[3])[1] + hand_threshold)):
         hand = sorted(y_sorted[:4], key=lambda tag: find_center(tag)[0])
     else:
