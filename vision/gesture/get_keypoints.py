@@ -6,8 +6,6 @@ import os
 params = dict()
 params["model_folder"] = "../../../openpose/models/"
 params["hand"] = True
-params["hand_detector"] = 2
-params["body"] = 0
 
 # Starting OpenPose
 opWrapper = op.WrapperPython()
@@ -31,8 +29,6 @@ def append_keypoints(folder, pose):
         img_process = cv2.imread(os.path.join(folder, img))
         datum.cvInputData = img_process
         opWrapper.emplaceAndPop([datum])
-        print("Left hand keypoints: \n" + str(datum.handKeypoints[0]))
-        print("Right hand keypoints: \n" + str(datum.handKeypoints[1]))
         if pose == 'left':
 	        point_left.append(datum.handKeypoints[0])
         elif pose == 'right':
