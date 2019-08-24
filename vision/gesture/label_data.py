@@ -25,18 +25,18 @@ dataset = np.append(point_left, point_right, axis=0)
 from sklearn.utils import shuffle
 X1, y1 = shuffle(dataset, labels)
 
-X1[:,:,0] = X1[:,:,0] / 720
-X1[:,:,1] = X1[:,:,1] / 1280
+X1[:,:,0] = X1[:,:,0] / 960
+X1[:,:,1] = X1[:,:,1] / 720
 X1 = X1[:,:,1:]
 print(X1.shape)
-X1 = X1.reshape(len(X1), 50)
+X1 = X1.reshape(len(X1), 60)
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.optimizers import SGD
 
 model = Sequential()
-model.add(Dense(128, activation='relu', input_shape=(42,)))
+model.add(Dense(128, activation='relu', input_shape=(60,)))
 model.add(Dropout(0.5))
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
