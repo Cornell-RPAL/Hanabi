@@ -52,6 +52,8 @@ class SelfKnowledge():
                 ukCard.exclude(card)
 
     def updateHelper(self, action):
+        print(action.indices[0])
+        print(self._partnerHand)
         card = self._partnerHand[action.indices[0]]
         self.excludeCard(card)
 

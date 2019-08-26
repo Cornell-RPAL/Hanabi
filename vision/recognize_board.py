@@ -58,15 +58,25 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     def find_center(tag):
         return sum(tag.corners)/4
 
-    def find_width(tag):
-        return (tag.corners[1][0] - tag.corners[0][0]) #* (tag.corners[2][1] - tag.corners[0][1])
+    def find_area(tag):
+        return abs((tag.corners[0][0] - tag.corners[1][0]) * (tag.corners[1][1] - tag.corners[2][1])) #* (tag.corners[2][1] - tag.corners[0][1])
 
 
-    width_sorted = sorted(tags, key=find_width)
-    if empty_draw_pile and (find_center(width_sorted[-1])[1] > (find_center(width_sorted[-2])[1] * nearness_threshold)):
-        gripper = width_sorted[-1]
-    else:
-        gripper = []    
+    area_sorted = sorted(tags, key=find_area)
+    #print(area_sorted)
+
+    #print([id_to_card(tag.tag_id) for tag in area_sorted])
+
+    gripper = []
+    if len(area_sorted) > 2 and (find_area(area_sorted[0]) > (find_area(area_sorted[1]) * 2)):
+        print('comp1 ', id_to_card(area_sorted[0].tag_id), find_area(area_sorted[0]))
+        print('comp2 ', id_to_card(area_sorted[1].tag_id), find_area(area_sorted[1]))
+        gripper = [area_sorted[0]]
+
+    # if empty_draw_pile and (find_center(area_sorted[-1])[1] > (find_center(area_sorted[-2])[1] * nearness_threshold)):
+    #     gripper = area_sorted[-1]
+    # else:
+    #     gripper = []    
 
     # print('BIGGEST', id_to_card(width_sorted[-1].tag_id), find_width(width_sorted[-1]))
     # print('2nd BIG', id_to_card(width_sorted[-2].tag_id), find_width(width_sorted[-2]))
@@ -96,7 +106,8 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     res = {"discard": discard, "hand": hand, "board": board, "gripper": gripper}
 
     for key in res:
-        res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
+        if res[key]:
+            res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
     return res
 
 

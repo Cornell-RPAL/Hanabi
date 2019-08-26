@@ -20,6 +20,7 @@ class Hanabot():
             await asyncio.sleep(0.05)
             # react to player action
             observedAction = iBuffer.action
+            print(observedAction and observedAction.indices)
             if observedAction:
                 self.inform(observedAction)
 
@@ -40,6 +41,7 @@ class Hanabot():
             # react to self action (intent)
             card = iBuffer.cvState['gripper']
             if card:
+                action = None
                 if isinstance(self._currentIntent, PlayIntent):
                     if card.isPlayable():
                         action = self._currentIntent.complete(card, success=True)
@@ -51,7 +53,8 @@ class Hanabot():
                     action = self._currentIntent.complete(card)
                     oBuffer.baxterCommand = ("discard", [])
 
-                self.inform(action)
+                if action:
+                    self.inform(action)
                 self._currentIntent = None
 
     def isPlayable(self, card):

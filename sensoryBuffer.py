@@ -69,7 +69,7 @@ class SensoryBuffer():
         def stateChange(new_state): #maybe should change (does only hand matter??)
             visible = self.cvState
             visible['discard'] = [visible['discard'][0]]
-            print(visible, new_state)
+            # print(visible, new_state)
             return visible != new_state
 
         def updateDiscard(new_state):
@@ -83,6 +83,8 @@ class SensoryBuffer():
         # print(self.cvState)
         if stateChange(new_state):
             print('detected state change')
+            if new_state['gripper']:
+                print(new_state['gripper'])
             if self._permanence > 5: #should set in const later
                 self._permanence = 0
                 if len(new_state['hand']) == 5:
@@ -99,7 +101,7 @@ class SensoryBuffer():
                             print('new stable state:', self.cvState)
                             indices = [new_state['board'].index(action_card)]
                             return PlaySuccess(
-                                PLAYER, action_card, indices=indices)
+                                PLAYER, action_card, indices= [123])#indices)
                         if action_card in new_state['discard']: 
                             #could also just check top card
                             updateDiscard(new_state)

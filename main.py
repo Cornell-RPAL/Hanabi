@@ -63,7 +63,7 @@ class Main(object):
             print ('synthesizing text from output buffer')
             t2s(text)
             print ('if you see this only after audio finishies, should be blocking')
-            p.resume()
+            #p.resume()
 
     async def manageProcess(self, v2t, v2t_end):
         detected = False
@@ -74,9 +74,9 @@ class Main(object):
             else:
                 print("play detected!")
 
-            if checkIfProcessRunning('play'):
-                detected = True
-                #    print('play detected')
+            #if checkIfProcessRunning('play'):
+            #    detected = True
+            #        print('play detected')
             #    v2t.terminate()
             #elif not v2t.is_alive():
             #    v2t = Process(target = v2tloop, args = (v2t_end,))
@@ -89,7 +89,11 @@ class Main(object):
             # baxter_env = ['cd ~/ros_ws && ./baxter.sh']
             fn = 'baxter/' + command[0] + '.py'
             typ = '--nargs-int-type' if command[0] == 'point' else ''
-            args =['python2.7'] + [fn] + typ + [str(i) for i in command[1]]
+            if typ:
+                args = ['python2.7'] + [fn] + [typ] + [str(i) for i in command[1]]
+            else:
+                args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
+            print (args)
             Popen(args)
 
     async def run(self):
