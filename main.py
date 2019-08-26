@@ -88,7 +88,8 @@ class Main(object):
         if command:
             # baxter_env = ['cd ~/ros_ws && ./baxter.sh']
             fn = 'baxter/' + command[0] + '.py'
-            args =['python2.7'] + [fn] + [str(i) for i in command[1]]
+            typ = '--nargs-int-type' if command[0] == 'point' else ''
+            args =['python2.7'] + [fn] + typ + [str(i) for i in command[1]]
             Popen(args)
 
     async def run(self):
