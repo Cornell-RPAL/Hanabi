@@ -4,7 +4,7 @@ import rospy
 import baxter_interface
 import argparse
 
-from motion_consts import NEUTRAL, POSITIONS
+from motion_consts import NEUTRAL, POSITIONS, LEFT_END
 
 rospy.init_node('node')
 
@@ -16,8 +16,9 @@ def pick_up(i):
 	l_limb.move_to_joint_positions(POSITIONS['place_start'][i])
 	l_gripper.open()
 	l_limb.move_to_joint_positions(POSITIONS['place_end'][i])
-	l_limb.move_to_joint_positions(NEUTRAL)
 	l_gripper.close(block=True)
+	l_limb.move_to_joint_positions(LEFT_END)
+
 
 parser = argparse.ArgumentParser(description="play card parser")
 parser.add_argument("i", nargs='?', default="check_string_for_empty")
