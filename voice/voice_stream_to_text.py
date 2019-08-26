@@ -126,6 +126,7 @@ units = ['card', 'cards']
 noun_phrases = [(det + unit) for det in determiners for unit in units]
 common_phrases = ['you have']
 filler_words = ['uh', 'um', 'ah']
+hardcoded = ['your card at index', 'your cards at indices']
 
 terminologies = (colors + numbers + color_cards + color_number + noun_phrases +
     tokens)
