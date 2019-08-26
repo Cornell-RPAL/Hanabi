@@ -28,7 +28,6 @@ img = cv2.imread(read_path, cv2.IMREAD_GRAYSCALE)
 
 
 def id_to_card(id_):
-
     assert id_ < 60
     assert id_ >= 0
 
@@ -63,15 +62,19 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
 
 
     area_sorted = sorted(tags, key=find_area)
-    #print(area_sorted)
+    
 
-    #print([id_to_card(tag.tag_id) for tag in area_sorted])
+
+    # print('cards:, ', [id_to_card(tag.tag_id) for tag in area_sorted])
+
+    # print(find_area(area_sorted[-2]))
+    # print(find_area(area_sorted[-1]))
 
     gripper = []
-    if len(area_sorted) > 2 and (find_area(area_sorted[0]) > (find_area(area_sorted[1]) * 2)):
-        print('comp1 ', id_to_card(area_sorted[0].tag_id), find_area(area_sorted[0]))
-        print('comp2 ', id_to_card(area_sorted[1].tag_id), find_area(area_sorted[1]))
-        gripper = [area_sorted[0]]
+    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 4)):
+        print('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
+        print('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
+        gripper = [area_sorted[-1]]
 
     # if empty_draw_pile and (find_center(area_sorted[-1])[1] > (find_center(area_sorted[-2])[1] * nearness_threshold)):
     #     gripper = area_sorted[-1]
