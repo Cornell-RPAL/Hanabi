@@ -53,6 +53,11 @@ class HintIntent(Intent):
     def baxterCommand(self):
         return ('point', self._indices)
 
+    @property
+    def feature(self):
+        return self._feature
+    
+
     def __str__(self):
         idx = ""
         for num in self._indices:

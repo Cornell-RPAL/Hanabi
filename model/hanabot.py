@@ -20,10 +20,12 @@ class Hanabot():
             await asyncio.sleep(0.05)
             # react to player action
             observedAction = iBuffer.action
+            print(observedAction and observedAction.indices)
             if observedAction:
                 self.inform(observedAction)
 
                 intent = self.decideAction()
+                self._currentIntent = intent
                 oBuffer.intent = intent
                 oBuffer.baxterCommand = intent.baxterCommand
 
@@ -38,21 +40,36 @@ class Hanabot():
                 oBuffer.text = text
 
             # react to self action (intent)
-            card = iBuffer.cvState['gripper']
+            card = iBuffer.getGripper()
             if card:
+                print('AI recognized card in gripper')
+                print(self._currentIntent)
+                action = None
                 if isinstance(self._currentIntent, PlayIntent):
-                    if card.isPlayable():
-                        action = self._currentIntent.complete(card, success=True)
-                        oBuffer.baxterCommand = ("play", [])
+                    if self.isPlayable(card):
+                        print('card is playable')
+                        action = self._currentIntent.complete([card], success=True)
+                        oBuffer.baxterCommand = ("play", [self.playableIndex(card)])
                     else:
-                        action = self._currentIntent.complete(card, success=False)
+                        action = self._currentIntent.complete([card], success=False)
                         oBuffer.baxterCommand = ("discard", [])
                 elif isinstance(self._currentIntent, DiscardIntent):
-                    action = self._currentIntent.complete(card)
+                    action = self._currentIntent.complete([card])
                     oBuffer.baxterCommand = ("discard", [])
 
-                self.inform(action)
+                if action:
+                    self.inform(action)
                 self._currentIntent = None
+
+    def playableIndex(self, card):
+        top = self._board.topPlayedCards()
+
+
+        for i, topCardColor in enumerate(top):
+            if card.color == topCardColor:
+                return i
+        raise Exception("Card not playable!")
+
 
     def isPlayable(self, card):
         top = self._board.topPlayedCards()
