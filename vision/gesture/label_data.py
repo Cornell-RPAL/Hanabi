@@ -23,27 +23,13 @@ dataset = np.append(point_left, point_right, axis=0)
 
 # now, let's shuffle labels and the array, the same way
 from sklearn.utils import shuffle
-X1, y1 = shuffle(dataset, labels)
+X, Y = shuffle(dataset, labels, random_state = 0)
 
-X1[:,:,0] = X1[:,:,0] / 960
-X1[:,:,1] = X1[:,:,1] / 720
-X1 = X1[:,:,1:]
-print(X1.shape)
-X1 = X1.reshape(len(X1), 60)
+X[:,:,0] = X[:,:,0] / 960
+X[:,:,1] = X[:,:,1] / 720
+X = X[:,:,1:]
+print(X.shape)
+X = X.reshape(len(X), 60)
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.optimizers import SGD
-
-model = Sequential()
-model.add(Dense(128, activation='relu', input_shape=(60,)))
-model.add(Dropout(0.5))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(y1.shape[1], activation='softmax'))
-model.compile(optimizer='Adam',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-model.fit(X1, y1, epochs=2000,batch_size=21)
-
-model.save('gesture_data/pointing.h5') # save our model as h5
+np.save('gesture_data/xtrain', X)
+np.save('gesture_data/ytrain', Y)

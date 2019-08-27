@@ -1,4 +1,3 @@
-
 import itertools
 import numpy as np
 
@@ -27,22 +26,11 @@ def samples_to_3D_array(_vector_dim, _vectors_per_sample, _X):
 
     return np.asarray(result_array)
 
-def convert_y_to_one_hot(_y):
-    '''
-    Converst y integer labels (0,1,2..) to one_hot_encoding vectors
-    '''
-    _y = np.asarray(_y,dtype=int)
-    b = np.zeros((_y.size, _y.max()+1))
-    b[np.arange(_y.size),_y] = 1
-    return b
-
-
 def main():
     '''
     main routine to train and generate keras classifier model
     '''
     # Model Parameters and Paths
-    # NOTE: Uncomment below cell to generate one of the classifier model (hand or pose or face)
 
     timesteps = 5
     epochs = 1000
@@ -52,18 +40,17 @@ def main():
     _optimizer='adam'
   #  class_names = ["fist","pinch","wave","victory","stop","thumbsup"]
     X_vector_dim = 1 # number of features or columns (hand)
-    samples_path = "../../../train_data/hand/hand_samples_raw.txt"
-    labels_path = "../../../train_data/hand/hand_labels_raw.txt"
-    model_path = '../../../train_data/hand/hand.model'
-    json_model_path = '../../../train_data/hand/hand_model.json'
-    model_weights_path = "../../../train_data/hand/hand_model.h5"
+    X_path = "gesture_data/xtrain.npy"
+    Y_path = "gesture_data/ytrain.npy"
+    # model_path = '../../../train_data/hand/hand.model'
+    # json_model_path = '../../../train_data/hand/hand_model.json'
+    # model_weights_path = "../../../train_data/hand/hand_model.h5"
 
     # Load Keypoints Samples and Labels
-    X = np.loadtxt(samples_path, dtype="float")
-    y = np.loadtxt(labels_path)
+    X = np.load(X_path, dtype="float")
+    Y = np.load(Y_path)
 
-    y_one_hot = convert_y_to_one_hot(y) # convert to one_hot_encoding vector
-    y_vector_dim = y_one_hot.shape[1] # number of features or columns
+    y_vector_dim = y.shape[1] # number of features or columns
 
     X_vectors_per_sample = timesteps # number of vectors per sample
 
@@ -71,7 +58,7 @@ def main():
     X_3D = samples_to_3D_array(X_vector_dim, X_vectors_per_sample, X)
 
     # Perform test-train split
-    X_train, X_test, y_train, y_test = train_test_split(X_3D, y_one_hot, test_size=0.33, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_3D, Y, test_size=0.33, random_state=42)
 
     input_shape = (X_train.shape[1], X_train.shape[2]) # store input_shape
 
@@ -116,13 +103,32 @@ def main():
     # Export model
     # export_model(model,model_path)
 
-    # serialize model to JSON
-    model_json = model.to_json()
-    with open(json_model_path, "w") as json_file:
-        json_file.write(json_model_path)
-    # serialize weights to HDF5
-    model.save_weights(model_weights_path)
-    print("Saved model to disk")
+    # # serialize model to JSON
+    # model_json = model.to_json()
+    # with open(json_model_path, "w") as json_file:
+    #     json_file.write(json_model_path)
+    # # serialize weights to HDF5
+    # model.save_weights(model_weights_path)
+    # print("Saved model to disk")
+
+
+
+    # from keras.models import Sequential
+    # from keras.layers import Dense, Dropout, Activation, Flatten
+    # from keras.optimizers import SGD
+    
+    # model = Sequential()
+    # model.add(Dense(128, activation='relu', input_shape=(60,)))
+    # model.add(Dropout(0.5))
+    # model.add(Dense(128, activation='relu'))
+    # model.add(Dropout(0.5))
+    # model.add(Dense(y1.shape[1], activation='softmax'))
+    # model.compile(optimizer='Adam',
+    #               loss='categorical_crossentropy',
+    #               metrics=['accuracy'])
+    # model.fit(X1, y1, epochs=2000,batch_size=21)
+    
+    model.save('gesture_data/pointing.h5') # save our model as h5
 
 
 if __name__ == "__main__":
