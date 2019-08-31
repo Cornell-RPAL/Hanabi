@@ -34,7 +34,7 @@ def append_keypoints(folder, pose):
             pose = pose.reshape(46, 3)
             point_left.append(pose)
         elif pose == 'right':
-	        pose = np.append(datum.poseKeypoints, datum.handKeypoints[1])
+            pose = np.append(datum.poseKeypoints, datum.handKeypoints[1])
             pose = pose.reshape(46, 3)
             point_right.append(pose)
 
