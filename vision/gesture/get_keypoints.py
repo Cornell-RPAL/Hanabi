@@ -30,9 +30,13 @@ def append_keypoints(folder, pose):
         datum.cvInputData = img_process
         opWrapper.emplaceAndPop([datum])
         if pose == 'left':
-	        point_left.append(datum.handKeypoints[0])
+            pose = np.append(datum.poseKeypoints, datum.handKeypoints[0])
+            pose = pose.reshape(46, 3)
+            point_left.append(pose)
         elif pose == 'right':
-	        point_right.append(datum.handKeypoints[1])
+	        pose = np.append(datum.poseKeypoints, datum.handKeypoints[1])
+            pose = pose.reshape(46, 3)
+            point_right.append(pose)
 
 append_keypoints(point_l_path, 'left')
 append_keypoints(point_r_path, 'right')
