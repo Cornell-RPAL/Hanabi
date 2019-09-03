@@ -6,7 +6,7 @@ poses = ['point_left_hand','point_right_hand']
 
 num_poses = len(poses)
 
-num_no_pose = 60
+num_no_pose = 79
 num_pointL = 60
 num_pointR = 58
 point_left = np.load('gesture_data/point_left.npy')
