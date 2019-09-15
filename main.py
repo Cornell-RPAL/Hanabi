@@ -62,8 +62,8 @@ class Main(object):
             p.suspend() # prevent computer from hearing itself
             print ('synthesizing text from output buffer')
             t2s(text)
-            print ('if you see this only after audio finishies, should be blocking')
-            #p.resume()
+            print ('if you see this only after audio finishes, should be blocking')
+            p.resume()
 
     async def manageProcess(self, v2t, v2t_end):
         detected = False

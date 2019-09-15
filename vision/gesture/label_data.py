@@ -1,22 +1,20 @@
-# converts JSON outputs from OpenPose to numpy array
-
 import numpy as np
 
 poses = ['point_left_hand','point_right_hand']
 
 num_poses = len(poses)
 
-num_no_pose = 79
-num_pointL = 60
-num_pointR = 58
+num_no_pose = 99
+num_pointL = 76
+num_pointR = 79
 point_left = np.load('gesture_data/point_left.npy')
 point_right = np.load('gesture_data/point_right.npy')
 no_pose = np.load('gesture_data/no_pose.npy')
 
 Y = np.zeros((num_no_pose+num_pointL + num_pointR))
 Y[:num_no_pose] = 0
-Y[num_no_pose:num_no_pose+num_pointL] = 1
-Y[num_no_pose+num_pointL:] = 2
+Y[num_no_pose:(num_no_pose+num_pointL)] = 1
+Y[(num_no_pose+num_pointL):] = 2
 
 # save labels as one_hot_encoded numpy
 new_Y = np.asarray(Y, dtype=int)

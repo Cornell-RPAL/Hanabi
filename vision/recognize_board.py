@@ -71,10 +71,14 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     # print(find_area(area_sorted[-1]))
 
     gripper = []
-    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 4)):
+    if len(area_sorted) > 2:
+        print('area1 ', (find_area(area_sorted[-1])))
+        print('area2 ', (find_area(area_sorted[-2])))
+    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 3)):
         print('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
         print('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
         gripper = [area_sorted[-1]]
+        print("Gripper detected: ", gripper)
 
     # if empty_draw_pile and (find_center(area_sorted[-1])[1] > (find_center(area_sorted[-2])[1] * nearness_threshold)):
     #     gripper = area_sorted[-1]

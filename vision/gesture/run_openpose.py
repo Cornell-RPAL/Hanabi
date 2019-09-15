@@ -19,6 +19,25 @@ datum = op.Datum()
 
 cap = cv2.VideoCapture(0)
 
+def indexFromKeypoint(x, y):
+	if (y<250 or y>450):
+		return -1
+	elif x >= 190 and x <= 235:
+		return 0
+	elif x >= 241 and x <= 283:
+		return 1
+	elif x >= 288 and x <= 326:
+		return 2
+	elif x >= 328 and x <= 369:
+		return 3
+	elif x >= 378 and x <= 430:
+		return 4
+	else: return -1
+
+
+indices = []
+frameCount = 0
+
 while True:
 	ret, frame = cap.read()
 
@@ -42,12 +61,32 @@ while True:
 					print("NO POSE")
 				elif j == 1:
 					print("point_left")
-					keypoint = datum.handKeypoints[0][0][8]
-					print(keypoint)
+					x, y, _ = datum.handKeypoints[0][0][8]
+					index = indexFromKeypoint(x,y)
+					print(index)
+					if index == -1:
+						frameCount = 0
+					else:
+						frameCount+=1
+					if frameCount >= 4 and index != -1 or index in indices:
+						frameCount = 0
+						if index not in indices and index != -1:
+							indices.append(index)
 				elif j == 2:
+					frameCount+=1
 					print("point_right")
-					keypoint = datum.handKeypoints[1][0][8]
-					print(keypoint)
+					x, y, _ = datum.handKeypoints[1][0][8]
+					index = indexFromKeypoint(x,y)
+					print(index)
+					if index == -1:
+						frameCount = 0
+					else:
+						frameCount+=1
+					if frameCount >= 4 and index != -1 or index in indices:
+						frameCount = 0
+						if index not in indices and index != -1:
+							indices.append(index)
+			print (indices)
 		except:
 			continue
 	key = cv2.waitKey(1)

@@ -56,7 +56,7 @@ class SensoryBuffer():
     def getGripper(self):
         g = self._cvState['gripper']
         if g:
-            return g[0]
+            return g.pop(0)
         else:
             return None
 
@@ -91,7 +91,7 @@ class SensoryBuffer():
         if stateChange(new_state):
             print('detected state change')
             if new_state['gripper']:
-                print(new_state['gripper'])
+                print('gripper', new_state['gripper'])
                 self._cvState = new_state
             elif self._permanence > 5: #should set in const later
                 self._permanence = 0
@@ -108,6 +108,7 @@ class SensoryBuffer():
                             print('played', action_card)
                             print('new stable state:', self.cvState)
                             indices = [new_state['board'].index(action_card)]
+                            print("PlaySuccess detected")
                             return PlaySuccess(
                                 PLAYER, action_card, indices=   indices)
                         if action_card in new_state['discard']: 
@@ -118,6 +119,7 @@ class SensoryBuffer():
                             print('new stable state:', self.cvState)
                             indices = [new_state['discard'].index(action_card)]
                             
+                            print("Discard detected")
                             return Discard(PLAYER, action_card, indices=indices)
             self._permanence += 1
 
