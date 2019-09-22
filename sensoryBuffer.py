@@ -24,6 +24,8 @@ class SensoryBuffer():
         #
         self._action = []
 
+        self._justSpoke = False
+
     @property
     def text(self):
         return self._text
@@ -59,6 +61,15 @@ class SensoryBuffer():
             return g.pop(0)
         else:
             return None
+
+    @property
+    def justSpoke(self):
+        return self._justSpoke
+    
+
+    @justSpoke.setter 
+    def justSpoke(self, v):
+        self._justSpoke = v
 
 
     @property
@@ -127,6 +138,10 @@ class SensoryBuffer():
         oldText = ''
         while True:
             await asyncio.sleep(0.05)
+            if self._justSpoke and self.text:
+                print (f'deleted self-speaking text: {self._text}')
+                self._text = ''
+                self._justSpoke = False
             if self._text and self._text != oldText and self.cvStateHistory:
                 print('input buffer processing...')
                 self.action = CommandParser.parse(self._text)

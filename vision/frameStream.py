@@ -10,7 +10,7 @@ from vision.recognize_board import detectState, getTags
 class FrameStream():
 
     def __init__(self):
-        self.cap = cv2.VideoCapture(1)#USE 1 if personal computer, 0 if baxter workstation
+        self.cap = cv2.VideoCapture(0)#USE 1 if personal computer, 0 if baxter workstation
         g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
         self.initial_state = detectState(getTags(g_img))
         print('Initial State:', self.initial_state)

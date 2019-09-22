@@ -2,6 +2,7 @@ import keras
 import pyopenpose as op
 import numpy as np
 import cv2
+import time
 
 from keras.models import load_model
 
@@ -34,6 +35,11 @@ def indexFromKeypoint(x, y):
 		return 4
 	else: return -1
 
+def checkTime(time):
+    if (time):
+        start = time.time()
+    else:
+        interval = (time.time())-start
 
 indices = []
 frameCount = 0
@@ -58,6 +64,7 @@ while True:
 			opt = model.predict_classes(p, batch_size = 67)
 			for j in opt: 
 				if j == 0:
+					frameCount = 0
 					print("NO POSE")
 				elif j == 1:
 					print("point_left")
