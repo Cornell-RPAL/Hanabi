@@ -1,5 +1,6 @@
 from .action import PlaySuccess, PlayFail, Discard, Hint
 from .consts import HANABOT
+from log import log
 
 class Intent:
     """
@@ -27,7 +28,7 @@ class Intent:
             return Hint(HANABOT, cardList, feature = self._feature, \
                 indices = self._indices)
         else:
-            print('intent completion failed')
+            log('intent completion failed')
 
     def __str__ (self):
         return ''

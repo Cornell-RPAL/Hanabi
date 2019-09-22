@@ -7,6 +7,7 @@ from google.cloud import texttospeech
 from subprocess import run
 from time import sleep
 import platform
+from log import log
 
 def text_to_speech(text):
     # Instantiates a client
@@ -35,7 +36,7 @@ def text_to_speech(text):
     with open('output.mp3', 'wb') as out:
         # Write the response to the output file.
         out.write(response.audio_content)
-        print('Audio content written to file "output.mp3"')
+        log('Audio content written to file "output.mp3"')
 
     if platform.system() == 'Darwin':
         run(['afplay', 'output.mp3'])

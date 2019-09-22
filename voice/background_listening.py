@@ -5,7 +5,7 @@
 import time
 
 import speech_recognition as sr
-
+from log import log
 
 # this is called from the background thread
 def callback(recognizer, audio):
@@ -14,11 +14,11 @@ def callback(recognizer, audio):
         # for testing purposes, we're just using the default API key
         # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
         # instead of `r.recognize_google(audio)`
-        print("Google Speech Recognition thinks you said " + recognizer.recognize_google(audio))
+        log("Google Speech Recognition thinks you said " + recognizer.recognize_google(audio))
     except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio")
+        log("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
+        log("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
 r = sr.Recognizer()
