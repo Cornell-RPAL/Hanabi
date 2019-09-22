@@ -6,8 +6,8 @@
 
 ## Installation
 Hanabot needs to run on an Ubuntu machine that is connected with a Baxter unit. Instructions for setting up Baxter can be found [here](http://sdk.rethinkrobotics.com/wiki/Baxter_Setup). 
-- Requirements: `python 3.7`, `pipenv`, 'python3.7-dev', 'ffmpeg'
-- Run 'sudo apt-get install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0'
+- Requirements: `python 3.7`, `pipenv`, `python3.7-dev`, `ffmpeg`
+- Run `sudo apt-get install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0`
 - In the directory of Hanabot, run `python3 -m pipenv install`
 - To update, run `git pull`, then `python3 -m pipenv sync`
 
