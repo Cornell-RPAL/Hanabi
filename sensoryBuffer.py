@@ -63,9 +63,9 @@ class SensoryBuffer():
         else:
             return None
 
-    @justSpoke.setter 
-    def justSpoke(self, v):
-        self._justSpoke = v
+    #@justSpoke.setter 
+    #def justSpoke(self, v):
+    #    self._justSpoke = v
 
 
     @property
