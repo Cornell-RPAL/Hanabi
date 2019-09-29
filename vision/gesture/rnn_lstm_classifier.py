@@ -5,6 +5,7 @@ from keras.layers import Dense, Dropout, LSTM, Flatten, BatchNormalization, Time
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import numpy as np
+from log import log
 
 X = np.load("gesture_data/x.npy")
 y = np.load("gesture_data/y.npy")
@@ -51,7 +52,7 @@ model.summary()
 loss, acc = model.evaluate(x_test, y_test,
                                 batch_size=batch_size)
 
-print('Loss: {:.3}'.format(loss))
-print('Acc: {:.3}'.format(acc))
+log('Loss: {:.3}'.format(loss))
+log('Acc: {:.3}'.format(acc))
 
 model.save('gesture_data/pointing.h5')

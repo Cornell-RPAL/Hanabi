@@ -3,6 +3,7 @@ import pyopenpose as op
 import numpy as np
 import cv2
 
+from log import log
 from keras.models import load_model
 
 model = load_model('gesture_data/pointing.h5')
@@ -39,15 +40,15 @@ while True:
 			opt = model.predict_classes(p, batch_size = 67)
 			for j in opt: 
 				if j == 0:
-					print("NO POSE")
+					log("NO POSE")
 				elif j == 1:
-					print("point_left")
+					log("point_left")
 					keypoint = datum.handKeypoints[0][0][8]
-					print(keypoint)
+					log(keypoint)
 				elif j == 2:
-					print("point_right")
+					log("point_right")
 					keypoint = datum.handKeypoints[1][0][8]
-					print(keypoint)
+					log(keypoint)
 		except:
 			continue
 	key = cv2.waitKey(1)

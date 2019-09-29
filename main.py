@@ -3,6 +3,7 @@ import psutil
 from multiprocessing import Process, Pipe, Lock, Condition
 from subprocess import Popen
 
+from log import log
 from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
 from outputBuffer import OutputBuffer
@@ -60,10 +61,10 @@ class Main(object):
         if text:
             p = psutil.Process(self._childPid)
             p.suspend() # prevent computer from hearing itself
-            print ('synthesizing text from output buffer')
+            log('synthesizing text from output buffer')
             t2s(text)
             self._sensoryBuffer.justSpoke = True
-            print ('if you see this only after audio finishies, should be blocking')
+            log('if you see this only after audio finishies, should be blocking')
             p.resume()
 
     async def manageProcess(self, v2t, v2t_end):
@@ -71,13 +72,13 @@ class Main(object):
         while True:
             await asyncio.sleep(0.02)
             if not detected:
-                print('managing processes')
+                log('managing processes')
             else:
-                print("play detected!")
+                log("play detected!")
 
             #if checkIfProcessRunning('play'):
             #    detected = True
-            #        print('play detected')
+            #        log('play detected')
             #    v2t.terminate()
             #elif not v2t.is_alive():
             #    v2t = Process(target = v2tloop, args = (v2t_end,))
@@ -94,7 +95,7 @@ class Main(object):
                 args = ['python2.7'] + [fn] + [typ] + [str(i) for i in command[1]]
             else:
                 args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
-            print (args)
+            log(args)
             Popen(args)
 
     async def run(self):
