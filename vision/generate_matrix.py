@@ -8,4 +8,4 @@ y_foc = y_rad / math.tan(fov/2) #calculate y focal length
 cameraMatrix = np.array([x_foc, 0, x_rad, 0, y_foc, y_rad, 0, 0, 1])
 camparams = ( cameraMatrix[0,0], cameraMatrix[1,1], cameraMatrix[0,2], cameraMatrix[1,2])
 
-tags = at_detector.detect(img, estimate_tag_pose=True, camera_params=cam_params, tag_size=None)
+tags = at_detector.detect(img, estimate_tag_pose=True, camera_params=cam_params, tag_size=0.05)
