@@ -136,6 +136,10 @@ def getTags(img, flip=False, verbose=False, save=False):
 
     tags = at_detector.detect(res, estimate_tag_pose=True, camera_params=cam_params, tag_size=0.05)
     print(tags)
+    for tag in tags:
+        print("Tag id:" + str(tag.tag_id))
+        print("Tag pose_t:" + str(tag.pose_t)) 
+
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 
     if verbose:
