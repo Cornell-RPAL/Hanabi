@@ -180,6 +180,7 @@ class Hanabot():
         else:
             return self.discardRandom()
 
+
     def inform(self, action):
         self._selfknowledge.updateHandAge()
         if isinstance(action, Hint):
@@ -191,5 +192,3 @@ class Hanabot():
             self._selfknowledge.updateSelfAction(action)
         else:
             self._selfknowledge.updatePartnerAction(action)
-
-

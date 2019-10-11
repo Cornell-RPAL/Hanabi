@@ -1,4 +1,4 @@
-from .card import Card
+from .card import Card, isValidColor, isValidNumber
 from .consts import NUMBERS, COLORS, AMTS
 
 from collections import Counter
@@ -15,7 +15,16 @@ class UnknownCard():
     def __init__(self):
         self._possibleCards = Counter(ALL_CARDS)
         self._handAge = 0
+        self._possible = ["colors":COLORS, "numbers":NUMBERS]
+        self._beliefs = ["colors":COLORS, "numbers":NUMBERS]
 
+    @property
+    def possible(self):
+        return self._possible
+
+    @property
+    def beliefs(self):
+        return self._beliefs
     @property
     def possible_cards(self):
         return self._possibleCards
@@ -27,6 +36,22 @@ class UnknownCard():
     def filter(self, f):
         self._possibleCards = Counter(dict([pair
                                             for pair in self._possibleCards.items() if f(pair[0])]))
+
+    def filterPossibiliitiesAndBeliefs(self, feature):
+        if(isValidColor(feature)):
+            f = lambda color: color == feature
+            self._possible = filter(f, self._possible["colors"])
+            self._beliefs = filter(f, self._beliefs["colors"])
+        elif(isValidNumber(feature)):
+            f = lambda number: number == feature
+            self._possible = filter(f, self._possible["numbers"])
+            self._beliefs = filter(f, self._beliefs["numbers"])
+
+    def filterBeliefsForImplicature(self, feature, nextCardInColor = None, color = None):
+        if(isValidColor(feature) and len(self._beliefs["numbers"]) > 1):
+            self._beliefs["numbers"] = [nextCardInColor]
+        elif(isValidNumber(feature) and len(self._beliefs["colors"]) > 1):
+            self._beliefs["colors"] = [color]
 
     def setDraw(self, drawSet):
         self._possibleCards = drawSet
