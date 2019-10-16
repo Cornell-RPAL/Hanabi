@@ -111,8 +111,8 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
 
     for key in res:
         if res[key]:
-            log([tag.tag_id for tag in res[key]])
             res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
+    log([key + ": " + ", ".join([str(card) for card in res[key]]) for key in res]) 
     return res
 
 

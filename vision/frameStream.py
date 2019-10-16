@@ -13,9 +13,10 @@ class FrameStream():
         self.cap = cv2.VideoCapture(0)#USE 1 if personal computer, 0 if baxter workstation
         g_img = cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2GRAY)
         self.initial_state = detectState(getTags(g_img))
-        log('Initial State:', self.initial_state)
         self.frame_num = 0
 
+    def initial_state(self):
+        return self.initial_state
 
 
     async def frame_process(self, buffer, fps=10):

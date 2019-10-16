@@ -9,7 +9,7 @@ from log import log
 TEXT_BUFFER_LENGTH = 10
 
 class SensoryBuffer():
-    def __init__(self, frame_num=30):
+    def __init__(self, initial_state, frame_num=30):
         # inputs and buffers
 
         # voice
@@ -17,7 +17,7 @@ class SensoryBuffer():
         self._textHistory = []
 
         # cv
-        self._initial_state = FrameStream().initial_state
+        self._initial_state = initial_state
         self._permanence = 0
         self._cvState = self._initial_state
         self._cvStateHistory = []
