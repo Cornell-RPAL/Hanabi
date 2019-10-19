@@ -9,7 +9,7 @@ class SimulateFrameStream():
         if f.mode != "r":
             raise RuntimeError("simulateBoard.txt must be given read permissions")
         game_text = f.readlines()
-        discard = self.to_card(game_text[0])
+        discard = [self.to_card(game_text[0])]
         hand = [self.to_card(item) for item in game_text[1].split(", ")]
         board = [self.to_card(item) for item in game_text[2].split(", ")] if len(game_text) >= 3 else []
         gripper = self.to_card(game_text[3]) if len(game_text) >= 4 else []
@@ -23,7 +23,7 @@ class SimulateFrameStream():
             print(len(game_text))
             if len(game_text) < 3:
                 return self.last_valid_board
-            discard = self.to_card(game_text[0])
+            discard = [self.to_card(game_text[0])]
             hand = [self.to_card(item) for item in game_text[1].split(", ")]
             board = [self.to_card(item) for item in game_text[2].split(", ")] if len(game_text) >= 3 else []
             gripper = to_card(game_text[3]) if len(game_text) >= 4 else []
