@@ -33,7 +33,7 @@ class Main(object):
         self._childPid = -1
         self._fs = None
         for opt in args:
-            if opt == "-sv":
+            if opt == "-scv":
                 self._fs = SimulateFrameStream()
         if self._fs == None:
             self._fs = FrameStream()

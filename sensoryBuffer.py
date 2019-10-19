@@ -82,6 +82,7 @@ class SensoryBuffer():
     def recognize_action(self, new_state):
         def stateChange(new_state): #maybe should change (does only hand matter??)
             visible = self.cvState
+            log(visible)
             visible['discard'] = [visible['discard'][0]]
             # log(visible, new_state)
             return visible != new_state
