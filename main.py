@@ -8,12 +8,14 @@ from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
+from voice.sim_voice_stream_to_text import main as simv2tloop
 from voice.text_to_speech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
 from model.board import Board
 from process_monitor import checkIfProcessRunning
+from sys import argv
 
 
 def loop(func):
@@ -98,7 +100,7 @@ class Main(object):
             log(args)
             Popen(args)
 
-    async def run(self):
+    async def run(self, systemargument):
         """
         Runs all the processes and tasks.
         """
@@ -106,7 +108,10 @@ class Main(object):
         listen = asyncio.create_task(self._listen(main_rcv))
 
         # multiprocessing is necessary for microphone stream
-        v2t = Process(target = v2tloop, args = (v2t_send,))
+        if ("-sv" not in systemargument):
+            v2t = Process(target = v2tloop, args = (v2t_send,))
+        else:
+            v2t = Process(target = simv2tloop, args = (v2t_send,))
         v2t.start()
         self._childPid = v2t.pid
 
@@ -132,4 +137,4 @@ class Main(object):
 
 if __name__ == '__main__':
     m = Main()
-    asyncio.run(m.run())
+    asyncio.run(m.run(argv))
