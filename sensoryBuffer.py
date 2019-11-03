@@ -134,7 +134,7 @@ class SensoryBuffer():
         while True:
             await asyncio.sleep(0.05)
             if self._justSpoke and self.text:
-                print (f'deleted self-speaking text: {text}')
+                log (f'deleted self-speaking text: {text}')
                 self.text = ''
                 self._justSpoke = False
             if self._text and self._text != oldText and self.cvStateHistory:
