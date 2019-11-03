@@ -1,6 +1,7 @@
 import apriltags3
 import os
 import cv2
+import numpy as np
 import math 
 import numpy as np
 from cv2 import imshow
@@ -129,7 +130,7 @@ def getTags(img, flip=False, verbose=False, save=False):
     else:
         res = img
 
-    #get camera params 
+    #get camera params ---------------------------------------------------------
     x_rad = 640/2 #camera radius y direction
     y_rad = 480/2 #camera radius x direction
     fov = 60 #field of view (degrees)
@@ -140,6 +141,10 @@ def getTags(img, flip=False, verbose=False, save=False):
 
     tags = at_detector.detect(res, estimate_tag_pose=True, camera_params=cam_params, tag_size=0.05)
     print(tags)
+    for tag in tags:
+        print("Tag id:" + str(tag.tag_id))
+        print("Tag pose_t:" + str(tag.pose_t)) 
+
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 
     if verbose:
