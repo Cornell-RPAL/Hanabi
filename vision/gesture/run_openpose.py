@@ -35,14 +35,18 @@ def indexFromKeypoint(x, y):
 		return 4
 	else: return -1
 
-def checkTime(time):
-    if (time):
-        start = time.time()
-    else:
-        interval = (time.time())-start
+timing = False
+curpose = -1
+start_time = time.time()
 
 indices = []
-frameCount = 0
+
+def getPointingIndices():
+	temp = indices
+	indices = []
+	timing = False
+	curpose = -1
+	return temp
 
 while True:
 	ret, frame = cap.read()
@@ -64,35 +68,35 @@ while True:
 			opt = model.predict_classes(p, batch_size = 67)
 			for j in opt: 
 				if j == 0:
-					frameCount = 0
 					print("NO POSE")
+					curpose = -1
+					timing = False
 				elif j == 1:
 					print("point_left")
 					x, y, _ = datum.handKeypoints[0][0][8]
 					index = indexFromKeypoint(x,y)
-					print(index)
-					if index == -1:
-						frameCount = 0
-					else:
-						frameCount+=1
-					if frameCount >= 4 and index != -1 or index in indices:
-						frameCount = 0
-						if index not in indices and index != -1:
+					timing = index != -1
+					if (timing and curpose == index):
+						if time.time() - start_time > 0.3 and index not in indices:
+							timing = True
 							indices.append(index)
+					elif (timing):
+						curpose = index
+						start_time = time.time()
+					else: start_time = time.time()
 				elif j == 2:
-					frameCount+=1
 					print("point_right")
 					x, y, _ = datum.handKeypoints[1][0][8]
 					index = indexFromKeypoint(x,y)
-					print(index)
-					if index == -1:
-						frameCount = 0
-					else:
-						frameCount+=1
-					if frameCount >= 4 and index != -1 or index in indices:
-						frameCount = 0
-						if index not in indices and index != -1:
+					timing = index != -1
+					if (timing and curpose == index):
+						if time.time() - start_time > 0.3 and index not in indices:
+							timing = True
 							indices.append(index)
+					elif (timing):
+						curpose = index
+						start_time = time.time()
+					else: start_time = time.time()
 			print (indices)
 		except:
 			continue
