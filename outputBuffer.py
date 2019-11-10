@@ -1,3 +1,5 @@
+from log import log
+
 class OutputBuffer():
     def __init__(self):
         self._text = []
@@ -13,7 +15,7 @@ class OutputBuffer():
 
     @text.setter
     def text(self, val):
-        print (f'output buffer received: {val}')
+        log(f'output buffer received: {val}')
         self._text = [val]
 
     @property

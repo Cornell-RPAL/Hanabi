@@ -1,5 +1,6 @@
 from model.action import Hint
 from model.consts import HANABOT, PLAYER
+from log import log
 
 class CommandParser():
     def __init__(self):
@@ -49,8 +50,8 @@ class CommandParser():
         if feature in dn:
             feature = dn[feature]
 
-        print('feature: ' + str(feature))
-        print('index list: ' + str(index_list))
+        log('feature: ' + str(feature))
+        log('index list: ' + str(index_list))
 
         return Hint(PLAYER, feature=feature, indices=index_list)
 

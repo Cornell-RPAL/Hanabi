@@ -6,6 +6,7 @@ import argparse
 import time
 
 from motion_consts import NEUTRAL_R, POINT
+from log import log
 
 rospy.init_node('node')
 
@@ -24,5 +25,5 @@ parser.add_argument('--nargs-int-type', nargs='+', type=int)
 for _, values in parser.parse_args()._get_kwargs():
 	for v in values:
 		if v not in range(0,5):
-			print('all arguments must be integers from 0-4 inclusive')
+			log('all arguments must be integers from 0-4 inclusive')
 	point(values)

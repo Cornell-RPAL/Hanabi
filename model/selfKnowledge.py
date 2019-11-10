@@ -6,7 +6,7 @@ from .consts import (
 )
 from .card import Card, isValidColor, isValidNumber
 from .action import PlaySuccess, PlayFail, Discard, Hint
-
+from log import log
 
 class SelfKnowledge():
     def __init__(self, board, player, partnerKnowledge=None):
@@ -52,8 +52,8 @@ class SelfKnowledge():
                 ukCard.exclude(card)
 
     def updateHelper(self, action):
-        print(action.indices[0])
-        print(self._partnerHand)
+        log(action.indices[0])
+        log(self._partnerHand)
         card = self._partnerHand[action.indices[0]]
         self.excludeCard(card)
 

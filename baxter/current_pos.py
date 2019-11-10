@@ -5,8 +5,9 @@ import baxter_interface
 import argparse
 
 from motion_consts import NEUTRAL, POSITIONS
+from log import log
 
 rospy.init_node('node')
 
 l_limb = baxter_interface.Limb('right')
-print(l_limb.joint_angles())
+log(l_limb.joint_angles())

@@ -6,10 +6,11 @@ import math
 import numpy as np
 from cv2 import imshow
 from model.card import Card
+from log import log
 
 visualization = False
 current_loc = os.path.dirname(os.path.abspath(__file__))
-print(current_loc)
+log(current_loc)
 file_name = 'turn0.jpg'
 read_path = current_loc + "/vision/data/board_rec/before/" + file_name
 save_path = current_loc + "/vision/data/board_rec/after/" + file_name
@@ -68,18 +69,24 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     
 
 
-    # print('cards:, ', [id_to_card(tag.tag_id) for tag in area_sorted])
+    # log('cards:, ', [id_to_card(tag.tag_id) for tag in area_sorted])
 
-    # print(find_area(area_sorted[-2]))
-    # print(find_area(area_sorted[-1]))
+    # log(find_area(area_sorted[-2]))
+    # log(find_area(area_sorted[-1]))
 
     gripper = []
+<<<<<<< HEAD
     if len(area_sorted) > 2:
         print('area1 ', (find_area(area_sorted[-1])))
         print('area2 ', (find_area(area_sorted[-2])))
     if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 3)):
         print('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
         print('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
+=======
+    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 4)):
+        log('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
+        log('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
+>>>>>>> dc9fde9bf219bb818a6e93d888bcf35d2417527b
         gripper = [area_sorted[-1]]
         print("Gripper detected: ", gripper)
 
@@ -88,22 +95,22 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     # else:
     #     gripper = []    
 
-    # print('BIGGEST', id_to_card(width_sorted[-1].tag_id), find_width(width_sorted[-1]))
-    # print('2nd BIG', id_to_card(width_sorted[-2].tag_id), find_width(width_sorted[-2]))
+    # log('BIGGEST', id_to_card(width_sorted[-1].tag_id), find_width(width_sorted[-1]))
+    # log('2nd BIG', id_to_card(width_sorted[-2].tag_id), find_width(width_sorted[-2]))
 
     y_sorted = sorted(tags, key=lambda tag: find_center(tag)[1])
     x_sorted = sorted(tags, key=lambda tag: find_center(tag)[0])
 
-    # print('y', [id_to_card(tag.tag_id) for tag in y_sorted])
-    # print('x', [id_to_card(tag.tag_id) for tag in x_sorted])
+    # log('y', [id_to_card(tag.tag_id) for tag in y_sorted])
+    # log('x', [id_to_card(tag.tag_id) for tag in x_sorted])
 
     if empty_draw_pile and (find_center(y_sorted[4])[1] > (find_center(y_sorted[3])[1] + hand_threshold)):
         hand = sorted(y_sorted[:4], key=lambda tag: find_center(tag)[0])
     else:
         hand = sorted(y_sorted[:5], key=lambda tag: find_center(tag)[0])
 
-    # print(id_to_card(x_sorted[-1].tag_id), find_center(x_sorted[-1]))
-    # print(id_to_card(x_sorted[-2].tag_id), find_center(x_sorted[-2]))
+    # log(id_to_card(x_sorted[-1].tag_id), find_center(x_sorted[-1]))
+    # log(id_to_card(x_sorted[-2].tag_id), find_center(x_sorted[-2]))
 
     if find_center(x_sorted[-1])[0] > (find_center(x_sorted[-2])[0] + discard_threshold):
         discard = [x_sorted[-1]]
@@ -117,7 +124,7 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
 
     for key in res:
         if res[key]:
-            print([tag.tag_id for tag in res[key]])
+            log([tag.tag_id for tag in res[key]])
             res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
     return res
 
@@ -149,8 +156,8 @@ def getTags(img, flip=False, verbose=False, save=False):
 
     if verbose:
         tag_ids = [tag.tag_id for tag in tags]
-        print(len(tags), " tags found.")
-        print(len(tags), " cards found: ", [id_to_card(id_) for id_ in tag_ids])
+        log(len(tags), " tags found.")
+        log(len(tags), " cards found: ", [id_to_card(id_) for id_ in tag_ids])
 
     if save:
         cv2.imwrite(save_path, color_img)

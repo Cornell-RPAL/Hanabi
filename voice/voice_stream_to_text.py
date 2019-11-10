@@ -8,6 +8,7 @@ import pyaudio
 import asyncio
 from six.moves import queue
 from sensoryBuffer import SensoryBuffer
+from log import log
 
 # Audio recording parameters
 RATE = 16000
@@ -163,5 +164,5 @@ def voice_stream_to_text():
 
 def main(sender):
     for text in voice_stream_to_text():
-        print(f"generated {text}")
+        log(f"generated {text}")
         sender.send(text)

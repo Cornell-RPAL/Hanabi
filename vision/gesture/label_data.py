@@ -1,4 +1,5 @@
 import numpy as np
+from log import log
 
 poses = ['point_left_hand','point_right_hand']
 
@@ -26,6 +27,6 @@ dataset = np.append(dataset, point_right, axis = 0)
 # now, let's shuffle labels and the array, the same way
 from sklearn.utils import shuffle
 X, Y = shuffle(dataset, labels, random_state = 0)
-print(X.shape)
+log(X.shape)
 np.save('gesture_data/x', X)
 np.save('gesture_data/y', Y)

@@ -1,4 +1,5 @@
 import psutil
+from log import log
 
 def checkIfProcessRunning(processName):
     '''
@@ -17,6 +18,6 @@ def checkIfProcessRunning(processName):
 def check(name):
     while True:
         if checkIfProcessRunning(name):
-            print('found')
+            log('found')
         else:
-            print('not found')
+            log('not found')
