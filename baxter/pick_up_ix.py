@@ -1,6 +1,7 @@
 import rospy
 import baxter_interface
 import argparse
+import time
 
 from motion_consts import NEUTRAL, POSITIONS
 
@@ -13,6 +14,7 @@ def pick_up(i):
 	l_limb.move_to_joint_positions(NEUTRAL)
 	l_limb.move_to_joint_positions(POSITIONS['above_holder'][i])
 	l_gripper.open()
+        time.sleep(2)
 	l_limb.move_to_joint_positions(POSITIONS['holder'][i])
 	l_gripper.close(block=True)
 	l_limb.move_to_joint_positions(POSITIONS['above_holder'][i])

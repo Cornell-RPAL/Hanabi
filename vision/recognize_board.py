@@ -1,6 +1,9 @@
 import apriltags3
 import os
 import cv2
+import numpy as np
+import math 
+import numpy as np
 from cv2 import imshow
 from model.card import Card
 
@@ -71,10 +74,14 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     # print(find_area(area_sorted[-1]))
 
     gripper = []
-    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 4)):
+    if len(area_sorted) > 2:
+        print('area1 ', (find_area(area_sorted[-1])))
+        print('area2 ', (find_area(area_sorted[-2])))
+    if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 3)):
         print('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
         print('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
         gripper = [area_sorted[-1]]
+        print("Gripper detected: ", gripper)
 
     # if empty_draw_pile and (find_center(area_sorted[-1])[1] > (find_center(area_sorted[-2])[1] * nearness_threshold)):
     #     gripper = area_sorted[-1]
@@ -123,7 +130,21 @@ def getTags(img, flip=False, verbose=False, save=False):
     else:
         res = img
 
-    tags = at_detector.detect(res)
+    #get camera params ---------------------------------------------------------
+    x_rad = 640/2 #camera radius y direction
+    y_rad = 480/2 #camera radius x direction
+    fov = 60 #field of view (degrees)
+    x_foc = x_rad / math.tan(fov/2) #calculate x focal length
+    y_foc = y_rad / math.tan(fov/2) #calculate y focal length 
+    cameraMatrix = np.array([x_foc, 0, x_rad, 0, y_foc, y_rad, 0, 0, 1]).reshape(3,3)
+    cam_params = ( cameraMatrix[0,0], cameraMatrix[1,1], cameraMatrix[0,2], cameraMatrix[1,2])
+
+    tags = at_detector.detect(res, estimate_tag_pose=True, camera_params=cam_params, tag_size=0.05)
+    print(tags)
+    for tag in tags:
+        print("Tag id:" + str(tag.tag_id))
+        print("Tag pose_t:" + str(tag.pose_t)) 
+
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 
     if verbose:
