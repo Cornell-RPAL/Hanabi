@@ -3,8 +3,7 @@ import datetime
 from sys import argv
 
 def log(*message):
-    logger = logging.getLogger('main')
-    logger.setLevel(logging.DEBUG)
+    logging.basicConfig(filename='main.log', level=logging.DEBUG)
     func = inspect.currentframe().f_back.f_code
     msg = "%s [%s:%i - %s()] %s" % (
         datetime.datetime.now(),
