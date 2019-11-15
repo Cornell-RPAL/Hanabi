@@ -2,8 +2,7 @@ import inspect, logging
 import datetime
 
 def log(*message):
-    logger = logging.getLogger('main')
-    logger.setLevel(logging.DEBUG)
+    logging.basicConfig(filename='main.log', level=logging.DEBUG)
     func = inspect.currentframe().f_back.f_code
     print("%s [%s:%i - %s()] %s" % (
         datetime.datetime.now(),

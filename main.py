@@ -141,8 +141,6 @@ class Main(object):
 
         await asyncio.gather(*tasks)
 
-        v2t.terminate()
-
 
 if __name__ == '__main__':
     m = Main()
