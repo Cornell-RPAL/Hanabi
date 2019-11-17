@@ -1,11 +1,13 @@
 import asyncio
 import psutil
+import sys
 from multiprocessing import Process, Pipe, Lock, Condition
 from subprocess import Popen
 
 from log import log
 from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
+from vision.simulate_frameStream import SimulateFrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
 from voice.sim_voice_stream_to_text import main as simv2tloop
@@ -27,11 +29,17 @@ def loop(func):
 
 class Main(object):
     def __init__(self):
-        self._sensoryBuffer = SensoryBuffer()
+        args = sys.argv
         self._outputBuffer = OutputBuffer()
         self._hanabot = None
         self._childPid = -1
-        self._fs = FrameStream()
+        self._fs = None
+        for opt in args:
+            if opt == "-sv":
+                self._fs = SimulateFrameStream()
+        if self._fs == None:
+            self._fs = FrameStream()
+        self._sensoryBuffer = SensoryBuffer(self._fs.initial_state())
 
     @loop
     def _listen(self, end):
@@ -112,6 +120,7 @@ class Main(object):
             v2t = Process(target = v2tloop, args = (v2t_send,))
         else:
             v2t = Process(target = simv2tloop, args = (v2t_send,))
+
         v2t.start()
         self._childPid = v2t.pid
 
