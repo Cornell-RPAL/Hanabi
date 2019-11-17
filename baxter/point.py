@@ -6,7 +6,7 @@ import argparse
 import time
 
 from motion_consts import NEUTRAL_R, POINT
-from log import log
+from .log import log
 
 rospy.init_node('node')
 

@@ -12,7 +12,7 @@ class SimulateFrameStream():
         discard = [self.to_card(game_text[0])]
         hand = [self.to_card(item) for item in game_text[1].split(", ")]
         board = [self.to_card(item) for item in game_text[2].split(", ")] if len(game_text) >= 3 else []
-        gripper = self.to_card(game_text[3]) if len(game_text) >= 4 else []
+        gripper = [self.to_card(game_text[3])] if len(game_text) >= 4 else []
         self.last_valid_board = {"discard": discard, "hand": hand, "board": board, "gripper": gripper}
     
     async def frame_process(self, buffer, fps):
@@ -20,16 +20,16 @@ class SimulateFrameStream():
         while True:
             await asyncio.sleep(0.2)
             game_text = open(self.filename, "r").readlines()
-            print(len(game_text))
             if len(game_text) < 3:
                 return self.last_valid_board
             discard = [self.to_card(game_text[0])]
             hand = [self.to_card(item) for item in game_text[1].split(", ")]
             board = [self.to_card(item) for item in game_text[2].split(", ")] if len(game_text) >= 3 else []
-            gripper = to_card(game_text[3]) if len(game_text) >= 4 else []
+            gripper = [self.to_card(game_text[3])] if len(game_text) >= 4 else []
             game_state_parsed = {"discard": discard, "hand": hand, "board": board, "gripper": gripper}
-            self.last_valid_board = game_state_parsed 
-            log(self.last_valid_board)
+            if self.last_valid_board != game_state_parsed:
+                self.last_valid_board = game_state_parsed
+                log(self.last_valid_board)
             buffer.cvStateHistory = self.last_valid_board
 
     def to_card(self, card_name):

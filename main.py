@@ -107,19 +107,19 @@ class Main(object):
         """
         v2t_send, main_rcv = Pipe() # communication pipe for across processes
         listen = asyncio.create_task(self._listen(main_rcv))
+        
+        fs = None
+        if "-scv" in systemargument:
+            fs = SimulateFrameStream()
+        else:
+            fs = FrameStream()
+        self._sensoryBuffer = SensoryBuffer(fs.initial_state())
 
         # multiprocessing is necessary for microphone stream
         if ("-sv" not in systemargument):
             v2t = Process(target = v2tloop, args = (v2t_send,))
         else:
             v2t = Process(target = simv2tloop, args = (v2t_send,))
-        
-        fs = None
-        if "-scv" in argv:
-            fs = SimulateFrameStream()
-        else:
-            fs = FrameStream()
-        self._sensoryBuffer = SensoryBuffer(fs.initial_state())
 
         v2t.start()
         self._childPid = v2t.pid
