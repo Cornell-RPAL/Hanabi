@@ -9,7 +9,7 @@ from log import log
 TEXT_BUFFER_LENGTH = 10
 
 class SensoryBuffer():
-    def __init__(self, frame_num=30):
+    def __init__(self, initial_state, frame_num=30):
         # inputs and buffers
 
         # voice
@@ -17,7 +17,7 @@ class SensoryBuffer():
         self._textHistory = []
 
         # cv
-        self._initial_state = FrameStream().initial_state
+        self._initial_state = initial_state
         self._permanence = 0
         self._cvState = self._initial_state
         self._cvStateHistory = []
@@ -63,7 +63,6 @@ class SensoryBuffer():
         else:
             return None
 
-<<<<<<< HEAD
     @property
     def justSpoke(self):
         return self._justSpoke
@@ -72,12 +71,6 @@ class SensoryBuffer():
     @justSpoke.setter 
     def justSpoke(self, v):
         self._justSpoke = v
-=======
-    #@justSpoke.setter 
-    #def justSpoke(self, v):
-    #    self._justSpoke = v
->>>>>>> dc9fde9bf219bb818a6e93d888bcf35d2417527b
-
 
     @property
     def cvStateHistory(self):
@@ -93,6 +86,7 @@ class SensoryBuffer():
     def recognize_action(self, new_state):
         def stateChange(new_state): #maybe should change (does only hand matter??)
             visible = self.cvState
+            log(visible)
             visible['discard'] = [visible['discard'][0]]
             # log(visible, new_state)
             return visible != new_state
@@ -109,11 +103,7 @@ class SensoryBuffer():
         if stateChange(new_state):
             log('detected state change')
             if new_state['gripper']:
-<<<<<<< HEAD
-                print('gripper', new_state['gripper'])
-=======
                 log(new_state['gripper'])
->>>>>>> dc9fde9bf219bb818a6e93d888bcf35d2417527b
                 self._cvState = new_state
             elif self._permanence > 5: #should set in const later
                 self._permanence = 0
@@ -130,7 +120,7 @@ class SensoryBuffer():
                             log('played', action_card)
                             log('new stable state:', self.cvState)
                             indices = [new_state['board'].index(action_card)]
-                            print("PlaySuccess detected")
+                            log("PlaySuccess detected")
                             return PlaySuccess(
                                 PLAYER, action_card, indices=   indices)
                         if action_card in new_state['discard']: 
@@ -141,7 +131,7 @@ class SensoryBuffer():
                             log('new stable state:', self.cvState)
                             indices = [new_state['discard'].index(action_card)]
                             
-                            print("Discard detected")
+                            log("Discard detected")
                             return Discard(PLAYER, action_card, indices=indices)
             self._permanence += 1
 
@@ -150,7 +140,7 @@ class SensoryBuffer():
         while True:
             await asyncio.sleep(0.05)
             if self._justSpoke and self.text:
-                print (f'deleted self-speaking text: {self._text}')
+                log (f'deleted self-speaking text: {self._text}')
                 self._text = ''
                 self._justSpoke = False
             if self._text and self._text != oldText and self.cvStateHistory:

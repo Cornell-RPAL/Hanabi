@@ -7,7 +7,7 @@ import argparse
 from motion_consts import NEUTRAL, POSITIONS, LOOK
 import sys
 sys.path.append("/var/Hanabi/Hanabi")
-from log import log
+from .log import log
 
 rospy.init_node('node')
 
