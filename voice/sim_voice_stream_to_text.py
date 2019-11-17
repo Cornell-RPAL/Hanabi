@@ -1,13 +1,12 @@
 from log import log
-import time
+import asyncio
 
 def main(sender):
+    filename = "voice/simulatedVoice.txt"
+    last_valid_text = ""
     while (True):
-        try:
-            text = input("input: ")
-            print(f"generated {text}")
-            sender.send(text)
-        except EOFError:
-            print("generated EOFError")
-            time.sleep(5)
-            pass 
+        voice_msg = open(filename, "r").readlines()[0]
+        if voice_msg != last_valid_text:
+            log(f"generated {voice_msg}")
+            sender.send(voice_msg)
+            last_valid_text = voice_msg
