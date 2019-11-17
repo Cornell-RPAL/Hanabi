@@ -1,12 +1,12 @@
 import curses
-from .game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
-NoHintTokens, NoErrorTokens)
-from .consts import (
+from game import (Game, InvalidCommand, IncorrectArgumentNumber, InvalidHint,
+NoHintTokens)
+from consts import (
     STATE_ACTIVE, STATE_CONTINUE, STATE_LAST_ROUND, STATE_COMPLETE, HANABOT
 )
-from .consts import NUMBER_IN_HAND
-from .action import Action, PlayCard, Discard, Hint
-from .hanabot import Hanabot
+from consts import NUMBER_IN_HAND
+from action import Action, PlayCard, Discard, Hint
+from hanabot import Hanabot
 
 stdscr = curses.initscr()
 
@@ -127,10 +127,10 @@ class Hanabi():
         scr.addstr("Turn: " + str(g.turn) + '\n\n')
         scr.addstr("Partner Hand: " + p_hand + '\n\n')
         scr.addstr("Played Cards: " + played + '\n\n')
-        scr.addstr("Number left in draw pile: " + 
+        scr.addstr("Number left in draw pile: " +
             str(len(g.board.drawPile)) + '\n\n')
 
-        
+
         if (g.message != self._prevCommand and
                 g.message != self._prevError):
             scr.addstr(g.message + '\n')

@@ -11,7 +11,7 @@ from .message import Message
 class simpleImplicatureBot():
     def __init__(self, board):
         self._board = board # stores pointer so always updated with reality
-        self._selfknowledge = SelfKnowledge(board, HANABOT)
+        self._selfknowledge = implicatureBotSelfKnowledge(board, HANABOT)
         self._player = HANABOT
         self._currentIntent = None
 

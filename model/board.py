@@ -1,7 +1,7 @@
-from .consts import (
+from consts import (
     NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, COLORS
 )
-from .card import Card
+from card import Card
 from collections import Counter
 from random import shuffle
 
@@ -66,7 +66,7 @@ class Board():
     @property
     def cardInGripper(self):
         return self._cardInGripper
-        
+
     @cardInGripper.setter
     def cardInGripper(self, val):
         self._cardInGripper = val
@@ -81,7 +81,7 @@ class Board():
 
     def topPlayedCards(self):
         """
-        A dictionary representing the top card of each color. 
+        A dictionary representing the top card of each color.
 
         The value is [0] if there is no cards of the color.
         """
@@ -90,4 +90,3 @@ class Board():
             if d[c.color] < c.number:
                 d[c.color] = c.number
         return d
-

@@ -1,4 +1,4 @@
-from .consts import COLORS, NUMBERS
+from consts import COLORS, NUMBERS
 
 
 class Card:
@@ -17,7 +17,7 @@ class Card:
     @property
     def id(self):
         return self._id
-    
+
     @property
     def color(self):
         return self._color

@@ -1,4 +1,4 @@
-from model.consts import HANABOT
+from consts import HANABOT
 
 class Action(object):
     """
