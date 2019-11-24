@@ -2,7 +2,9 @@ import keras
 import pyopenpose as op
 import numpy as np
 import cv2
+import time
 
+from log import log
 from keras.models import load_model
 
 model = load_model('gesture_data/pointing.h5')
@@ -18,6 +20,34 @@ opWrapper.start()
 datum = op.Datum()
 
 cap = cv2.VideoCapture(0)
+
+def indexFromKeypoint(x, y):
+	if (y<250 or y>450):
+		return -1
+	elif x >= 190 and x <= 235:
+		return 0
+	elif x >= 241 and x <= 283:
+		return 1
+	elif x >= 288 and x <= 326:
+		return 2
+	elif x >= 328 and x <= 369:
+		return 3
+	elif x >= 378 and x <= 430:
+		return 4
+	else: return -1
+
+timing = False
+curpose = -1
+start_time = time.time()
+
+indices = []
+
+def getPointingIndices():
+	temp = indices
+	indices = []
+	timing = False
+	curpose = -1
+	return temp
 
 while True:
 	ret, frame = cap.read()
@@ -40,14 +70,35 @@ while True:
 			for j in opt: 
 				if j == 0:
 					print("NO POSE")
+					curpose = -1
+					timing = False
 				elif j == 1:
 					print("point_left")
-					keypoint = datum.handKeypoints[0][0][8]
-					print(keypoint)
+					x, y, _ = datum.handKeypoints[0][0][8]
+					index = indexFromKeypoint(x,y)
+					timing = index != -1
+					if (timing and curpose == index):
+						if time.time() - start_time > 0.3 and index not in indices:
+							timing = True
+							indices.append(index)
+					elif (timing):
+						curpose = index
+						start_time = time.time()
+					else: start_time = time.time()
 				elif j == 2:
 					print("point_right")
-					keypoint = datum.handKeypoints[1][0][8]
-					print(keypoint)
+					x, y, _ = datum.handKeypoints[1][0][8]
+					index = indexFromKeypoint(x,y)
+					timing = index != -1
+					if (timing and curpose == index):
+						if time.time() - start_time > 0.3 and index not in indices:
+							timing = True
+							indices.append(index)
+					elif (timing):
+						curpose = index
+						start_time = time.time()
+					else: start_time = time.time()
+			print (indices)
 		except:
 			continue
 	key = cv2.waitKey(1)

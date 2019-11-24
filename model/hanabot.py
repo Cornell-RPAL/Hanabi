@@ -7,6 +7,7 @@ from .board import Board
 from .consts import NUMBER_IN_HAND, HANABOT
 from .unknownCard import UnknownCard
 from .message import Message
+from log import log
 
 class Hanabot():
     def __init__(self, board):
@@ -20,7 +21,7 @@ class Hanabot():
             await asyncio.sleep(0.05)
             # react to player action
             observedAction = iBuffer.action
-            print(observedAction and observedAction.indices)
+            log(observedAction and observedAction.indices)
             if observedAction:
                 self.inform(observedAction)
 
@@ -42,12 +43,12 @@ class Hanabot():
             # react to self action (intent)
             card = iBuffer.getGripper()
             if card:
-                print('AI recognized card in gripper')
-                print(self._currentIntent)
+                log('AI recognized card in gripper')
+                log(self._currentIntent)
                 action = None
                 if isinstance(self._currentIntent, PlayIntent):
                     if self.isPlayable(card):
-                        print('card is playable')
+                        log('card is playable')
                         action = self._currentIntent.complete([card], success=True)
                         oBuffer.baxterCommand = ("play", [self.playableIndex(card)])
                     else:

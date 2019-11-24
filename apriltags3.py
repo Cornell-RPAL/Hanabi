@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 '''Python wrapper for C version of apriltags. This program creates two
 classes that are used to detect apriltags and extract information from
 them. Using this module, you can identify all apriltags visible in an
@@ -13,7 +12,7 @@ Apriltags 3 version: Aleksandar Petrov, Spring 2019
 '''
 from __future__ import division
 from __future__ import print_function
-
+from log import log
 import ctypes
 import os
 import numpy
@@ -225,7 +224,6 @@ class Detector(object):
         self.libc = None
         self.tag_detector = None
         self.tag_detector_ptr = None
-
         for path in searchpath:
             relpath = os.path.join(path, filename)
             if os.path.exists(relpath):
@@ -236,7 +234,8 @@ class Detector(object):
         # this should search whatever paths dlopen is supposed to
         # search.
         if self.libc is None:
-            self.libc = ctypes.CDLL(filename)
+            dll_path = "/usr/local/lib/" + filename
+            self.libc = ctypes.CDLL(dll_path, ctypes.RTLD_GLOBAL)
 
         if self.libc is None:
             raise RuntimeError('could not find DLL named ' + filename)
@@ -432,8 +431,8 @@ if __name__ == '__main__':
     try:
         from cv2 import imshow
     except:
-        print("The function imshow was not implemented in this installation. Rebuild OpenCV from source to use it")
-        print("VIsualization will be disabled.")
+        log("The function imshow was not implemented in this installation. Rebuild OpenCV from source to use it")
+        log("VIsualization will be disabled.")
         visualization = False
 
     at_detector = Detector(families='tagStandard41h12',
@@ -444,7 +443,7 @@ if __name__ == '__main__':
                            decode_sharpening=0.25,
                            debug=0)
 
-    print("\n\nTESTING WITH MULTIPLE TAGS IMAGES")
+    log("\n\nTESTING WITH MULTIPLE TAGS IMAGES")
 
     time_num = 0
     time_sum = 0
@@ -456,7 +455,7 @@ if __name__ == '__main__':
 
 
     tag_ids = [tag.tag_id for tag in tags]
-    print(len(tags), " tags found: ", tag_ids)
+    log(len(tags), " tags found: ", tag_ids)
 
 
     color_img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)

@@ -1,18 +1,27 @@
 import asyncio
+<<<<<<< HEAD
 #import psutil
+=======
+import psutil
+import sys
+>>>>>>> 01f5bab6b11a8f91097bef0ce8ae1e92f3d47ff9
 from multiprocessing import Process, Pipe, Lock, Condition
 from subprocess import Popen
 
+from log import log
 from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
+from vision.simulate_frameStream import SimulateFrameStream
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
+from voice.sim_voice_stream_to_text import main as simv2tloop
 from voice.text_to_speech import text_to_speech as t2s
 from model.hanabot import Hanabot
 from model.message import Message
 from model.consts import HANABOT
 from model.board import Board
 from process_monitor import checkIfProcessRunning
+from sys import argv
 
 
 def loop(func):
@@ -24,11 +33,10 @@ def loop(func):
 
 class Main(object):
     def __init__(self):
-        self._sensoryBuffer = SensoryBuffer()
         self._outputBuffer = OutputBuffer()
         self._hanabot = None
         self._childPid = -1
-        self._fs = FrameStream()
+        self._sensoryBuffer = None
 
     @loop
     def _listen(self, end):
@@ -60,23 +68,24 @@ class Main(object):
         if text:
             p = psutil.Process(self._childPid)
             p.suspend() # prevent computer from hearing itself
-            print ('synthesizing text from output buffer')
+            log('synthesizing text from output buffer')
             t2s(text)
-            print ('if you see this only after audio finishies, should be blocking')
-            #p.resume()
+            self._sensoryBuffer.justSpoke = True
+            log('if you see this only after audio finishies, should be blocking')
+            p.resume()
 
     async def manageProcess(self, v2t, v2t_end):
         detected = False
         while True:
             await asyncio.sleep(0.02)
             if not detected:
-                print('managing processes')
+                log('managing processes')
             else:
-                print("play detected!")
+                log("play detected!")
 
             #if checkIfProcessRunning('play'):
             #    detected = True
-            #        print('play detected')
+            #        log('play detected')
             #    v2t.terminate()
             #elif not v2t.is_alive():
             #    v2t = Process(target = v2tloop, args = (v2t_end,))
@@ -93,18 +102,29 @@ class Main(object):
                 args = ['python2.7'] + [fn] + [typ] + [str(i) for i in command[1]]
             else:
                 args = ['python2.7'] + [fn] + [str(i) for i in command[1]]
-            print (args)
+            log(args)
             Popen(args)
 
-    async def run(self):
+    async def run(self, systemargument):
         """
         Runs all the processes and tasks.
         """
         v2t_send, main_rcv = Pipe() # communication pipe for across processes
         listen = asyncio.create_task(self._listen(main_rcv))
+        
+        fs = None
+        if "-scv" in systemargument:
+            fs = SimulateFrameStream()
+        else:
+            fs = FrameStream()
+        self._sensoryBuffer = SensoryBuffer(fs.initial_state())
 
         # multiprocessing is necessary for microphone stream
-        v2t = Process(target = v2tloop, args = (v2t_send,))
+        if ("-sv" not in systemargument):
+            v2t = Process(target = v2tloop, args = (v2t_send,))
+        else:
+            v2t = Process(target = simv2tloop, args = (v2t_send,))
+
         v2t.start()
         self._childPid = v2t.pid
 
@@ -114,7 +134,7 @@ class Main(object):
 
         t2v = asyncio.create_task(self.textToSpeech())
 
-        frame_processing = asyncio.create_task(self._fs.frame_process(self._sensoryBuffer, fps=10))
+        frame_processing = asyncio.create_task(fs.frame_process(self._sensoryBuffer, fps=10))
 
         # process_managing = asyncio.create_task(self.manageProcess(v2t, v2t_end))
 
@@ -125,9 +145,7 @@ class Main(object):
 
         await asyncio.gather(*tasks)
 
-        v2t.terminate()
-
 
 if __name__ == '__main__':
     m = Main()
-    asyncio.run(m.run())
+    asyncio.run(m.run(argv))
