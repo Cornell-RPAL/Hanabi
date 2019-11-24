@@ -640,3 +640,78 @@ DEBUG:google.auth.transport.requests:Making request: POST https://oauth2.googlea
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): oauth2.googleapis.com:443
 DEBUG:urllib3.connectionpool:https://oauth2.googleapis.com:443 "POST /token HTTP/1.1" 200 None
 DEBUG:root:2019-11-17 16:31:41.176631 [/var/Hanabi/ywk2/Hanabi/voice/text_to_speech.py:12 - text_to_speech()] Audio content written to file "output.mp3"
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:74: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:517: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4138: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:133: The name tf.placeholder_with_default is deprecated. Please use tf.compat.v1.placeholder_with_default instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3445: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:174: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/optimizers.py:790: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 1 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 2 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 3 of 3
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:74: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:517: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4138: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:133: The name tf.placeholder_with_default is deprecated. Please use tf.compat.v1.placeholder_with_default instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3445: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:174: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/optimizers.py:790: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 1 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 2 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 3 of 3
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:74: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:517: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:4138: The name tf.random_uniform is deprecated. Please use tf.random.uniform instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:133: The name tf.placeholder_with_default is deprecated. Please use tf.compat.v1.placeholder_with_default instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:3445: calling dropout (from tensorflow.python.ops.nn_ops) with keep_prob is deprecated and will be removed in a future version.
+Instructions for updating:
+Please use `rate` instead of `keep_prob`. Rate should be set to `rate = 1 - keep_prob`.
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/backend/tensorflow_backend.py:174: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/keras/optimizers.py:790: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
+
+WARNING:tensorflow:From /home/nst45/.local/share/virtualenvs/Hanabi-6Eo08z-l/lib/python3.7/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+DEBUG:asyncio:Using selector: EpollSelector
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 1 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 2 of 3
+DEBUG:google.auth.transport._http_client:Making request: GET http://169.254.169.254
+INFO:google.auth.compute_engine._metadata:Compute Engine Metadata server unavailable onattempt 3 of 3

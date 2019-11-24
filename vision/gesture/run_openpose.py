@@ -25,8 +25,13 @@ class GestureRec(object):
 		self.cap = cv2.VideoCapture(0)
 
 		self.timing = False
+		self.noposeTiming = False
+		self.nopose = False
+		self.noposeStart = time.time()
 		self.curpose = -1
 		self.start_time = time.time()
+
+
 
 		self.indices = []
 
@@ -52,7 +57,7 @@ class GestureRec(object):
 	# 	curpose = -1
 	# 	return temp
 
-	async def main(self):
+	async def main(self, buffer):
 		while True:
 			#asyncio.sleep(0.05)
 			ret, frame = self.cap.read()
@@ -75,14 +80,25 @@ class GestureRec(object):
 
 					for j in opt: 
 						if j == 0:
-							print("NO POSE")
+							# print("NO POSE")
 							self.curpose = -1
 							self.timing = False
+
+							if( not self.noposeTiming):
+								self.noposeTiming = True
+								self.noposeStart = time.time()
+							elif time.time() - self.noposeStart > 5:
+								# self.noposeTimi
+								buffer.pointedIndices = self.indices 
+								self.indices = []
+								self.noposeTiming = False
+
 						elif j == 1:
-							print("point_left")
+							# print("point_left")
 							x, y, _ = self.datum.handKeypoints[0][0][8]
 							index = self.indexFromKeypoint(x,y)
 							self.timing = index != -1
+							self.noposeTiming = False
 							if (self.timing and self.curpose == index):
 								if time.time() - self.start_time > 0.3 and index not in self.indices:
 									self.timing = True
@@ -92,10 +108,11 @@ class GestureRec(object):
 								self.start_time = time.time()
 							else: self.start_time = time.time()
 						elif j == 2:
-							print("point_right")
+							# print("point_right")
 							x, y, _ = self.datum.handKeypoints[1][0][8]
 							index = self.indexFromKeypoint(x,y)
 							self.timing = index != -1
+							self.noposeTiming = False
 							if (self.timing and self.curpose == index):
 								if time.time() - self.start_time > 0.3 and index not in self.indices:
 									self.timing = True
@@ -104,7 +121,8 @@ class GestureRec(object):
 								self.curpose = index
 								self.start_time = time.time()
 							else: self.start_time = time.time()
-					print (self.indices)
+					#print (self.indices)
+					# buffer.pointedIndices = self.indices 
 				except ValueError:
 					continue
 				
