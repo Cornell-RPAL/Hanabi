@@ -5,6 +5,7 @@ import baxter_interface
 import argparse
 
 from motion_consts import NEUTRAL, POSITIONS, LEFT_END
+from log import log
 
 rospy.init_node('node')
 
@@ -25,8 +26,8 @@ parser.add_argument("i", nargs='?', default="check_string_for_empty")
 args = parser.parse_args()
 
 if args.i == 'check_string_for_empty':
-    print 'No index given, please specify the index of the card you want played.'
+    log('No index given, please specify the index of the card you want played.')
 elif int(args.i) in range(0,5):
     pick_up(int(args.i))
 else:
-    print 'Give a valid integer in range 0-4 inclusive to specify the index!'
+    log('Give a valid integer in range 0-4 inclusive to specify the index!')

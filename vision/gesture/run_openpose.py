@@ -3,8 +3,8 @@ import pyopenpose as op
 import numpy as np
 import cv2
 import time
-
 import asyncio
+from log import log
 from keras.models import load_model
 
 class GestureRec(object):
