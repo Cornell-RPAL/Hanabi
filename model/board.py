@@ -1,7 +1,7 @@
-from consts import (
+from .consts import (
     NUMBER_OF_HINT_TOKENS, NUMBER_OF_ERROR_TOKENS, COLORS
 )
-from card import Card
+from .card import Card
 from collections import Counter
 from random import shuffle
 

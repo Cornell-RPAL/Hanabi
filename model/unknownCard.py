@@ -13,10 +13,10 @@ class UnknownCard():
     """
 
     def __init__(self):
-        self._possibleCards = Counter(ALL_CARDS)
+        #self._possibleCards = Counter(ALL_CARDS)
         self._handAge = 0
-        self._possible = ["colors":COLORS, "numbers":NUMBERS]
-        self._beliefs = ["colors":COLORS, "numbers":NUMBERS]
+        self._possible = {"colors":COLORS, "numbers":NUMBERS}
+        self._beliefs = {"colors":COLORS, "numbers":NUMBERS}
 
     @property
     def possible(self):
@@ -40,12 +40,12 @@ class UnknownCard():
     def filterPossibiliitiesAndBeliefs(self, feature):
         if(isValidColor(feature)):
             f = lambda color: color == feature
-            self._possible = filter(f, self._possible["colors"])
-            self._beliefs = filter(f, self._beliefs["colors"])
+            self._possible["colors"] = list(filter(f, self._possible["colors"]))
+            self._beliefs["colors"] = list(filter(f, self._beliefs["colors"]))
         elif(isValidNumber(feature)):
             f = lambda number: number == feature
-            self._possible = filter(f, self._possible["numbers"])
-            self._beliefs = filter(f, self._beliefs["numbers"])
+            self._possible["numbers"] = list(filter(f, self._possible["numbers"]))
+            self._beliefs["numbers"] = list(filter(f, self._beliefs["numbers"]))
 
     def filterBeliefsForImplicature(self, feature, nextCardInColor = None, color = None):
         if(isValidColor(feature) and len(self._beliefs["numbers"]) > 1):
@@ -66,7 +66,7 @@ class UnknownCard():
         self._handAge += 1
 
     def __str__(self):
-        return '[Unknown card that could be ' + str(self._possibleCards) + ']'
+        return 'Unknown card that could be ' + str(self._possibleCards)
 
     def __eq__(self, other):
         possibleCards1 = self._possibleCards.items()

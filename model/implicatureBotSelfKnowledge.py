@@ -6,6 +6,7 @@ from .consts import (
 )
 from .card import Card, isValidColor, isValidNumber
 from .action import PlaySuccess, PlayFail, Discard, Hint
+from .selfKnowledge import SelfKnowledge
 
 
 class implicatureBotSelfKnowledge():
@@ -96,11 +97,17 @@ class implicatureBotSelfKnowledge():
         self._hintTokens -= 1
         for i in range(NUMBER_IN_HAND):
             if i not in indexList:
-                nf = lambda card: not (f (card))
-                self._hand[i].filter(nf)
+                nf = lambda id: not feature
+                self._hand[i].possible['colors'] = list(filter(nf, self._hand[i].possible['colors']))#self._hand[i].possible['colors'].filter(nf) #correct?
+                self._hand[i].possible['numbers'] = list(filter(nf, self._hand[i].possible['numbers']))
             else:
-                self._hand[i].filter(f)
-                self._hand[i].filterPossibiliitiesAndBeliefs(feature)
+                print("feature: ", feature)
+                print("original hand", self._hand[i])
+                self._hand[i]._possibleCards = Counter(filter(f, self._hand[i]._possibleCards.elements()))
+                print("hand after else 1", self._hand[i])
+                self._hand[i] = self._hand[i].filterPossibiliitiesAndBeliefs(feature)
+                print("hand after else 2", self._hand[i])
+
                 self.updateBeliefHelper(feature, indexList)
 
     def updatePartnerWithHint(self, feature, indexList):
