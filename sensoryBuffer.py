@@ -146,11 +146,11 @@ class SensoryBuffer():
                 self._justSpoke = False
             if self._text and self._text != oldText and self.cvStateHistory:
                 log('input buffer processing...')
-                    try:
-                        self.action = CommandParser.parse(self._text)
-                    except parsingError:
-                        log("could not find index")
-                        continue
+                try:
+                    self.action = CommandParser.parse(self._text)
+                except parsingError:
+                    log("could not find index")
+                    continue
 
                 oldText = self._text
             self.action = self.recognize_action(self.cvStateHistory)
