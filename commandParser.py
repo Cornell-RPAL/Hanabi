@@ -2,6 +2,18 @@ from model.action import Hint
 from model.consts import HANABOT, PLAYER
 from log import log
 
+class parsingError(Exception):
+    """Exception raised for issues with parsing
+
+    Attributes:
+        input -- input expression in which the error occurred
+        explanation -- explanation of the error
+    """
+
+    def __init__(self, input, explanation):
+        self.input = input
+        self.explanation = explanation
+
 class CommandParser():
     def __init__(self):
         pass
@@ -18,7 +30,7 @@ class CommandParser():
         elif 'indices' in word_list:
             i = word_list.index("indices")
         else:
-            return
+            raise parsingError(text, "Index was not found.")
 
         index_list = []
         while True:

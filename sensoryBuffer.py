@@ -1,10 +1,11 @@
 from model.action import Action, PlaySuccess, PlayFail, Discard
 from model.card import Card
 from model.consts import PLAYER
-from commandParser import CommandParser
+from commandParser import CommandParser, parsingError
 from vision.frameStream import FrameStream
 import asyncio
 from log import log
+import parsingError
 
 TEXT_BUFFER_LENGTH = 10
 
@@ -66,9 +67,9 @@ class SensoryBuffer():
     @property
     def justSpoke(self):
         return self._justSpoke
-    
 
-    @justSpoke.setter 
+
+    @justSpoke.setter
     def justSpoke(self, v):
         self._justSpoke = v
 
@@ -123,14 +124,14 @@ class SensoryBuffer():
                             log("PlaySuccess detected")
                             return PlaySuccess(
                                 PLAYER, action_card, indices=   indices)
-                        if action_card in new_state['discard']: 
+                        if action_card in new_state['discard']:
                             #could also just check top card
                             updateDiscard(new_state)
 
                             log('discarded', action_card)
                             log('new stable state:', self.cvState)
                             indices = [new_state['discard'].index(action_card)]
-                            
+
                             log("Discard detected")
                             return Discard(PLAYER, action_card, indices=indices)
             self._permanence += 1
@@ -145,8 +146,11 @@ class SensoryBuffer():
                 self._justSpoke = False
             if self._text and self._text != oldText and self.cvStateHistory:
                 log('input buffer processing...')
-                self.action = CommandParser.parse(self._text)
+                    try:
+                        self.action = CommandParser.parse(self._text)
+                    except parsingError:
+                        log("could not find index")
+                        continue
+
                 oldText = self._text
             self.action = self.recognize_action(self.cvStateHistory)
-
-
