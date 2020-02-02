@@ -5,7 +5,6 @@ from commandParser import CommandParser, parsingError
 from vision.frameStream import FrameStream
 import asyncio
 from log import log
-import parsingError
 
 TEXT_BUFFER_LENGTH = 10
 
