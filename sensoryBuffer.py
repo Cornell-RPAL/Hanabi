@@ -15,6 +15,7 @@ class SensoryBuffer():
         # voice
         self._text = ''
         self._textHistory = []
+        self._justSpoke = False
 
         # cv
         self._initial_state = initial_state
@@ -22,10 +23,13 @@ class SensoryBuffer():
         self._cvState = self._initial_state
         self._cvStateHistory = []
 
-        #
+        # gesture
+        self._pointedIndices = []
+
+        # analyzed action from user
         self._action = []
 
-        self._justSpoke = False
+        
 
     @property
     def text(self):
@@ -66,11 +70,23 @@ class SensoryBuffer():
     @property
     def justSpoke(self):
         return self._justSpoke
-    
 
     @justSpoke.setter 
     def justSpoke(self, v):
         self._justSpoke = v
+
+    @property
+    def pointedIndices(self):
+        if self._pointedIndices:
+            return self._pointedIndices.pop(0)
+        else:
+            return None
+
+    @pointedIndices.setter
+    def pointedIndices(self, val):
+        log('indices received: ', val)
+        self._pointedIndices = [val]
+    
 
     @property
     def cvStateHistory(self):

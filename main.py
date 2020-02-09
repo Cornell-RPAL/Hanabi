@@ -8,6 +8,7 @@ from log import log
 from sensoryBuffer import SensoryBuffer
 from vision.frameStream import FrameStream
 from vision.simulate_frameStream import SimulateFrameStream
+from vision.gesture.run_openpose import GestureRec
 from outputBuffer import OutputBuffer
 from voice.voice_stream_to_text import main as v2tloop
 from voice.sim_voice_stream_to_text import main as simv2tloop
@@ -33,6 +34,7 @@ class Main(object):
         self._hanabot = None
         self._childPid = -1
         self._sensoryBuffer = None
+        self._ges = GestureRec()
 
     @loop
     def _listen(self, end):
@@ -132,12 +134,13 @@ class Main(object):
 
         frame_processing = asyncio.create_task(fs.frame_process(self._sensoryBuffer, fps=10))
 
+        gesture_recognizing = asyncio.create_task(self._ges.main(self._sensoryBuffer))
         # process_managing = asyncio.create_task(self.manageProcess(v2t, v2t_end))
 
         baxter_running = asyncio.create_task(self._runBaxter())
 
         tasks = (listen, frame_processing, input_processing, \
-                hanabot_processing, t2v, baxter_running)
+                gesture_recognizing, hanabot_processing, t2v, baxter_running)
 
         await asyncio.gather(*tasks)
 
