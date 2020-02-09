@@ -29,7 +29,7 @@ class SensoryBuffer():
         # analyzed action from user
         self._action = []
 
-        
+
 
     @property
     def text(self):
@@ -87,7 +87,7 @@ class SensoryBuffer():
     def pointedIndices(self, val):
         log('indices received: ', val)
         self._pointedIndices = [val]
-    
+
 
     @property
     def cvStateHistory(self):
@@ -163,7 +163,7 @@ class SensoryBuffer():
             if self._text and self._text != oldText and self.cvStateHistory:
                 log('input buffer processing...')
                 try:
-                    self.action = CommandParser.parse(self._text)
+                    self.action = CommandParser.parse(self._text, self.pointedIndices
                 except parsingError:
                     log("did not understand features")
                     continue

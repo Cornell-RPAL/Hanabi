@@ -19,7 +19,7 @@ class CommandParser():
         pass
 
     @staticmethod
-    def parse(text):
+    def parse(text, pointedIndices):
         # HINT:
         # "Your card at index 3 is red" (currently support)
         # "Your first, second and last cards are white"
@@ -106,7 +106,7 @@ class CommandParser():
 
         log('feature: ' + str(feature))
 
-        return Hint(PLAYER, feature=feature)
+        return Hint(PLAYER, feature=feature, indices=pointedIndices)
 
 if __name__ == '__main__':
     cp = CommandParser()
