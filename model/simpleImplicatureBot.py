@@ -153,13 +153,12 @@ class simpleImplicatureBot():
         return len(ret)
 
     def checkNotPlayedMyCardsFor1(self, num):
-        ret = None
         lst = self.indicesOfMyNumber(num)
         for x in lst:
             card_colors = self._selfKnowledge.hand[x].possible["colors"] #assumes 0 is removed!
             if(not (len(card_colors) == 1 and self._board.topPlayedCards[card_colors[0]] == 0)):
-                ret = x
-        return ret
+                return x
+        return None
 
     def minNumber(self):
         track = 6
@@ -242,7 +241,7 @@ class simpleImplicatureBot():
         elif(len(self.teamMateImmediatelyPlayableUnknown()) > 0 and len(self._board.playedPile )== 0): #teammate's cards are immediately playable, know nothing about, and score = 0
             i = self.teamMateImmediatelyPlayableUnknown()
             return HintIntent(indices = i, feature = self._selfKnowledge.partnerHand[i[0]].number)
-        elif(self.activeFireworks() < 4 and self.checkNotPlayedMyCardsFor1(1)): #less than or equal to 4 stacks played and you have any 1, play it
+        elif(self.activeFireworks() < 4 and self.checkNotPlayedMyCardsFor1(1) != None): #less than or equal to 4 stacks played and you have any 1, play it
             return PlayIntent(indices = self.checkNotPlayedMyCardsFor1(1)[0])
         elif(len(self.altanySureDiscard()) > 0): #no hints left and sure of a discard
             return DiscardIntent(indices=[self.altanySureDiscard(self)])
