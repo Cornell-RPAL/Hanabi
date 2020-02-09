@@ -1,6 +1,5 @@
 import asyncio
 import psutil
-import sys
 from multiprocessing import Process, Pipe, Lock, Condition
 from subprocess import Popen
 

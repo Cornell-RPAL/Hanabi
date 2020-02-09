@@ -21,7 +21,7 @@ class FrameStream():
     async def frame_process(self, buffer, fps=10):
         log('Starting frame process...')
         while True:
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(1)
             self.frame_num += 1
             ret, frame = self.cap.read()
             gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

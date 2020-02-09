@@ -76,10 +76,9 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
 
     gripper = []
     if len(area_sorted) > 2 and (find_area(area_sorted[-1]) > (find_area(area_sorted[-2]) * 4)):
-        log('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
-        log('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
+        #log('comp1 ', id_to_card(area_sorted[-1].tag_id), find_area(area_sorted[-1]))
+        #log('comp2 ', id_to_card(area_sorted[-2].tag_id), find_area(area_sorted[-2]))
         gripper = [area_sorted[-1]]
-        print("Gripper detected: ", gripper)
 
     # if empty_draw_pile and (find_center(area_sorted[-1])[1] > (find_center(area_sorted[-2])[1] * nearness_threshold)):
     #     gripper = area_sorted[-1]
@@ -100,8 +99,8 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     else:
         hand = sorted(y_sorted[:5], key=lambda tag: find_center(tag)[0])
 
-    # log(id_to_card(x_sorted[-1].tag_id), find_center(x_sorted[-1]))
-    # log(id_to_card(x_sorted[-2].tag_id), find_center(x_sorted[-2]))
+    #log(id_to_card(x_sorted[-1].tag_id), find_center(x_sorted[-1]))
+    #log(id_to_card(x_sorted[-2].tag_id), find_center(x_sorted[-2]))
 
     if find_center(x_sorted[-1])[0] > (find_center(x_sorted[-2])[0] + discard_threshold):
         discard = [x_sorted[-1]]
@@ -116,7 +115,7 @@ def detectState(tags, empty_draw_pile = False, discard_threshold=50, hand_thresh
     for key in res:
         if res[key]:
             res[key] = [id_to_card(tag.tag_id) for tag in res[key]]
-    log([key + ": " + ", ".join([str(card) for card in res[key]]) for key in res]) 
+    #log([key + ": " + ", ".join([str(card) for card in res[key]]) for key in res]) 
     return res
 
 
@@ -138,10 +137,10 @@ def getTags(img, flip=False, verbose=False, save=False):
     cam_params = ( cameraMatrix[0,0], cameraMatrix[1,1], cameraMatrix[0,2], cameraMatrix[1,2])
 
     tags = at_detector.detect(res, estimate_tag_pose=True, camera_params=cam_params, tag_size=0.05)
-    print(tags)
-    for tag in tags:
-        print("Tag id:" + str(tag.tag_id))
-        print("Tag pose_t:" + str(tag.pose_t)) 
+    #log(tags)
+    #for tag in tags:
+        #log("Tag id:" + str(tag.tag_id))
+        #log("Tag pose_t:" + str(tag.pose_t)) 
 
     color_img = cv2.cvtColor(res, cv2.COLOR_GRAY2RGB)
 

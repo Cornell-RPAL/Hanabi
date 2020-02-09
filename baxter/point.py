@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 import baxter_interface
@@ -6,7 +6,6 @@ import argparse
 import time
 
 from motion_consts import NEUTRAL_R, POINT
-from .log import log
 
 rospy.init_node('node')
 
