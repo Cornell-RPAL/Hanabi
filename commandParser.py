@@ -24,32 +24,74 @@ class CommandParser():
         # "Your card at index 3 is red" (currently support)
         # "Your first, second and last cards are white"
 
-        word_list = text.split(' ')
-        if 'index' in word_list:
-            i = word_list.index("index")
-        elif 'indices' in word_list:
-            i = word_list.index("indices")
-        else:
-            raise parsingError(text, "Index was not found.")
+        # Red, red, Red
+        # this card is Red
+        # these cards are Red
+        # this is Red
+        # these are red
+        # red
+        #
 
-        index_list = []
-        while True:
-            i += 1
-            try:
-                if word_list[i] == 'and':
-                    continue
-                n = int(word_list[i])
-                index_list.append(n)
-            except:
-                break
-        i += 1 # 'is', 'are'
-        try:
-            feature = int(word_list[i])
-        except ValueError:
-            feature = word_list[i]
-        except IndexError:
-            return
-        # feature = word_list[-1]
+
+        feature_list = set('red', 'green', 'yellow', 'blue', 'white', 'one', 'two', 'three', 'four', 'five', '1', '2', '3', '4', '5')
+        word_list = set(text.split())
+        intersection = feature_list.intersection(word_list)
+        if len(intersection) == 1:
+            feature = intersection
+        elif len(intersection) < 1:
+            raise parsingError(text, "Feature was not found")
+        else:
+            raise parsingError(text, "Too many features mentioned")
+
+
+
+##################### OLD CODE ##########################
+
+        # word_list = text.split(' ')
+        # if 'index' in word_list:
+        #     i = word_list.index("index")
+        # elif 'indices' in word_list:
+        #     i = word_list.index("indices")
+        # else:
+        #     raise parsingError(text, "Index was not found.")
+        #
+        # index_list = []
+        # while True:
+        #     i += 1
+        #     try:
+        #         if word_list[i] == 'and':
+        #             continue
+        #         n = int(word_list[i])
+        #         index_list.append(n)
+        #     except:
+        #         break
+        # i += 1 # 'is', 'are'
+        # try:
+        #     feature = int(word_list[i])
+        # except ValueError:
+        #     feature = word_list[i]
+        # except IndexError:
+        #     return
+        # # feature = word_list[-1]
+
+
+        # dn = {
+        #     'one': 1,
+        #     'two': 2,
+        #     'three': 3,
+        #     'four': 4,
+        #     'five': 5
+        # }
+        #
+        # if feature in dn:
+        #     feature = dn[feature]
+        #
+        # log('feature: ' + str(feature))
+        # log('index list: ' + str(index_list))
+        #
+        # return Hint(PLAYER, feature=feature, indices=index_list)
+##################### OLD CODE ##########################
+
 
         dn = {
             'one': 1,
@@ -63,9 +105,8 @@ class CommandParser():
             feature = dn[feature]
 
         log('feature: ' + str(feature))
-        log('index list: ' + str(index_list))
 
-        return Hint(PLAYER, feature=feature, indices=index_list)
+        return Hint(PLAYER, feature=feature)
 
 if __name__ == '__main__':
     cp = CommandParser()

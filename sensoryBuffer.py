@@ -148,7 +148,7 @@ class SensoryBuffer():
                 try:
                     self.action = CommandParser.parse(self._text)
                 except parsingError:
-                    log("could not find index")
+                    log("did not understand features")
                     continue
 
                 oldText = self._text
