@@ -98,28 +98,36 @@ class simpleImplicatureBot():
             if card.hasFeature(feature)]
 
     def indicesOfMyNumber(self, number):
-        return [i for i, card in enumerate(self._selfKnowledge.Hand) \
-            if card.number == number]
+        return [i for i, card in enumerate(self._selfKnowledge._hand) \
+            if len(card.possible["numbers"]) == 1 and  \
+            card.possible["numbers"][0] == number]
 
     def discardables(self, hand):
         return [i for i, card in enumerate(hand) if self.isDiscardable(card)]
 
     def myImmediatelyPlayableBelief(self): #change for beliefs vs possibility
         hand = self._selfKnowledge.hand
-        print("HAND!!!:", self._selfKnowledge.hand[0], self._selfKnowledge.hand[1], self._selfKnowledge.hand[2], self._selfKnowledge.hand[3], self._selfKnowledge.hand[4])
+        #print("HAND!!!:", self._selfKnowledge.hand[0], self._selfKnowledge.hand[1], self._selfKnowledge.hand[2], self._selfKnowledge.hand[3], self._selfKnowledge.hand[4])
         for i in range(len(self._selfKnowledge.hand)):
-            print(i)
-            print("in loop")
-            print(hand[i].beliefs["colors"])
-            print(hand[i].beliefs["numbers"])
+            #print(i)
+            #print("in loop")
+            #print(hand[i].beliefs["colors"])
+            #print(hand[i].beliefs["numbers"])
+            card = hand[i]
             if(len(hand[i].beliefs["numbers"]) == 1 and len(hand[i].beliefs["colors"]) == 1): #if certain about a card
-                print("in if")
-                if(topPlayedCards(self._board)[card.color] != 0): #if the color has been played before
-                    if(isPlayable(card)):#if card playable, return index of card
+                #print("in if")
+                if(self._board.topPlayedCards()[card.beliefs["colors"][0]] != 0): #if the color has been played before
+                    if(self.isPlayableBelief(card)):#if card playable, return index of card
                         return i
                 elif hand[i].beliefs["numbers"][0] == 1:#else if you think it is a 1
                     return i #return index of card
         return None
+
+    def isPlayableBelief(self, card):
+        top = self._board.topPlayedCards()
+        if (top[card.beliefs['colors'][0]] + 1) == card.beliefs['numbers'][0]:
+            return True
+        return False
 
     def teamMateImmediatelyPlayable(self):
         return self.playables(self._board.partnerHand)
@@ -127,22 +135,31 @@ class simpleImplicatureBot():
     def teamMateImmediatelyPlayableUnknown(self):
         ret = []
         hand = self._selfKnowledge._partnerKnowledge.hand
-        for i in self.teamMateImmediatelyPlayable():
+        for i in range(0, len(self.teamMateImmediatelyPlayable())):
+            #print("for card index i in teamate's hand ", i)
+            #print("possible numbers are ", hand[i].possible['numbers'])
+            #print('possible colors are ', hand[i].possible['colors'])
             if len(hand[i].possible["numbers"]) > 1 and len(hand[i].possible["colors"]) > 1:
+                #print("appended to list: index ", i)
                 ret.append(i)
         return ret
 
     def activeFireworks(self):
-        return len(self._board.topPlayedCards())
+        ret = []
+        for color in self._board.topPlayedCards():
+            if self._board.topPlayedCards()[color] < 1:
+                ret.append(color)
+        print("number of active fireworks is", len(ret))
+        return len(ret)
 
-    def checkNotPlayedp2for1(self, num):
+    def checkNotPlayedMyCardsFor1(self, num):
         ret = None
-        lst = indicesOfMyNumber(num)
+        lst = self.indicesOfMyNumber(num)
         for x in lst:
-            card = self._selfKnowledge.hand[x].possible["color"] #assumes 0 is removed!
-            if(not (len(cards) == 1 and self._board.topPlayedCards[cards[0].color] == 0)):
+            card_colors = self._selfKnowledge.hand[x].possible["colors"] #assumes 0 is removed!
+            if(not (len(card_colors) == 1 and self._board.topPlayedCards[card_colors[0]] == 0)):
                 ret = x
-        return x
+        return ret
 
     def minNumber(self):
         track = 6
@@ -220,16 +237,16 @@ class simpleImplicatureBot():
             #to the next number. 1 hint of number, if it matches a color stack and unsure
             #about the color of that card, then set color to where it would be viable to play
         #game.played is array indexed by color of queues? of played cards
-        if(len(self.myImmediatelyPlayableBelief()) > 0): #any of my cards are playable
+        if(self.myImmediatelyPlayableBelief() != None): #any of my cards are playable
             return PlayIntent(indices=[self.myImmediatelyPlayableBelief()])
         elif(len(self.teamMateImmediatelyPlayableUnknown()) > 0 and len(self._board.playedPile )== 0): #teammate's cards are immediately playable, know nothing about, and score = 0
-            i = self.teamMateImmediatelyPlayableUnknown()[0]
-            return HintIntent(indices = i, feature = self._selfKnowledge.partnerHand[i].color)
-        elif(self.activeFireworks() < 4 and checkNotPlayedp2for1(1)): #less than or equal to 4 stacks played and the 1 of color is not played yet
-            return HintIntent(indices = checkNotPlayedp2for1(1), feature = 1)
+            i = self.teamMateImmediatelyPlayableUnknown()
+            return HintIntent(indices = i, feature = self._selfKnowledge.partnerHand[i[0]].number)
+        elif(self.activeFireworks() < 4 and self.checkNotPlayedMyCardsFor1(1)): #less than or equal to 4 stacks played and you have any 1, play it
+            return PlayIntent(indices = self.checkNotPlayedMyCardsFor1(1)[0])
         elif(len(self.altanySureDiscard()) > 0): #no hints left and sure of a discard
-            return DiscardIntent(indices=[altanySureDiscard(self)])
-        elif(self._board.hintTokens < 1 and anyNoInfo(self)): #no hints and cards with no info, discard it
-            return DiscardIntent(indices = [anyNoInfo(self)])
+            return DiscardIntent(indices=[self.altanySureDiscard(self)])
+        elif(self._board.hintTokens < 1 and self.anyNoInfo(self)): #no hints and cards with no info, discard it
+            return DiscardIntent(indices = [self.anyNoInfo(self)])
         elif(self._board.hintTokens <= 1): #1 or less hints, do less risky discard -
-            return DiscardIntent(indices = [lessRiskyDiscard(self)])
+            return DiscardIntent(indices = [self.lessRiskyDiscard(self)])

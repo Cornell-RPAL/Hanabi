@@ -31,7 +31,7 @@ class SelfKnowledge():
     @property
     def board(self):
         return self._board
-    
+
     @property
     def partnerHand(self):
         return self._partnerHand
@@ -79,7 +79,7 @@ class SelfKnowledge():
             f = lambda card: card.color == feature
         elif isValidNumber(feature):
             f = lambda card: card.number == feature
-        
+
         self._hintTokens -= 1
         for i in range(NUMBER_IN_HAND):
             if i not in indexList:

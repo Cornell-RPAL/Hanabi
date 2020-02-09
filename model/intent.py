@@ -16,6 +16,11 @@ class Intent:
         self._feature = feature
         self._baxterCommand = ''
 
+    def __eq__ (self, other):
+        if self._indices == other._indices and self._feature == other._feature \
+            and self._baxterCommand == other._baxterCommand:
+            return True
+
     def complete(self, cardList = [], success = True):
         if isinstance(self, PlayIntent):
             if success:
@@ -57,10 +62,7 @@ class HintIntent(Intent):
     @property
     def feature(self):
         return self._feature
-    
+
 
     def __str__(self):
-        idx = ""
-        for num in self._indices:
-            idx += " "+ str(num)
-        return "Hint: your cards at indices "+ idx + " are "+ str(self._feature) +"\n"
+        return "Hint: your cards at indices "+ str(self._indices) + " are "+ str(self._feature) +"\n"
