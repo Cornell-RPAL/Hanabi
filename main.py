@@ -1,10 +1,6 @@
 import asyncio
-<<<<<<< HEAD
-#import psutil
-=======
 import psutil
 import sys
->>>>>>> 01f5bab6b11a8f91097bef0ce8ae1e92f3d47ff9
 from multiprocessing import Process, Pipe, Lock, Condition
 from subprocess import Popen
 
@@ -111,7 +107,7 @@ class Main(object):
         """
         v2t_send, main_rcv = Pipe() # communication pipe for across processes
         listen = asyncio.create_task(self._listen(main_rcv))
-        
+
         fs = None
         if "-scv" in systemargument:
             fs = SimulateFrameStream()

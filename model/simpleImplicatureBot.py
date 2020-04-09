@@ -1,13 +1,14 @@
-import random
+from random import randint
 import asyncio
 from .implicatureBotSelfKnowledge import implicatureBotSelfKnowledge
 from .selfKnowledge import SelfKnowledge
 from .intent import PlayIntent, DiscardIntent, HintIntent
 from .action import PlaySuccess, PlayFail, Discard, Hint
 from .board import Board
-from .consts import NUMBER_IN_HAND, HANABOT
+from .consts import NUMBER_IN_HAND, HANABOT, AMTS, COLORS
 from .unknownCard import UnknownCard
 from .message import Message
+
 
 class simpleImplicatureBot():
     def __init__(self, board, selfknowledge):
@@ -135,7 +136,7 @@ class simpleImplicatureBot():
     def teamMateImmediatelyPlayableUnknown(self):
         ret = []
         hand = self._selfKnowledge._partnerKnowledge.hand
-        for i in range(0, len(self.teamMateImmediatelyPlayable())):
+        for i in range(len(self.teamMateImmediatelyPlayable())):
             #print("for card index i in teamate's hand ", i)
             #print("possible numbers are ", hand[i].possible['numbers'])
             #print('possible colors are ', hand[i].possible['colors'])
@@ -147,7 +148,7 @@ class simpleImplicatureBot():
     def activeFireworks(self):
         ret = []
         for color in self._board.topPlayedCards():
-            if self._board.topPlayedCards()[color] < 1:
+            if self._board.topPlayedCards()[color] > 0:
                 ret.append(color)
         print("number of active fireworks is", len(ret))
         return len(ret)
@@ -156,81 +157,130 @@ class simpleImplicatureBot():
         lst = self.indicesOfMyNumber(num)
         for x in lst:
             card_colors = self._selfKnowledge.hand[x].possible["colors"] #assumes 0 is removed!
-            if(not (len(card_colors) == 1 and self._board.topPlayedCards[card_colors[0]] == 0)):
+            if(not (len(card_colors) == 1 and (self._board.topPlayedCards())[card_colors[0]] == 1)):
                 return x
         return None
 
     def minNumber(self):
         track = 6
-        for c, x in topPlayedCards:
+        for c, x in self._board.topPlayedCards().items():
             if x < track:
                 track = x
         return track
 
-    def checkDeadByNumber(number, pile):
+    def checkDeadByNumber(self, number, pile):
         f = lambda card: card.number == number
-        return len(filter(filterFunction(number), pile)) == AMTS[number]
+        new_pile = list(filter(f, pile))
+        return len(new_pile) == AMTS[number + 1]
 
-    def deadFireworkOfColor(color):
+    def deadFireworkOfColor(self, color):
+        ret = 6
         f = lambda card: card.color == color
         discardOfColor = list(filter(f, self._board.discardPile))
         for i in range(5):
-            if(checkDeadByNumber(i, discardOfColor)):
-                return i
-        return None
+            if(self.checkDeadByNumber(i, discardOfColor)):
+                ret = i
+        return ret
 
-    def altanySureDiscard():
+    def altanySureDiscard(self):
         checkedDup = []
-        for i in range(len(selfKnowledge.hand)):
-            x = selfKnowledge.hand[i]
-            if (len(x.beliefs["colors"]) == 1 and len(x.beliefs["number"]) == 1 and x.beliefs["number"][0] <= self._board.topPlayedCards[x.color]):
+        for i in range(len(self._selfKnowledge._hand)):
+            x = self._selfKnowledge._hand[i]
+            #print("color beliefs for ", i, x.beliefs['colors'])
+            #print("number beliefs for ", i, x.beliefs['numbers'])
+            if (len(x.beliefs["colors"]) == 1 and len(x.beliefs["numbers"]) == 1  \
+            and x.beliefs["numbers"][0] <= self._board.topPlayedCards()[x.beliefs['colors'][0]]):
                 return i
-            elif(len(x.beliefs["number"]) == 1 and len(x.beliefs["number"][0]) < minNumber()):
+            elif(len(x.beliefs["numbers"]) == 1 and x.beliefs["numbers"][0] < self.minNumber()):
                 return i
-            elif(len(x.beliefs["colors"]) == 1 and self._board.topPlayedCards[x.beliefs["colors"][0]] == 5):
+            elif(len(x.beliefs["colors"]) == 1 and self._board.topPlayedCards()[x.beliefs["colors"][0]] == 5):
                 return i
-            elif(len(x.beliefs["colors"]) == 1 and min(x.beliefs["number"]) > deadFireworkOfColor(x.beliefs["color"][0])):
+            elif(len(x.beliefs["colors"]) == 1 and min(x.beliefs["numbers"]) > self.deadFireworkOfColor(x.beliefs["colors"][0])):
                 return i
-            #TODO override __eq__ methods
-            elif(len(x.beliefs["colors"] == 1) and len(x.beliefs["number"] == 1)):
-                if (x.beliefs["colors"][0], x.beliefs.number[0]) in checkedDup:
+            elif(len(x.beliefs["colors"]) == 1 and len(x.beliefs["numbers"]) == 1):
+                if (x.beliefs["colors"][0], x.beliefs["numbers"][0]) in checkedDup:
                     return i
                 else:
-                    checkedDup.append((x.beliefs["colors"][0], x.beliefs.number[0]))
+                    checkedDup.append((x.beliefs["colors"][0], x.beliefs["numbers"][0]))
         return None
 
-    def anyNoPartial(self):
-        for i in len(range(self._selfKnowledge.hand)):
-            x = self._selfKnowledge.hand[i]
-            if(len(x.possibility["number"]) > 1 and len(x.possibility["color"]) > 1):
-                return i
-        return None
-
-    def anyNoFive(self):
+    def anyNoDead(self): #return something that won't cause a dead card
         for i in range(len(self._selfKnowledge.hand)):
             x = self._selfKnowledge.hand[i]
-            if(not (len(x.possibility["number"]) == 1 and x.possibility["number"][0] == 5)):
-                return i
+            for k in COLORS:
+                if len(x.possible["numbers"]) == 1:
+                    f = lambda card: card.color == k and card.number == x.possible['numbers'][0]
+                    if len(list(filter(f, self._board._discardPile))) < AMTS[x.possible['numbers'][0]] - 1:
+                        return i
+                else:
+                    return i
         return None
-
-    def lessRiskyDiscard(self):
-        if(anyNoPartial(self)):
-            return anyNoPartial(self)
-        elif(anyNoFive(self)):
-            return anyNoFive(self)
-        else:
-            return self._selfKnowledge.hand[randint(0, 4)]
-
 
     def anyNoInfo(self): #possibilities is only updated with hints
+        ret = None
+        handAge = 0
+
         for i in range(len(self._selfKnowledge.hand)):
             x = self._selfKnowledge.hand[i]
-            if (len(x.possible["colors"]) == 5 and len(x.possible["numbers"]) == 5):
-                return i
+
+            if (len(x.possible["colors"]) > 1 and len(x.possible["numbers"]) > 1):
+                if(x.handAge >= handAge):
+                    handAge = x.handAge
+                    ret = i
+
+        return ret
+
+    def lessRiskyDiscard(self):
+        #import pdb; pdb.set_trace();
+
+        if(self.anyNoInfo() != None): #discard oldest card with no information
+            return self.anyNoInfo()
+        elif(self.anyNoDead() != None): #discard something that will not create dead firework
+            return self.anyNoDead()
+        else:
+            return randint(0, 4)
+
+    def singleHint(self):
+        playableUnknowns = self.teamMateImmediatelyPlayableUnknown()
+        for x in playableUnknowns:
+            f_color = lambda card: card.color == self._selfKnowledge.partnerHand()[i].color
+            f_number = lambda card: card.number == self._selfKnowledge.partnerHand()[i].number
+            filter_color = list(filter(f_color, playableUnknowns))
+            filter_number = list(filter(f_number, playableUnknowns))
+            if len(filter_color) == 1:
+                return [x, self._selfKnowledge.partnerHand()[i].color()]
+            elif len(filter_number) == 1:
+                return [x, self._selfKnowledge.partnerHand()[i].number()]
         return None
+
+    def fiveHint(self):
+        partnerPerspectiveHand = self._selfKnoweldge._partnerKnowledge.hand()
+        for i in range(partnerPerspectiveHand):
+            if self.selfKnowledge.partnerHand()[i].number == 5  \
+                and len(partnerPerspectiveHand[i].possible() > 1):
+                return [i, 5]
+        return None
+
+    def unambiguousHint(self):
+        return None
+
+
+    def implicatureHint(self):
+        if(self.singleHint() != None):
+            return self.singleHint()
+        elif(self.fiveHint() != None):
+            return self.fiveHint()
+        elif(self.unambiguousHint() != None):
+            return self.unambiguousHint()
+        return None
+
 
 
     def decideAction(self):
+
+        #print("numbers for 1", self._selfKnowledge._hand[1].beliefs["numbers"][0])
+        #print("colors as list", self._selfKnowledge._hand[1].beliefs["colors"])
+        #print("colors for 1", self._selfKnowledge._hand[1].beliefs["colors"][0])
         #need beliefs of cards
         #beliefs are updated in updateBeliefs. 1 hint of color sets belief of the number
             #to the next number. 1 hint of number, if it matches a color stack and unsure
@@ -242,10 +292,17 @@ class simpleImplicatureBot():
             i = self.teamMateImmediatelyPlayableUnknown()
             return HintIntent(indices = i, feature = self._selfKnowledge.partnerHand[i[0]].number)
         elif(self.activeFireworks() < 4 and self.checkNotPlayedMyCardsFor1(1) != None): #less than or equal to 4 stacks played and you have any 1, play it
-            return PlayIntent(indices = self.checkNotPlayedMyCardsFor1(1)[0])
-        elif(len(self.altanySureDiscard()) > 0): #no hints left and sure of a discard
-            return DiscardIntent(indices=[self.altanySureDiscard(self)])
-        elif(self._board.hintTokens < 1 and self.anyNoInfo(self)): #no hints and cards with no info, discard it
-            return DiscardIntent(indices = [self.anyNoInfo(self)])
+            return PlayIntent(indices = [self.checkNotPlayedMyCardsFor1(1)])
+        elif(self.altanySureDiscard() != None): #no hints left and sure of a discard
+            #Case 1, believe the number and color and number <= top played number of that color
+            #Case 2, believe only number and number is less than any top played card
+            #Case 3, believe only the color and the color is already completed
+            #Case 4, believe only the color and believe number is greater than dead firework number
+            #Case 5, believe color and number and duplicate
+            return DiscardIntent(indices=[self.altanySureDiscard()])
+        elif(self._board.hintTokens < 1 and self.anyNoInfo() != None): #no hints and cards with no info, discard it
+            return DiscardIntent(indices = [self.anyNoInfo()])
         elif(self._board.hintTokens <= 1): #1 or less hints, do less risky discard -
-            return DiscardIntent(indices = [self.lessRiskyDiscard(self)])
+            return DiscardIntent(indices = [self.lessRiskyDiscard()])
+        else:
+            return None

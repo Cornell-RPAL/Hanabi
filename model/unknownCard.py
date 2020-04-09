@@ -40,10 +40,15 @@ class UnknownCard():
     def filterPossibiliitiesAndBeliefs(self, feature):
         if(isValidColor(feature)):
             f = lambda color: color == feature
+            if(feature not in self._beliefs['colors']):
+                self._beliefs['colors'].append(feature)
             self._possible["colors"] = list(filter(f, self._possible["colors"]))
             self._beliefs["colors"] = list(filter(f, self._beliefs["colors"]))
+
         elif(isValidNumber(feature)):
             f = lambda number: number == feature
+            if(feature not in self._beliefs['numbers']):
+                self._beliefs['numbers'].append(feature)
             self._possible["numbers"] = list(filter(f, self._possible["numbers"]))
             self._beliefs["numbers"] = list(filter(f, self._beliefs["numbers"]))
             #print("possible numbers after filter ", self._possible["numbers"])
@@ -51,11 +56,20 @@ class UnknownCard():
 
 
     def filterBeliefsForImplicature(self, feature, nextCardInColor = None, color = None):
+        #print("in last filter")
         if(isValidColor(feature) and len(self._beliefs["numbers"]) > 1):
             self._beliefs["numbers"] = [nextCardInColor]
+            if (len(self._possible['numbers']) == 1) and \
+                self._possible['numbers'][0] not in self._beliefs['numbers']:
+                self._beliefs['numbers'].append(self._possible['numbers'][0])
+
         elif(isValidNumber(feature) and len(self._beliefs["colors"]) > 1):
             self._beliefs["colors"] = [color]
-            #print("believed number after implicature filter", self._beliefs["numbers"])
+            if (len(self._possible['colors']) == 1) and \
+                self._possible['colors'][0] not in self._beliefs['colors']:
+                self._beliefs['colors'].append(self._possible['colors'][0])
+
+
 
 
     def setDraw(self, drawSet):

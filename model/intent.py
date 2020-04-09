@@ -16,10 +16,6 @@ class Intent:
         self._feature = feature
         self._baxterCommand = ''
 
-    def __eq__ (self, other):
-        if self._indices == other._indices and self._feature == other._feature \
-            and self._baxterCommand == other._baxterCommand:
-            return True
 
     def complete(self, cardList = [], success = True):
         if isinstance(self, PlayIntent):
@@ -46,6 +42,13 @@ class PlayIntent(Intent):
     def __str__(self):
         return " play card at index " + str(self._indices)+"\n"
 
+
+    def __eq__ (self, other):
+        if isinstance(other, PlayIntent):
+            if self._indices == other._indices and self._feature == other._feature and self._baxterCommand == other._baxterCommand:
+                return True
+        return False
+
 class DiscardIntent(Intent):
     @property
     def baxterCommand(self):
@@ -53,6 +56,13 @@ class DiscardIntent(Intent):
 
     def __str__(self):
         return " discard card at index " + str(self._indices) +"\n"
+
+
+    def __eq__ (self, other):
+        if isinstance(other, DiscardIntent):
+            if self._indices == other._indices and self._feature == other._feature and self._baxterCommand == other._baxterCommand:
+                return True
+            return False
 
 class HintIntent(Intent):
     @property
@@ -66,3 +76,9 @@ class HintIntent(Intent):
 
     def __str__(self):
         return "Hint: your cards at indices "+ str(self._indices) + " are "+ str(self._feature) +"\n"
+
+    def __eq__ (self, other):
+        if isinstance(other, HintIntent):
+            if self._indices == other._indices and self._feature == other._feature and self._baxterCommand == other._baxterCommand:
+                return True
+        return False

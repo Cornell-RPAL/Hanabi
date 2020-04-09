@@ -53,8 +53,8 @@ class implicatureBotSelfKnowledge():
                 ukCard.exclude(card)
 
     def updateHelper(self, action):
-        #print(action.indices[0])
-        #print(self._partnerHand)
+        print("action indices", action.indices)
+        print("partner hand", self._partnerHand)
         card = self._partnerHand[action.indices[0]]
         self.excludeCard(card)
 
@@ -79,20 +79,21 @@ class implicatureBotSelfKnowledge():
         if(len(indexList) == 1):
             if isValidColor(feature):
                 nextOfColor = top[feature]+1
-                self._hand[i].filterBeliefsForImplicature(feature, nextCardInColor = nextOfColor)
+                self._hand[indexList[0]].filterBeliefsForImplicature(feature, nextCardInColor = nextOfColor)
             elif isValidNumber(feature):
-                #print("in update belief helper")
                 for key in top:
                     num = top.get(key) + 1
                     if(num == feature):
-                        self._hand[myCardIndex].filterBeliefsForImplicature(feature, color = key)
+                        self._hand[indexList[0]].filterBeliefsForImplicature(feature, color = key)
 
 
     def updateWithHint(self, feature, indexList):
-        assert(isValidColor(feature) or isValidNumber(feature))
-        assert(indexList)
-        assert(self._hintTokens > 0)
 
+        #assert(isValidColor(feature) or isValidNumber(feature))
+        #assert(indexList)
+        #assert(self._hintTokens > 0)
+        #print("before all filter colors at index", 1, print(self._hand[1].possible['colors']))
+        #print("before all filter numbers at index", 1, print(self._hand[1].possible['numbers']))
         if isValidColor(feature):
             f = lambda card: card.color == feature
         elif isValidNumber(feature):
@@ -101,18 +102,29 @@ class implicatureBotSelfKnowledge():
         self._hintTokens -= 1
         #print("index 1 had before", self._hand[1])
         for i in range(NUMBER_IN_HAND):
+
             if i not in indexList:
-                nf = lambda id: not feature
+                nf = lambda id: (id != feature)
+                #print("before nf filter colors at index", i, (self._hand[i].possible['colors']))
+                #print("before nf filter numbers at index", i, (self._hand[i].possible['numbers']))
                 self._hand[i].possible['colors'] = list(filter(nf, self._hand[i].possible['colors']))
                 self._hand[i].possible['numbers'] = list(filter(nf, self._hand[i].possible['numbers']))
+                #print("after nf filter colors at index", i, (self._hand[i].possible['colors']))
+                #print("after nf filter numbers at index", i, (self._hand[i].possible['numbers']))
+
             else:
                 #print("feature: ", feature)
                 #print("original hand", self._hand[i])
                 self._hand[i]._possibleCards = Counter(filter(f, self._hand[i]._possibleCards.elements()))
                 self._hand[i].filterPossibiliitiesAndBeliefs(feature)
-                #print("after filter Possibilities and Beliefs, possible numbers ", self._hand[i].possible['numbers'])
-                #print("after filter Possibilities and Beliefs, believed numbers ", self._hand[i].beliefs['numbers'])
+                #print("after filter Possibilities and Beliefs, possible numbers at index ", i, self._hand[i].possible['numbers'])
+                #print("after filter Possibilities and Beliefs, believed numbers at index", i, self._hand[i].beliefs['numbers'])
+                #print("after filter Possibilities and Beliefs, possible colors at index", i, self._hand[i].possible['colors'])
+                #print("after filter Possibilities and Beliefs, believed colors at index", i, self._hand[i].beliefs['colors'])
+
                 self.updateBeliefHelper(i, feature, indexList)
+
+
         #print("index 1 hand afterwards believed", self._hand[1].beliefs)
 
 
